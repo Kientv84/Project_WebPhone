@@ -71,7 +71,7 @@ const ProductDetailsComponent = () => {
                     bordered = {false}
                     size={40}
                     styleButton={{ 
-                        background: 'rgb(255, 57,69)',
+                        background: 'rgba(13, 129, 115, 0.82)',
                         height: '48px',
                         width: '220px', 
                         border: 'none',
