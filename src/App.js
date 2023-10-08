@@ -6,8 +6,9 @@ import {Routes, Route} from 'react-router-dom'
 import path from "./ultis/path";
 import { DatePicker } from 'antd';
 import SignIn from "./containers/public/SignIn/SignIn";
-import SignUp from "./containers/public/SignUp";
+
 import ProductDetail from "./containers/public/ProductDetail";
+import SignUp from "./containers/public/Register/SignUp";
 
 function App() {
 
