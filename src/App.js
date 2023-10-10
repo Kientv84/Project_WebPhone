@@ -1,35 +1,28 @@
-import { useState } from "react";
-import { UseSelector, useDispatch } from "react-redux";
-import { ToastContainer, toast } from 'react-toastify';
-import { Home, Login, Public } from './containers/public/'
-import {Routes, Route} from 'react-router-dom' 
-import path from "./ultis/path";
-import { DatePicker } from 'antd';
-import SignIn from "./containers/public/SignIn/SignIn";
-
-import ProductDetail from "./containers/public/ProductDetail";
-import SignUp from "./containers/public/Register/SignUp";
+import React, { Fragment } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { routes } from './routes/index';
+import DefaultComponent from './components/DefaultComponent/DefaultComponent';
 
 function App() {
-
- 
-
   return (
-    <>
-    <div className="">
-      <Routes>
-        <Route path={path.PUBLIC} element ={<Public />} >
-          <Route path={path.HOME} element = {<Home />} />
-          <Route path={path.LOGIN} element = {<Login />} />
-          <Route path={path.PRODUCTDETAIL} element = {<ProductDetail />} />
-        </Route>
-        <Route path="/sign-in" element = {<SignIn />} />
-        <Route path="/register" element = {<SignUp />} />
-      </Routes>
-
+    <div>
+        <Router>
+          <Routes>
+            {routes.map((route) => {
+              const Page = route.page
+              const Layout = route.isShowHeader ? DefaultComponent :Fragment
+              return (
+                <Route key={route.path} path={route.path} element={
+                  <Layout>
+                    <Page />
+                  </Layout>
+              } />
+              )
+            })}
+          </Routes>
+        </Router>
     </div>
-    </>
-  );
-}
+  )
+};
 
-export default App;
+export default App
