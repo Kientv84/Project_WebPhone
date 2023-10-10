@@ -14,11 +14,12 @@ const ButtonInputSearch = (props) => {
     } = props
     return (
         <div style={{ display:'flex', backgroundColor:'#fff'}}>
-            <Input 
+            <Input
                 size={size} 
                 bordered = {bordered}
                 placeholder={placeholder}  
                 style={{backgroundColor: backgroundColorInput}}/>
+
             <Button 
                     size={size} 
                     bordered = {false}
