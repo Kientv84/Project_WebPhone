@@ -23,7 +23,6 @@ const ButtonInputSearch = (props) => {
                 style={{backgroundColor: backgroundColorInput}}/>
             <ButtonComponent 
                     size={size} 
-                    bordered = {false}
                     style={{backgroundColor: backgroundColorButton, 
                     border: !bordered && 'none', borderRadius: '0px'}}
                     icon={<SearchOutlined  style={{color: colorButton}}/>}> 

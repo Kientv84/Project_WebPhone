@@ -12,7 +12,7 @@ export const WrapperContainerRight = styled.div`
     display: flex;
     justify-content: center;
     flex-direction: column;
-    algin-items: center;
+    align-items: center;
     gap: 4px;
 `
 
