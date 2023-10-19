@@ -1,3 +1,4 @@
+import AdminPage from "../containers/AdminPage/AdminPage";
 import HomePage from "../containers/HomePages/HomePage";
 import NotFoundPage from "../containers/NotFoundPage/NotFoundPage";
 import OrderPage from "../containers/OrderPage/OrderPage";
@@ -53,4 +54,10 @@ export const routes = [
         path: '*',
         page: NotFoundPage
     },
+    {
+        path: '/system//admin',
+        page: AdminPage,
+        isShowHeader: false,
+        isPrivate: true,
+    }
 ]
