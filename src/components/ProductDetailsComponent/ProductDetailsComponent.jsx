@@ -68,27 +68,25 @@ const ProductDetailsComponent = () => {
                 </div>
                 <div style={{display: 'flex', alignItems:'center', gap: '12px'}}>
                     <ButtonComponent
-                    bordered = {false}
-                    size={40}
-                    styleButton={{ 
-                        background: 'rgba(13, 129, 115, 0.82)',
-                        height: '48px',
-                        width: '220px', 
-                        border: 'none',
-                        borderRadius: '4px'
+                        size={40}
+                        styleButton={{ 
+                            background: 'rgba(13, 129, 115, 0.82)',
+                            height: '48px',
+                            width: '220px', 
+                            border: 'none',
+                            borderRadius: '4px'
                     }}
                     textButton={'Chọn mua'}
                     styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
                     ></ButtonComponent>
                     <ButtonComponent
-                    size={40}
-                    border={false}
-                    styleButton={{ 
-                        background: '#fff',
-                        height: '48px',
-                        width: '220px', 
-                        border: '1px solid rgb(13,92,182',
-                        borderRadius: '4px'
+                        size={40}
+                        styleButton={{ 
+                            background: '#fff',
+                            height: '48px',
+                            width: '220px', 
+                            border: '1px solid rgb(13,92,182',
+                            borderRadius: '4px'
                     }}
                     textButton={'Mua trả sau'}
                     styleTextButton={{ color: 'rgb(13,92,182)', fontSize: '15px' }}
