@@ -17,11 +17,7 @@ export const userSlide = createSlice({
       state.email = email;
       state.access_token = access_token;
         },
-        resetUser: (state) => {
-            state.name = '';
-            state.email = '';
-            state.access_token = '';
-    },
+        
   },
 })
 
