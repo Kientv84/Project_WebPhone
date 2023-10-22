@@ -1,5 +1,7 @@
 import React from 'react'
 import { SearchOutlined } from '@ant-design/icons';
+import InputComponent from '../InputComponent/InputComponent';
+import ButtonComponent from '../ButtonComponent/ButtonComponent';
 
 const ButtonInputSearch = (props) => {
     const {
@@ -13,18 +15,18 @@ const ButtonInputSearch = (props) => {
     } = props
     return (
         <div style={{ display:'flex', backgroundColor:'#fff'}}>
-            <Input 
+            <InputComponent 
                 size={size} 
                 bordered = {bordered}
                 placeholder={placeholder}  
                 style={{backgroundColor: backgroundColorInput}}/>
-            <Button 
+            <ButtonComponent 
                     size={size} 
                     style={{backgroundColor: backgroundColorButton, 
-                    border: !bordered && 'none', borderRadius: '0'}}
+                    border: !bordered && 'none', borderRadius: '0px'}}
                     icon={<SearchOutlined  style={{color: colorButton}}/>}> 
                  <span style={{color: colorButton}}>{textButton} </span>
-            </Button>
+            </ButtonComponent>
         </div>
     )
 }
