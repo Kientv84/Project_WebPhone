@@ -1,8 +1,10 @@
+import AdminPage from "../containers/AdminPage/AdminPage";
 import HomePage from "../containers/HomePages/HomePage";
 import NotFoundPage from "../containers/NotFoundPage/NotFoundPage";
 import OrderPage from "../containers/OrderPage/OrderPage";
 import ProductsPage from "../containers/ProducsPages/ProductsPage";
 import ProductDetailsPage from "../containers/ProductDetailsPage/ProductDetailsPage";
+import ProfilePage from "../containers/ProfilePae/ProfilePage";
 import SignInPage from "../containers/SignInPage/SignInPage";
 import SignUpPage from "../containers/SignUpPage/SignUpPage";
 import TypeProductPage from "../containers/TypeProductPage/TypeProductPage";
@@ -47,6 +49,19 @@ export const routes = [
         path: '/product-details',
         page: ProductDetailsPage,
         isShowHeader: true
+
+    },
+    {
+        path: '/profile-user',
+        page: ProfilePage,
+        isShowHeader: true
+
+    },
+    {
+        path: '/system/admin',
+        page: AdminPage,
+        isShowHeader: false,
+        isPrivate: true
 
     },
     {

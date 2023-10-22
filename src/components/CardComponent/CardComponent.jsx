@@ -3,38 +3,41 @@ import { StyleNameProduct, WrapperCardStyle, WrapperDiscountText, WrapperPriceTe
 import { StarFilled } from '@ant-design/icons';
 import logochinhhang from '../../assets/images/chinhhang.png';
 
-const CardComponent = () => {
+const CardComponent = (props) => {
+  const {countInStock, description, image, name, price, rating, type, selled, discount} = props
+
   return (
     <WrapperCardStyle
-        hoverable
-        headStyle={{width: '200px', height: '200px'}}
-        style={{
+      hoverable
+      headStyle={{ width: '200px', height: '200px' }}
+      style={{
         width: 200,
-        }}
-        cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
+      }}
+      cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
     >
-        <img 
-          src={logochinhhang} 
-          style={{ 
-              width: '68px',
-              height: '14px',
-              position: 'absolute',
-              top: -1,
-              left: -1,
-              borderTopLeftRadius: '3px'}}
-        />
-              
-        <StyleNameProduct>Iphone</StyleNameProduct>
-        <WrapperReportText>
-          <span style={{ marginRight: '4px'}}>
-            <span> 4.87 </span> <StarFilled style={{ fontSize:'12px', color: 'yellow' }} />
-          </span>
-          <WrapperStyleTextSell>| Đã bán 1000+</WrapperStyleTextSell>
-        </WrapperReportText>
-        <WrapperPriceText>
-          <span style={{marginRight: '8px'}}>10.000.000đ</span>
-          <WrapperDiscountText>-5%</WrapperDiscountText>
-        </WrapperPriceText>
+      <img
+        src={logochinhhang}
+        style={{
+          width: '68px',
+          height: '14px',
+          position: 'absolute',
+          top: -1,
+          left: -1,
+          borderTopLeftRadius: '3px'
+        }}
+      />
+
+      <StyleNameProduct> {name} </StyleNameProduct>
+      <WrapperReportText>
+        <span style={{ marginRight: '4px' }}>
+          <span> {rating} </span> <StarFilled style={{ fontSize: '12px', color: 'yellow' }} />
+        </span>
+        <WrapperStyleTextSell>| Đã bán {selled || 1000}+</WrapperStyleTextSell>
+      </WrapperReportText>
+      <WrapperPriceText>
+        <span style={{ marginRight: '8px' }}> {price} </span>
+        <WrapperDiscountText> {discount || 5} % </WrapperDiscountText>
+      </WrapperPriceText>
 
     </WrapperCardStyle>
   )
