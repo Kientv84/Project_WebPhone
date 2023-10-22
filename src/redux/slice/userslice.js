@@ -8,7 +8,7 @@ const initialState = {
   avatar: '',
   access_token: '',
   id: '',
-  isAdmin : false
+  isAdmin : false,
 }
 
 export const userSlice = createSlice({
@@ -36,7 +36,7 @@ export const userSlice = createSlice({
       state.avatar = '';
       state.id = '';
       state.access_token = '';
-      state.access_token = false;
+      state.isAdmin = false;
 
     },
   },
