@@ -1,7 +1,7 @@
 import React from 'react'
 import { WrapperHeader } from '../../components/HeaderComponent/style'
 import { Button } from 'antd'
-import {PlusOutlined} from '@ant-desgin.icons'
+import { PlusOutlined } from '@ant-desgin.icons'
 import TableComponent from '../../components/TableComponent/TableComponent'
 
 const AdminUser = () => {

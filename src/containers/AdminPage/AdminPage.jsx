@@ -37,7 +37,7 @@ const AdminPage = () => {
                     <AdminProduct />
                 )
             default:
-                return <></>
+                return 
         }
     }
 

@@ -74,7 +74,7 @@ const SignInPage = () => {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
       <div style={{ width: '800px', height: '400px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
-          <h1 style={{ fontSize: '30px' }}>Xin chào</h1>
+          <h1 style={{ fontSize: '30px', marginBottom: '5px' }}>Xin chào</h1>
           <p style={{ fontSize: '15px',  marginBottom: '10px' }}>Đăng nhập hoặc tạo tài khoản</p>
           <InputForm style={{ marginBottom: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
           <div style={{ position: 'relative' }}>
@@ -117,7 +117,7 @@ const SignInPage = () => {
                 styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
               ></ButtonComponent>
           </Loading>
-          <p style={{ marginBottom: '13px'}}><WrapperTextLight >Quên mật khẩu?</WrapperTextLight></p>
+          <p style={{ marginBottom: '-10px'}}><WrapperTextLight >Quên mật khẩu?</WrapperTextLight></p>
           <p style={{ fontSize: " 15px" }}>Chưa có tài khoản? <WrapperTextLight onClick={handleNavigateSignUp}> Tạo tài khoản</WrapperTextLight></p>
         </WrapperContainerLeft>
 
