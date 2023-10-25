@@ -1,9 +1,12 @@
 import { Divider, Radio, Table } from 'antd';
 import React, { useState } from 'react'
 
+
 const TableComponent = (props) => {
 const {selectionType = 'checkbox'} = props
 
+    
+    
     const columns = [
         {
         title: 'Name',
@@ -45,6 +48,16 @@ const {selectionType = 'checkbox'} = props
         address: 'Sydney No. 1 Lake Park',
         },
     ];
+
+    const rowSelection = {
+        onchange: (selectedRowKeys, selectedRows) => {
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'seclectRows: ', selectedRows);
+        },
+        getCheckboxProps: (record) => ({
+            disabled: record.name === 'Disable User',
+            name: record.name,
+        }),
+    };
 
   return (
     <Table

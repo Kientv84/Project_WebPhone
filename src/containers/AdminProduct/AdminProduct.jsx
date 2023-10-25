@@ -5,6 +5,7 @@ import { PlusOutlined } from '@ant-desgin.icons'
 import TableComponent from '../../components/TableComponent/TableComponent'
 import InputComponent from '../../components/InputComponent/InputComponent'
 
+
 const AdminProduct = () => {
   const [isModapOpen, setIsModalOpen] = useState(false);
   const [stateProduct, setStateProduct ] = useState({
@@ -41,7 +42,7 @@ const handleOnchange = (e) => {
     <div>
         <WrapperHeader >Quản lý sản phẩm</WrapperHeader>
         <div style={{marginTop: '10px'}}>
-            <Button style={{height: '15px', width: '150px', borderRadius: '6px', borderStyle: 'dashed'}} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px'}}></Button>
+            <Button style={{height: '15px', width: '150px', borderRadius: '6px', borderStyle: 'dashed'}} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px'}}/></Button>
         </div>
         <div style={{ marginTop: '20px' }}>
             <TableComponent />

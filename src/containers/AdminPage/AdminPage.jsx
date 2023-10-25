@@ -5,6 +5,8 @@ import { getItem } from '../../utils';
 import {UserOutlined, AppstoreOutlined } from '@ant-design/icons'
 import AdminUser from '../AdminUser/AdminUser';
 import AdminProduct from '../AdminProduct/AdminProduct';
+import HeaderComponent from '../../components/HeaderComponent/HeaderComponent'
+
 const AdminPage = () => {
     const items = [
         getItem('Người dùng', 'user', <UserOutlined />),
