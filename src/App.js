@@ -14,7 +14,6 @@ import Loading from './components/LoadingComponent/Loading';
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
-  const user = useSelector((state) => state.user)
 
   useEffect(() => {
     setIsLoading(true)
@@ -80,7 +79,6 @@ function App() {
           <Routes>
             {routes.map((route) => {
               const Page = route.page
-              const ischeckAuth = !route.isPrivate || user.isAdmin
               const Layout = route.isShowHeader ? DefaultComponent : Fragment
               return (
                 <Route key={route.path} path={ route.path} element={
