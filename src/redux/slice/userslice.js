@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-
 const initialState = {
   name: '',
   email: '',
@@ -40,7 +39,7 @@ export const userSlice = createSlice({
       state.isAdmin = false;
 
     },
-  },
+  }
 })
 
 // Action creators are generated for each case reducer function

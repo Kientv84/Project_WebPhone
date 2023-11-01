@@ -19,6 +19,7 @@ export const WrapperTextHeader = styled.span`
         font-size: 18px;
         color: #fff;
     }
+    
 `
 
 export const WrapperHeaderAccount = styled.div`
