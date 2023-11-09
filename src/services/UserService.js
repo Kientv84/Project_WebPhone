@@ -22,7 +22,7 @@ export const getDetailsUser = async (id, access_token) => {
 }
 
 export const deleteUser = async (id, data, access_token) => {
-    const res = await axiosJWT.get(`${process.env.REACT_APP_URL_BACKEND}/user/delete-user/${id}`,data, {
+    const res = await axiosJWT.delete(`${process.env.REACT_APP_URL_BACKEND}/user/delete-user/${id}`,data, {
         headers: {
             token: `Bearer ${access_token}`,
         }

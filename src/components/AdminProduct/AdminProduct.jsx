@@ -418,7 +418,6 @@ const AdminProduct = () => {
             onClick: (event) => {
               setRowSelected(record._id)
             }
-
           };
         }} />
       </div>
