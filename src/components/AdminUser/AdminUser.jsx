@@ -74,8 +74,9 @@ const AdminUser = () => {
   }
 
   const getAllUsers = async () => {
-    const res = await UserService.getAllUser()
-    return res
+    const user = JSON.parse(localStorage.getItem("user"));
+    const res = await UserService.getAllUser(user?.access_token)
+    return { data: res?.data, key: 'users' }
   }
 
   const fetchGetDetailsUser = async (rowSelected) => {
