@@ -82,50 +82,14 @@ const ProfilePage = () => {
                     <WrapperInput>
                         <WrapperLabel htmlFor='name'>Name</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id='name' value={name} onChange={handleOnChangeName} />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px'
-                            }}
-                            textButton={'Cập nhật'}
-                            styleTextButton={{ color: '#42C8B7', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent>
                     </WrapperInput>
                     <WrapperInput>
                         <WrapperLabel htmlFor='email'>Email</WrapperLabel>
-                        <InputForm style={{ width: '300px' }} id='email' value={email} onChange={handleOnChangeEmail} />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px'
-                            }}
-                            textButton={'Cập nhật'}
-                            styleTextButton={{ color: '#42C8B7', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent>
+                        <InputForm style={{ width: '300px' }} id='email' value={email} onChange={handleOnChangeEmail} readOnly />
                     </WrapperInput>
                     <WrapperInput>
                         <WrapperLabel htmlFor='phone'>Phone</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id='phone' value={phone} onChange={handleOnChangePhone} />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px'
-                            }}
-                            textButton={'Cập nhật'}
-                            styleTextButton={{ color: '#42C8B7', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent>
                     </WrapperInput>
                     <WrapperInput>
                         <WrapperLabel htmlFor='avatar'>Avatar</WrapperLabel>
@@ -135,43 +99,35 @@ const ProfilePage = () => {
                         {avatar && (
                             <img src={avatar} style={{
                                 height: '60px',
-                                width:'60px',
+                                width: '60px',
                                 borderRadius: '50%',
                                 objectFit: 'cover'
-                            }} alt="avatar"/>
+                            }} alt="avatar" />
                         )}
                         {/* <InputForm style={{ width: '300px' }} id='avatar' value={avatar} onChange={handleOnChangeAvatar} /> */}
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px',
-                            }}
-                            textButton={'Cập nhật'}
-                            styleTextButton={{ color: '#42C8B7', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent>
                     </WrapperInput>
                     <WrapperInput>
                         <WrapperLabel htmlFor='address'>Address</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id='address' value={address} onChange={handleOnChangeAddress} />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px'
-                            }}
-                            textButton={'Cập nhật'}
-                            styleTextButton={{ color: '#42C8B7', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent>
                     </WrapperInput>
+
+                    <ButtonComponent
+                        onClick={handleUpdate}
+                        size={40}
+                        styleButton={{
+                            height: '30px',
+                            width: 'fit-content',
+                            borderRadius: '4px',
+                            padding: '2px 6px 6px',
+                            marginLeft: 'auto'
+                        }}
+                        textButton={'Cập nhật'}
+                        styleTextButton={{ color: '#42C8B7', fontSize: '15px', fontWeight: '700' }}
+                    ></ButtonComponent>
                 </WrapperContentProfile>
+
             </Loading>
+
         </div>
     )
 }

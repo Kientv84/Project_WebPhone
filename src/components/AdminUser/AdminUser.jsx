@@ -23,19 +23,13 @@ const AdminUser = () => {
   const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
 
-  const [stateUser, setStateUser] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    isAdmin: false,
-
-  });
-
   const [stateUserDetails, setStateUserDetails] = useState({
     name: '',
     email: '',
     phone: '',
     isAdmin: false,
+    avatar: '',
+    address: ''
   });
 
   const [form] = Form.useForm();
@@ -61,6 +55,24 @@ const AdminUser = () => {
     }
   )
 
+  const mutationDeletedMany = useMutationHook(
+    (data) => {
+      const { token, ...ids } = data
+      const res = UserService.deleteManyUser(
+        ids, token
+      )
+      return res
+    }
+  )
+
+  const handleDeleteManyUsers = (ids) => {
+    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+      onSettled: () => {
+        queryUser.refetch()
+      }
+    })
+  }
+
   const getAllUsers = async () => {
     const res = await UserService.getAllUser()
     return res
@@ -74,6 +86,8 @@ const AdminUser = () => {
         email: res?.data?.email,
         phone: res?.data?.phone,
         isAdmin: res?.data?.isAdmin,
+        avatar: res?.data?.avatar,
+        address: res?.data?.address,
       })
     }
     setIsLoadingUpdate(false)
@@ -84,11 +98,11 @@ const AdminUser = () => {
   }, [form, stateUserDetails])
 
   useEffect(() => {
-    if (rowSelected) {
+    if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true)
       fetchGetDetailsUser(rowSelected)
     }
-  }, [rowSelected])
+  }, [rowSelected, isOpenDrawer])
 
   //
   const handleDetailsProduct = () => {
@@ -98,6 +112,8 @@ const AdminUser = () => {
 
   const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
   const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
+  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
+
 
   const queryUser = useQuery({ queryKey: ['user'], queryFn: getAllUsers })
   const { isLoading: isLoadingUsers, data: users } = queryUser
@@ -204,13 +220,19 @@ const AdminUser = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps('name'), //search name
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      ...getColumnSearchProps('name') //search name
     },
     {
       title: 'Email',
       dataIndex: 'email',
-      sorter: (a, b) => a.email.length - b.email.length,
+      sorter: (a, b) => a.email.localeCompare(b.email),
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      sorter: (a, b) => a.address.localeCompare(b.address),
+      ...getColumnSearchProps('address'), //search name
     },
     {
       title: 'Admin',
@@ -246,6 +268,13 @@ const AdminUser = () => {
     }
   }, [isSuccessDeleted])
 
+  useEffect(() => {
+    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+      message.success()
+    } else if (isErrorDeletedMany) {
+      message.error()
+    }
+  }, [isSuccessDeletedMany])
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === 'OK') {
@@ -286,16 +315,6 @@ const AdminUser = () => {
     })
   }
 
-  const handleOnChangeAvatar = async ({ fileList }) => {
-    const file = fileList[0]
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setStateUser({
-      ...stateUser,
-      image: file.preview
-    })
-  }
 
   const handleOnChangeAvatarDetails = async ({ fileList }) => {
     const file = fileList[0]
@@ -304,7 +323,7 @@ const AdminUser = () => {
     }
     setStateUserDetails({
       ...stateUserDetails,
-      image: file.preview
+      avatar: file.preview
     })
   }
 
@@ -320,7 +339,7 @@ const AdminUser = () => {
     <div>
       <WrapperHeader>Quản lý người dùng</WrapperHeader>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyUsers} columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: (event) => {
               setRowSelected(record._id)
@@ -329,7 +348,7 @@ const AdminUser = () => {
           };
         }} />
       </div>
-      <DrawerComponent title='Chi tiết người dùng' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="90%">
+      <DrawerComponent title='Chi tiết người dùng' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="50%">
         <Loading isLoading={isLoadingUpdate}>
           <Form
             name="basic"
@@ -357,20 +376,27 @@ const AdminUser = () => {
             <Form.Item
               label="Phone"
               name="phone"
-              rules={[{ required: true, message: 'Please input your count phone!' }]}
+              rules={[{ required: true, message: 'Please input your phone!' }]}
             >
               <InputComponent value={stateUserDetails.phone} onChange={handleOnchangeDetails} name="phone" />
             </Form.Item>
-            {/* <Form.Item
-              label="Image"
-              name="image"
-              rules={[{ required: true, message: 'Please input your image!' }]}
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[{ required: true, message: 'Please input your address!' }]}
+            >
+              <InputComponent value={stateUserDetails.address} onChange={handleOnchangeDetails} name="address" />
+            </Form.Item>
+            <Form.Item
+              label="Avatar"
+              name="avatar"
+              rules={[{ required: true, message: 'Please input your avatar!' }]}
             >
               <WrapperUploadFile onChange={handleOnChangeAvatarDetails} maxCount={1}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Button>Select File</Button>
-                  {stateProductDetails?.image && (
-                    <img src={stateProductDetails?.image} style={{
+                  {stateUserDetails?.avatar && (
+                    <img src={stateUserDetails?.avatar} style={{
                       height: '60px',
                       width: '60px',
                       borderRadius: '50%',
@@ -381,7 +407,7 @@ const AdminUser = () => {
                   )}
                 </div>
               </WrapperUploadFile>
-            </Form.Item> */}
+            </Form.Item>
             <Form.Item wrapperCol={{ offset: 19, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 Apply

@@ -70,13 +70,25 @@ const AdminProduct = () => {
 
   const mutationDeleted = useMutationHook(
     (data) => {
-      const { id, token} = data
+      const { id, token } = data
       const res = ProductService.deleteProduct(
         id, token
       )
       return res
     }
   )
+
+  const mutationDeletedMany = useMutationHook(
+    (data) => {
+      const { token, ...ids } = data
+      const res = ProductService.deleteManyProduct(
+        ids, token
+      )
+      return res
+    }
+  )
+
+  console.log('mutationDeletedMany', mutationDeletedMany)
 
   const getAllProduct = async () => {
     const res = await ProductService.getAllProduct()
@@ -104,11 +116,11 @@ const AdminProduct = () => {
   }, [form, stateProductDetails])
 
   useEffect(() => {
-    if (rowSelected) {
+    if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true)
       fetchGetDetailsProduct(rowSelected)
     }
-  }, [rowSelected])
+  }, [rowSelected, isOpenDrawer])
 
   //
   const handleDetailsProduct = () => {
@@ -116,9 +128,20 @@ const AdminProduct = () => {
 
   }
 
+  const handleDeleteManyProducts = (ids) => {
+    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+      onSettled: () => {
+        queryProduct.refetch()
+      }
+    })
+  }
+
+
   const { data, isLoading, isSuccess, isError } = mutation
   const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
-  const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted} = mutationDeleted
+  const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
+  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedmany } = mutationDeletedMany
+
 
   const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
   const { isLoading: isLoadingProducts, data: products } = queryProduct
@@ -239,11 +262,11 @@ const AdminProduct = () => {
         { text: '<= 10000000', value: '<=' },
       ],
       onFilter: (value, record) => {
-        if(value === '>='){
+        if (value === '>=') {
           return record.price >= 10000000;
         }
-        return record.price <=10000000;
-        
+        return record.price <= 10000000;
+
       },
     },
     {
@@ -255,11 +278,11 @@ const AdminProduct = () => {
         { text: '<= 3.5', value: '<=' },
       ],
       onFilter: (value, record) => {
-        if(value === '>='){
+        if (value === '>=') {
           return record.rating >= 3.5;
         }
-        return record.rating <=3.5;
-        
+        return record.rating <= 3.5;
+
       },
     },
     {
@@ -288,6 +311,14 @@ const AdminProduct = () => {
       message.error()
     }
   }, [isSuccess])
+
+  useEffect(() => {
+    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+      message.success()
+    } else if (isErrorDeletedmany) {
+      message.error()
+    }
+  }, [isSuccessDeletedMany])
 
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === 'OK') {
@@ -327,12 +358,13 @@ const AdminProduct = () => {
   }
 
   const handleDeleteProduct = () => {
-    mutationDeleted.mutate({ id: rowSelected, token: user?.access_token}, {
+    mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
     })
   }
+
   const handleCancel = () => {
     setIsModalOpen(false);
     setStateProduct({
@@ -413,7 +445,7 @@ const AdminProduct = () => {
           <PlusOutlined style={{ fontSize: '60px' }} /></Button>
       </div>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyProducts} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: (event) => {
               setRowSelected(record._id)
@@ -503,7 +535,7 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </ModalComponent>
-      <DrawerComponent title='Chi tiết sản phẩm' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="90%">
+      <DrawerComponent title='Chi tiết sản phẩm' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="75%" >
         <Loading isLoading={isLoadingUpdate}>
           <Form
             name="basic"
@@ -585,7 +617,7 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-      <ModalComponent title="Xóa sản phẩm" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk = {handleDeleteProduct} >
+      <ModalComponent title="Xóa sản phẩm" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct} >
         <Loading isLoading={isLoadingDeleted}>
           <div>Bạn có chắc xóa sản phẩm không?</div>
         </Loading>

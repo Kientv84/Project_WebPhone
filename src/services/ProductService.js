@@ -17,7 +17,7 @@ export const getDetailsProduct = async (id) => {
 }
 
 export const updateProduct = async (id, access_token, data) => {
-    const res = await axiosJWT.put(`${process.env.REACT_APP_URL_BACKEND}/product/update/${id}`,data,{
+    const res = await axiosJWT.put(`${process.env.REACT_APP_URL_BACKEND}/product/update/${id}`, data, {
         headers: {
             token: `Bearer ${access_token}`,
         }
@@ -26,7 +26,16 @@ export const updateProduct = async (id, access_token, data) => {
 }
 
 export const deleteProduct = async (id, access_token) => {
-    const res = await axiosJWT.delete(`${process.env.REACT_APP_URL_BACKEND}/product/delete/${id}`,{
+    const res = await axiosJWT.delete(`${process.env.REACT_APP_URL_BACKEND}/product/delete/${id}`, {
+        headers: {
+            token: `Bearer ${access_token}`,
+        }
+    })
+    return res.data
+}
+
+export const deleteManyProduct = async (data, access_token) => {
+    const res = await axiosJWT.post(`${process.env.REACT_APP_URL_BACKEND}/product/delete-many`, data, {
         headers: {
             token: `Bearer ${access_token}`,
         }

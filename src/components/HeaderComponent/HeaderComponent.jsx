@@ -14,8 +14,7 @@ import { resetUser } from '../../redux/slice/userslice';
 import Loading from '../LoadingComponent/Loading';
 
 
-
-const HeaderComponent = ({isHiddenSearch= false ,isHiddenCart=false}) => {
+const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate()
   const user = useSelector((state) => state.user)
   console.log('user ', user)
@@ -31,6 +30,7 @@ const HeaderComponent = ({isHiddenSearch= false ,isHiddenCart=false}) => {
     await UserService.logoutUser()
     dispatch(resetUser())
     setLoading(false)
+    navigate('/');
   }
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const HeaderComponent = ({isHiddenSearch= false ,isHiddenCart=false}) => {
     <div>
       <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thông tin người dùng</WrapperContentPopup>
       {user?.isAdmin && (
-      <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quản lý hệ thống</WrapperContentPopup>
+        <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quản lý hệ thống</WrapperContentPopup>
       )}
       <WrapperContentPopup onClick={handleLogout}>Đăng Xuất</WrapperContentPopup>
     </div>
@@ -52,18 +52,18 @@ const HeaderComponent = ({isHiddenSearch= false ,isHiddenCart=false}) => {
 
   return (
     <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
-      <WrapperHeader style={{justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset'}}>
+      <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
         <Col span={5}>
           <WrapperTextHeader> WEBPHONE </WrapperTextHeader>
         </Col>
         {!isHiddenSearch && (
           <Col span={13}>
-          <ButtonInputSearch
-            size="large"
-            placeholder="What do you need to find?"
-            textButton="Search"
-          />
-        </Col>
+            <ButtonInputSearch
+              size="large"
+              placeholder="What do you need to find?"
+              textButton="Search"
+            />
+          </Col>
         )}
         <Col span={6} style={{ display: "flex", gap: '54px', alignItems: 'center' }}>
           <Loading isLoading={loading}>
@@ -71,10 +71,10 @@ const HeaderComponent = ({isHiddenSearch= false ,isHiddenCart=false}) => {
               {userAvatar ? (
                 <img src={userAvatar} alt="avatar" style={{
                   height: '40px',
-                  width:'40px',
+                  width: '40px',
                   borderRadius: '50%',
                   objectFit: 'cover'
-              }}/>
+                }} />
               ) : (
                 <UserOutlined style={{ fontSize: '30px' }} />
               )}
@@ -95,12 +95,12 @@ const HeaderComponent = ({isHiddenSearch= false ,isHiddenCart=false}) => {
           </Loading>
           {!isHiddenCart && (
             <div>
-            <Badge count={4} size='small'>
-              <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
-            </Badge>
-            <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
-          </div>
-          )}  
+              <Badge count={4} size='small'>
+                <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
+              </Badge>
+              <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
+            </div>
+          )}
         </Col>
       </WrapperHeader>
     </div>
