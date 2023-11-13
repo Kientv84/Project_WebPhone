@@ -8,7 +8,7 @@ import { isJsonString } from './utils';
 import jwt_decode from "jwt-decode";
 import * as UserService from './services/UserService'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateUser } from './redux/slice/userslice';
+import { updateUser } from './redux/slice/userslide';
 import Loading from './components/LoadingComponent/Loading';
 
 function App() {
@@ -59,19 +59,6 @@ function App() {
     // console.log('res', res)
   }
 
-
-
-  // useEffect(() => {
-  //   fetchApi()
-  // }, [])
-  // const fetchApi = async() => {
-  //   const res = await axios.get(`${process.env.REACT_APP_URL_BACKEND}/product/get-all`)
-  //   return res.data
-  // }
-
-  // const query = useQuery('todos', fetchApi)
-  // console.log('query', query)
-
   return (
     <div>
       <Loading isLoading={isLoading} >
@@ -81,7 +68,7 @@ function App() {
               const Page = route.page
               const Layout = route.isShowHeader ? DefaultComponent : Fragment
               return (
-                <Route key={route.path} path={ route.path} element={
+                <Route key={route.path} path={route.path} element={
                   <Layout>
                     <Page />
                   </Layout>

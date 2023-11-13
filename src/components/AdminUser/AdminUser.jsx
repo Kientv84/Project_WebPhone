@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
-import { Button, Form, Space } from 'antd'
-import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
+import { Button, Form, Modal, Space } from 'antd'
+import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'
 import DrawerComponent from '../DrawerComponent/DrawerComponent'
 import Loading from '../LoadingComponent/Loading'
 import ModalComponent from '../ModalComponent/ModalComponent'
 import { getBase64 } from '../../utils'
-import * as ProductService from '../../services/ProductService'
+import * as UserService from '../../services/UserService'
 import * as message from '../../components/Message/Message'
 import { useSelector } from 'react-redux'
 import { useMutationHook } from '../../hooks/useMutationHook'
@@ -16,56 +16,30 @@ import { useQuery } from 'react-query'
 
 
 const AdminUser = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [rowSelected, setRowSelected] = useState('');
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user)
-  const [searchText, setSearchText] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
 
-  const [stateProduct, setStateProduct] = useState({
+  const [stateUserDetails, setStateUserDetails] = useState({
     name: '',
-    price: '',
-    description: '',
-    rating: '',
-    image: '',
-    type: '',
-    countInStock: '',
-  });
-
-  const [stateProductDetails, setStateProductDetails] = useState({
-    name: '',
-    price: '',
-    description: '',
-    rating: '',
-    image: '',
-    type: '',
-    countInStock: '',
+    email: '',
+    phone: '',
+    isAdmin: false,
+    avatar: '',
+    address: ''
   });
 
   const [form] = Form.useForm();
 
-  const mutation = useMutationHook(
-    (data) => {
-      const { name, price, description, rating, image, type,
-        countInStock } = data
-      const res = ProductService.createProduct({
-        name, price,
-        description, rating, image, type, countInStock
-      })
-      return res
-    }
-  )
-
   const mutationUpdate = useMutationHook(
     (data) => {
       const { id, token, ...rests } = data
-      const res = ProductService.updateProduct(
-        id, token,
-        { ...rests } // này là data nên phải là object
+      const res = UserService.updateUser(
+        id,
+        { ...rests }, token // này là data nên phải là object
       )
       return res
     }
@@ -74,44 +48,62 @@ const AdminUser = () => {
   const mutationDeleted = useMutationHook(
     (data) => {
       const { id, token } = data
-      const res = ProductService.deleteProduct(
+      const res = UserService.deleteUser(
         id, token
       )
       return res
     }
   )
 
-  const getAllProduct = async () => {
-    const res = await ProductService.getAllProduct()
-    return res
+  const mutationDeletedMany = useMutationHook(
+    (data) => {
+      const { token, ...ids } = data
+      const res = UserService.deleteManyUser(
+        ids, token
+      )
+      return res
+    }
+  )
+
+  const handleDeleteManyUsers = (ids) => {
+    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+      onSettled: () => {
+        queryUser.refetch()
+      }
+    })
   }
 
-  const fetchGetDetailsProduct = async (rowSelected) => {
-    const res = await ProductService.getDetailsProduct(rowSelected)
+  const getAllUsers = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const res = await UserService.getAllUser(user?.access_token)
+    return { data: res?.data, key: 'user' }
+  }
+
+  const fetchGetDetailsUser = async (rowSelected) => {
+    const res = await UserService.getDetailsUser(rowSelected)
     if (res?.data) {
-      setStateProductDetails({
+      setStateUserDetails({
         name: res?.data?.name,
-        price: res?.data?.price,
-        description: res?.data?.description,
-        rating: res?.data?.rating,
-        image: res?.data?.image,
-        type: res?.data?.type,
-        countInStock: res?.data?.countInStock
+        email: res?.data?.email,
+        phone: res?.data?.phone,
+        isAdmin: res?.data?.isAdmin,
+        avatar: res?.data?.avatar,
+        address: res?.data?.address,
       })
     }
     setIsLoadingUpdate(false)
   }
   // khi bấm edit sản phẩm nó giúp cho việc hiện ra lại các thông tin cần edit
   useEffect(() => {
-    form.setFieldsValue(stateProductDetails)
-  }, [form, stateProductDetails])
+    form.setFieldsValue(stateUserDetails)
+  }, [form, stateUserDetails])
 
   useEffect(() => {
-    if (rowSelected) {
+    if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true)
-      fetchGetDetailsProduct(rowSelected)
+      fetchGetDetailsUser(rowSelected)
     }
-  }, [rowSelected])
+  }, [rowSelected, isOpenDrawer])
 
   //
   const handleDetailsProduct = () => {
@@ -119,29 +111,28 @@ const AdminUser = () => {
 
   }
 
-  const { data, isLoading, isSuccess, isError } = mutation
   const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
   const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
+  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
 
-  const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
-  const { isLoading: isLoadingProducts, data: products } = queryProduct
+
+  const queryUser = useQuery({ queryKey: ['user'], queryFn: getAllUsers })
+  const { isLoading: isLoadingUsers, data: users } = queryUser
+
   const renderAction = () => {
     return (
       <div>
         <DeleteOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
-        <EditOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
+        <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
       </div>
     )
   }
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    // setSearchText(selectedKeys[0]);
-    // setSearchedColumn(dataIndex);
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    // setSearchText('');
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -230,67 +221,44 @@ const AdminUser = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps('name'), //search name
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      ...getColumnSearchProps('name') //search name
     },
     {
-      title: 'Price',
-      dataIndex: 'price',
-      sorter: (a, b) => a.price - b.price,
+      title: 'Email',
+      dataIndex: 'email',
+      sorter: (a, b) => a.email.localeCompare(b.email),
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      sorter: (a, b) => a.address.localeCompare(b.address),
+      ...getColumnSearchProps('address'), //search name
+    },
+    {
+      title: 'Admin',
+      dataIndex: 'isAdmin',
       filters: [
-        { text: '>= 10000000', value: '>=' },
-        { text: '<= 10000000', value: '<=' },
+        { text: 'True', value: true },
+        { text: 'False', value: false },
       ],
-      onFilter: (value, record) => {
-        if (value === '>=') {
-          return record.price >= 10000000;
-        }
-        return record.price <= 10000000;
-
-      },
     },
     {
-      title: 'Rating',
-      dataIndex: 'rating',
-      sorter: (a, b) => a.rating - b.rating,
-      filters: [
-        { text: '>= 3.5', value: '>=' },
-        { text: '<= 3.5', value: '<=' },
-      ],
-      onFilter: (value, record) => {
-        if (value === '>=') {
-          return record.rating >= 3.5;
-        }
-        return record.rating <= 3.5;
-
-      },
-    },
-    {
-      title: 'Type',
-      dataIndex: 'type',
-      ...getColumnSearchProps('type'), //search type
-
+      title: 'Phone',
+      dataIndex: 'phone',
+      sorter: (a, b) => a.phone - b.phone,
+      ...getColumnSearchProps('phone'), //search phone
     },
     {
       title: 'Action',
       dataIndex: 'action',
       render: renderAction,
-
     },
-
   ];
-  const dataTable = products?.data?.length && products?.data?.map((product) => {
-    return { ...product, key: product._id };
+  const dataTable = users?.data?.length && users?.data?.map((user) => {
+    return { ...user, key: user._id, isAdmin: user.isAdmin ? 'TRUE' : 'FALSE' };
   })
 
-  useEffect(() => {
-    if (isSuccess && data?.status === 'OK') {
-      message.success()
-      handleCancel()
-    } else if (isError) {
-      message.error()
-    }
-  }, [isSuccess])
 
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === 'OK') {
@@ -301,6 +269,13 @@ const AdminUser = () => {
     }
   }, [isSuccessDeleted])
 
+  useEffect(() => {
+    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+      message.success()
+    } else if (isErrorDeletedMany) {
+      message.error()
+    }
+  }, [isSuccessDeletedMany])
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === 'OK') {
@@ -313,14 +288,11 @@ const AdminUser = () => {
 
   const handleCancelDrawer = () => {
     setIsOpenDrawer(false);
-    setStateProductDetails({
+    setStateUserDetails({
       name: '',
-      price: '',
-      description: '',
-      rating: '',
-      image: '',
-      type: '',
-      countInStock: '',
+      email: '',
+      phone: '',
+      isAdmin: false,
     })
     form.resetFields()
   };
@@ -329,94 +301,58 @@ const AdminUser = () => {
     setIsModalOpenDelete(false)
   }
 
-  const handleDeleteProduct = () => {
+  const handleDeleteUser = () => {
     mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
       onSettled: () => {
-        queryProduct.refetch()
+        queryUser.refetch()
       }
     })
   }
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setStateProduct({
-      name: '',
-      price: '',
-      description: '',
-      rating: '',
-      image: '',
-      type: '',
-      countInStock: '',
-    })
-    form.resetFields()
+
+  const confirmDelete = (onOk) => {
+    Modal.confirm({
+      title: 'Xác nhận xóa',
+      content: 'Bạn có chắc chắn muốn xóa?',
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      onOk,
+    });
   };
 
-  const onFinish = () => {
-    mutation.mutate(stateProduct, {
-      onSettled: () => {
-        queryProduct.refetch()
-      }
-    })
-  }
-
-  const handleOnchange = (e) => {
-    setStateProduct({
-      ...stateProduct,
-      [e.target.name]: e.target.value
-    })
-  }
-
   const handleOnchangeDetails = (e) => {
-    setStateProductDetails({
-      ...stateProductDetails,
+    setStateUserDetails({
+      ...stateUserDetails,
       [e.target.name]: e.target.value
     })
   }
 
-  const handleOnChangeAvatar = async ({ fileList }) => {
-    const file = fileList[0]
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setStateProduct({
-      ...stateProduct,
-      image: file.preview
-    })
-  }
 
   const handleOnChangeAvatarDetails = async ({ fileList }) => {
     const file = fileList[0]
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
-    setStateProductDetails({
-      ...stateProductDetails,
-      image: file.preview
+    setStateUserDetails({
+      ...stateUserDetails,
+      avatar: file.preview
     })
   }
 
-  const onUpdateProduct = () => {
-    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateProductDetails }, {
+  const onUpdateUser = () => {
+    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateUserDetails }, {
       onSettled: () => {
-        queryProduct.refetch()
+        queryUser.refetch()
       }
     })
   }
 
+
   return (
     <div>
       <WrapperHeader>Quản lý người dùng</WrapperHeader>
-      <div style={{ marginTop: '10px'}}>
-      <Button 
-      style={{
-        height: '150px', 
-        width: '150px', 
-        borderRadius: '6px', 
-        borderStyle: 'dashed',
-        }}>
-        <PlusOutlined style={{fontSize: '60px'}} /></Button>
-        </div>
-        <div style={{ marginTop: '20px' }}>
-        <TableComponent columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
+      <div style={{ marginTop: '20px' }}>
+        <TableComponent handleDeleteMany={handleDeleteManyUsers} columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: (event) => {
               setRowSelected(record._id)
@@ -425,95 +361,13 @@ const AdminUser = () => {
           };
         }} />
       </div>
-      <ModalComponent forceRender title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null} >
-        <Loading isLoading={isLoading || isLoadingUpdated}>
-          <Form
-            name="basic"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
-            onFinish={onFinish}
-            autoComplete="off"
-            form={form}
-          >
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: true, message: 'Please input your name!' }]}
-            >
-              <InputComponent value={stateProduct.name} onChange={handleOnchange} name="name" />
-            </Form.Item>
-
-            <Form.Item
-              label="Type"
-              name="type"
-              rules={[{ required: true, message: 'Please input your type!' }]}
-            >
-              <InputComponent value={stateProduct.type} onChange={handleOnchange} name="type" />
-            </Form.Item>
-            <Form.Item
-              label="Count inStock"
-              name="countInStock"
-              rules={[{ required: true, message: 'Please input your count inStock!' }]}
-            >
-              <InputComponent value={stateProduct.countInStock} onChange={handleOnchange} name="countInStock" />
-            </Form.Item>
-            <Form.Item
-              label="Price"
-              name="price"
-              rules={[{ required: true, message: 'Please input your price!' }]}
-            >
-              <InputComponent value={stateProduct.price} onChange={handleOnchange} name="price" />
-            </Form.Item>
-            <Form.Item
-              label="Description"
-              name="description"
-              rules={[{ required: true, message: 'Please input your description!' }]}
-            >
-              <InputComponent value={stateProduct.description} onChange={handleOnchange} name="description" />
-            </Form.Item>
-            <Form.Item
-              label="Rating"
-              name="rating"
-              rules={[{ required: true, message: 'Please input your rating!' }]}
-            >
-              <InputComponent value={stateProduct.rating} onChange={handleOnchange} name="rating" />
-            </Form.Item>
-            <Form.Item
-              label="Image"
-              name="image"
-              rules={[{ required: true, message: 'Please input your image!' }]}
-            >
-              <WrapperUploadFile onChange={handleOnChangeAvatar} maxCount={1}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Button>Select File</Button>
-                  {stateProduct?.image && (
-                    <img src={stateProduct?.image} style={{
-                      height: '60px',
-                      width: '60px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      marginLeft: '30px',
-
-                    }} alt="avatar" />
-                  )}
-                </div>
-              </WrapperUploadFile>
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 19, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Form.Item>
-          </Form>
-        </Loading>
-      </ModalComponent>
-      <DrawerComponent title='Chi tiết sản phẩm' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="90%">
+      <DrawerComponent title='Chi tiết người dùng' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="50%">
         <Loading isLoading={isLoadingUpdate}>
           <Form
             name="basic"
             labelCol={{ span: 2 }}
             wrapperCol={{ span: 22 }}
-            onFinish={onUpdateProduct}
+            onFinish={onUpdateUser}
             autoComplete="off"
             form={form}
           >
@@ -522,54 +376,40 @@ const AdminUser = () => {
               name="name"
               rules={[{ required: true, message: 'Please input your name!' }]}
             >
-              <InputComponent value={stateProductDetails.name} onChange={handleOnchangeDetails} name="name" />
+              <InputComponent value={stateUserDetails.name} onChange={handleOnchangeDetails} name="name" />
             </Form.Item>
 
             <Form.Item
-              label="Type"
-              name="type"
-              rules={[{ required: true, message: 'Please input your type!' }]}
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: 'Please input your email!' }]}
             >
-              <InputComponent value={stateProductDetails.type} onChange={handleOnchangeDetails} name="type" />
+              <InputComponent value={stateUserDetails.email} onChange={handleOnchangeDetails} name="email" />
             </Form.Item>
             <Form.Item
-              label="Count inStock"
-              name="countInStock"
-              rules={[{ required: true, message: 'Please input your count inStock!' }]}
+              label="Phone"
+              name="phone"
+              rules={[{ required: true, message: 'Please input your phone!' }]}
             >
-              <InputComponent value={stateProductDetails.countInStock} onChange={handleOnchangeDetails} name="countInStock" />
+              <InputComponent value={stateUserDetails.phone} onChange={handleOnchangeDetails} name="phone" />
             </Form.Item>
             <Form.Item
-              label="Price"
-              name="price"
-              rules={[{ required: true, message: 'Please input your price!' }]}
+              label="Address"
+              name="address"
+              rules={[{ required: true, message: 'Please input your address!' }]}
             >
-              <InputComponent value={stateProductDetails.price} onChange={handleOnchangeDetails} name="price" />
+              <InputComponent value={stateUserDetails.address} onChange={handleOnchangeDetails} name="address" />
             </Form.Item>
             <Form.Item
-              label="Description"
-              name="description"
-              rules={[{ required: true, message: 'Please input your description!' }]}
-            >
-              <InputComponent value={stateProductDetails.description} onChange={handleOnchangeDetails} name="description" />
-            </Form.Item>
-            <Form.Item
-              label="Rating"
-              name="rating"
-              rules={[{ required: true, message: 'Please input your rating!' }]}
-            >
-              <InputComponent value={stateProductDetails.rating} onChange={handleOnchangeDetails} name="rating" />
-            </Form.Item>
-            <Form.Item
-              label="Image"
-              name="image"
-              rules={[{ required: true, message: 'Please input your image!' }]}
+              label="Avatar"
+              name="avatar"
+              rules={[{ required: true, message: 'Please input your avatar!' }]}
             >
               <WrapperUploadFile onChange={handleOnChangeAvatarDetails} maxCount={1}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Button>Select File</Button>
-                  {stateProductDetails?.image && (
-                    <img src={stateProductDetails?.image} style={{
+                  {stateUserDetails?.avatar && (
+                    <img src={stateUserDetails?.avatar} style={{
                       height: '60px',
                       width: '60px',
                       borderRadius: '50%',
@@ -589,9 +429,9 @@ const AdminUser = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-      <ModalComponent title="Xóa sản phẩm" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk = {handleDeleteProduct} >
+      <ModalComponent forceRender title="Xóa người dùng" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser}>
         <Loading isLoading={isLoadingDeleted}>
-          <div>Bạn có chắc xóa sản phẩm không?</div>
+          <div>Bạn có chắc xóa tài khoản này không?</div>
         </Loading>
       </ModalComponent>
     </div>

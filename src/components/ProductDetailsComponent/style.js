@@ -76,7 +76,7 @@ export const WrapperQualityProduct = styled.h1`
 `
 
 export const WrapperInputNumber = styled(InputNumber)`
-    &.ant-input-number.ant-input-number-sm {
+    &.ant-input-number ant-input-number-sm css-dev-only-do-not-override-xu9wm8 sc-iKOmII hnXzYK  {
         width: 40px;
         border-top: none;
         border-bottom: none;
@@ -85,4 +85,3 @@ export const WrapperInputNumber = styled(InputNumber)`
         }
     };
 `
-//css-dev-only-do-not-override-1ck3jst sc-csKJRI daMesu
