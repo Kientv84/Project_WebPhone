@@ -9,18 +9,31 @@ import CardComponent from "../../components/CardComponent/CardComponent";
 import NavbarComponent from "../../components/NavbarComponent/NavbarComponent";
 import { useQuery } from "react-query";
 import * as ProductService from '../../services/ProductService'
+import { useSelector } from "react-redux";
+import { useState } from "react";
+import Loading from "../../components/LoadingComponent/Loading";
+import { useDebounce } from "../../hooks/useDebounce";
 
 const HomePage = () => {
+    const searchProduct = useSelector((state) => state?.product?.search)
+    const searchDebounce = useDebounce(searchProduct, 1000)
+    const [loading, setLoading] = useState(false)
+    const [limit, setLimit] = useState(6)
+    // const [page, setLimit] = useState(6)
     const arr = ['TV', 'Phone', 'Airpod'];
-    const fetchProductAll = async () => {
-        const res = await ProductService.getAllProduct()
-        console.log('res', res)
+    const fetchProductAll = async (context) => {
+        const limit = context?.queryKey && context?.queryKey[1]
+        const search = context?.queryKey && context?.queryKey[2]
+        const res = await ProductService.getAllProduct(search, limit)
         return res
     }
-    const { isLoading, data: products } = useQuery(['products'], fetchProductAll, { retry: 3, retryDelay: 1000 })
-    console.log('data', products)
+
+    const { isLoading, data: products, isPreviousData } = useQuery(['products', limit, searchDebounce], fetchProductAll, { retry: 3, retryDelay: 1000, keepPreviousData: true })
+
+    console.log('isPreviousData', products)
+
     return (
-        <>
+        <Loading isLoading={isLoading || loading}>
             <div style={{ width: '1270px', margin: '0 auto' }}>
                 <WrapperTypeProduct>
                     {arr.map((item) => {
@@ -47,6 +60,7 @@ const HomePage = () => {
                                     type={product.type}
                                     selled={product.selled}
                                     discount={product.discount}
+                                    id={product._id}
                                 />
 
                             )
@@ -54,20 +68,25 @@ const HomePage = () => {
 
                     </WrapperProducts>
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                        <WrapperButtonMore textButton="Xem thêm" type="outline" styleButton={{
-                            border: '1px solid rgb(10, 104, 255)',
-                            color: 'rgb(10, 104, 255)',
-                            width: '240px',
-                            height: '38px',
-                            borderRadius: '4px',
-                        }}
-                            styleTextButton={{ fontWeight: 500 }} />
+                        <WrapperButtonMore
+                            textButton={isPreviousData ? 'Load more' : "Xem thêm"} type="outline" styleButton={{
+                                border: '1px solid rgb(10, 104, 255)',
+                                color: `${products?.totalProduct === products?.data?.length ? '#ccc' : 'rgb(10, 104, 255)'}`,
+                                width: '240px',
+                                height: '38px',
+                                borderRadius: '4px',
+                            }}
+                            disabled={products?.totalProduct === products?.data?.length || products?.totalPage === 1}
+                            styleTextButton={{ fontWeight: 500, color: products?.totalProduct === products?.data?.length && '#fff' }}
+                            onClick={() => setLimit((prev) => prev + 6)}
+
+                        />
                     </div>
 
                     <NavbarComponent />
                 </div>
             </div>
-        </>
+        </Loading>
     )
 }
 

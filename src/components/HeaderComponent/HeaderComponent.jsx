@@ -10,8 +10,9 @@ import ButtonInputSearch from '..//ButtonInputSearch/ButtonInputSearch';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as UserService from '../../services/UserService'
-import { resetUser } from '../../redux/slice/userslice';
+import { resetUser } from '../../redux/slice/userslide';
 import Loading from '../LoadingComponent/Loading';
+import { searchProduct } from '../../redux/slice/productSlide';
 
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
@@ -21,6 +22,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const dispatch = useDispatch()
   const [userName, setUserName] = useState('')
   const [userAvatar, setUserAvatar] = useState('')
+  const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
   const handleNavigateLogin = () => {
     navigate('/sign-in')
@@ -50,11 +52,16 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     </div>
   );
 
+  const onSearch = (e) => {
+    setSearch(e.target.value)
+    dispatch(searchProduct(e.target.value))
+  }
+
   return (
     <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
       <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
         <Col span={5}>
-          <WrapperTextHeader> WEBPHONE </WrapperTextHeader>
+          <WrapperTextHeader onClick={() => navigate('/')}> WEBPHONE </WrapperTextHeader>
         </Col>
         {!isHiddenSearch && (
           <Col span={13}>
@@ -62,6 +69,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               size="large"
               placeholder="What do you need to find?"
               textButton="Search"
+              onChange={onSearch}
             />
           </Col>
         )}

@@ -89,10 +89,11 @@ const AdminProduct = () => {
   )
 
   console.log('mutationDeletedMany', mutationDeletedMany)
-
+  //
   const getAllProduct = async () => {
-    const res = await ProductService.getAllProduct()
-    return res
+    const product = JSON.parse(localStorage.getItem("product"));
+    const res = await ProductService.getAllProduct(product?.access_token)
+    return { data: res?.data, key: 'products' }
   }
 
   const fetchGetDetailsProduct = async (rowSelected) => {
@@ -149,7 +150,7 @@ const AdminProduct = () => {
     return (
       <div>
         <DeleteOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
-        <EditOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
+        <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
       </div>
     )
   }

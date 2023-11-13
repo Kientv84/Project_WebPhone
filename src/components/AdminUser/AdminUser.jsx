@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
-import { Button, Form, Space } from 'antd'
+import { Button, Form, Modal, Space } from 'antd'
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'
@@ -76,7 +76,7 @@ const AdminUser = () => {
   const getAllUsers = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const res = await UserService.getAllUser(user?.access_token)
-    return { data: res?.data, key: 'users' }
+    return { data: res?.data, key: 'user' }
   }
 
   const fetchGetDetailsUser = async (rowSelected) => {
@@ -123,7 +123,7 @@ const AdminUser = () => {
     return (
       <div>
         <DeleteOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
-        <EditOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
+        <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
       </div>
     )
   }
@@ -309,6 +309,17 @@ const AdminUser = () => {
     })
   }
 
+  const confirmDelete = (onOk) => {
+    Modal.confirm({
+      title: 'Xác nhận xóa',
+      content: 'Bạn có chắc chắn muốn xóa?',
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      onOk,
+    });
+  };
+
   const handleOnchangeDetails = (e) => {
     setStateUserDetails({
       ...stateUserDetails,
@@ -335,6 +346,7 @@ const AdminUser = () => {
       }
     })
   }
+
 
   return (
     <div>
@@ -417,7 +429,7 @@ const AdminUser = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-      <ModalComponent forceRender title="Xóa người dùng" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser} >
+      <ModalComponent forceRender title="Xóa người dùng" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser}>
         <Loading isLoading={isLoadingDeleted}>
           <div>Bạn có chắc xóa tài khoản này không?</div>
         </Loading>

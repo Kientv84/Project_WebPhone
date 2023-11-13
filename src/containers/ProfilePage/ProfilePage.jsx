@@ -7,7 +7,7 @@ import * as UserService from '../../services/UserService'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
-import { updateUser } from '../../redux/slice/userslice'
+import { updateUser } from '../../redux/slice/userslide'
 import { Button, Upload } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import { getBase64 } from '../../utils'
