@@ -1,9 +1,10 @@
+import AdminPage from "../containers/AdminPage/AdminPage";
 import HomePage from "../containers/HomePages/HomePage";
 import NotFoundPage from "../containers/NotFoundPage/NotFoundPage";
 import OrderPage from "../containers/OrderPage/OrderPage";
 import ProductsPage from "../containers/ProducsPages/ProductsPage";
 import ProductDetailsPage from "../containers/ProductDetailsPage/ProductDetailsPage";
-import ProfilePage from "../containers/Profile/ProfilePage";
+import ProfilePage from "../containers/ProfilePage/ProfilePage";
 import SignInPage from "../containers/SignInPage/SignInPage";
 import SignUpPage from "../containers/SignUpPage/SignUpPage";
 import TypeProductPage from "../containers/TypeProductPage/TypeProductPage";
@@ -27,7 +28,7 @@ export const routes = [
 
     },
     {
-        path: '/:type',
+        path: '/product/:type',
         page: TypeProductPage,
         isShowHeader: true
 
@@ -45,7 +46,7 @@ export const routes = [
 
     },
     {
-        path: '/product-details',
+        path: '/product-details/:id',
         page: ProductDetailsPage,
         isShowHeader: true
 
@@ -54,6 +55,13 @@ export const routes = [
         path: '/profile-user',
         page: ProfilePage,
         isShowHeader: true
+
+    },
+    {
+        path: '/system/admin',
+        page: AdminPage,
+        isShowHeader: false,
+        isPrivate: true
 
     },
     {
