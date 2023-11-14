@@ -76,7 +76,7 @@ export const WrapperQualityProduct = styled.h1`
 `
 
 export const WrapperInputNumber = styled(InputNumber)`
-    &.ant-input-number ant-input-number-sm css-dev-only-do-not-override-xu9wm8 sc-iKOmII hnXzYK  {
+    &.ant-input-number.ant-input-number-sm {
         width: 40px;
         border-top: none;
         border-bottom: none;
