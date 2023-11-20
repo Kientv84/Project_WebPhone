@@ -311,27 +311,17 @@ const AdminUser = () => {
     })
   }
 
-  const confirmDelete = (onOk) => {
-    Modal.confirm({
-      title: 'Xác nhận xóa',
-      content: 'Bạn có chắc chắn muốn xóa?',
-      okText: 'Xóa',
-      okType: 'danger',
-      cancelText: 'Hủy',
-      onOk,
-    });
-  };
-
   const handlePhoneError = (value) => {
-    // Kiểm tra định dạng số điện thoại, có thể thay đổi theo quy ước của bạn
     const phonePattern = /^\d{10}$/;
-    if (!phonePattern.test(value)) {
+    const isValidPhone = phonePattern.test(value);
+
+    if (!isValidPhone) {
       setErrorPhone('Số điện thoại không hợp lệ');
-      return true;
     } else {
       setErrorPhone('');
-      return false;
     }
+
+    return isValidPhone;
   };
 
   const handleOnchangeDetails = (e) => {
@@ -347,9 +337,6 @@ const AdminUser = () => {
       })
     }
   }
-
-
-
 
   const handleOnChangeAvatarDetails = async ({ fileList }) => {
     const file = fileList[0]
@@ -428,7 +415,7 @@ const AdminUser = () => {
               validateStatus={errorPhone ? 'error' : ''}
               help={errorPhone}
             >
-              <InputComponent value={stateUserDetails.phone} onChange={handleOnchangeDetails} name="phone" maxLength={10} />
+              <InputComponent value={stateUserDetails.phone} onChange={handleOnchangeDetails} name="phone" />
             </Form.Item>
             <Form.Item
               label="Address"
