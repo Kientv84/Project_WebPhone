@@ -22,6 +22,8 @@ const AdminUser = () => {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
+  const [errorPhone, setErrorPhone] = useState('');
+
 
   const [stateUserDetails, setStateUserDetails] = useState({
     name: '',
@@ -74,9 +76,9 @@ const AdminUser = () => {
   }
 
   const getAllUsers = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    // const user = JSON.parse(localStorage.getItem("user"));
     const res = await UserService.getAllUser(user?.access_token)
-    return { data: res?.data, key: 'user' }
+    return res
   }
 
   const fetchGetDetailsUser = async (rowSelected) => {
@@ -320,12 +322,33 @@ const AdminUser = () => {
     });
   };
 
+  const handlePhoneError = (value) => {
+    // Kiểm tra định dạng số điện thoại, có thể thay đổi theo quy ước của bạn
+    const phonePattern = /^\d{10}$/;
+    if (!phonePattern.test(value)) {
+      setErrorPhone('Số điện thoại không hợp lệ');
+      return true;
+    } else {
+      setErrorPhone('');
+      return false;
+    }
+  };
+
   const handleOnchangeDetails = (e) => {
-    setStateUserDetails({
-      ...stateUserDetails,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target;
+    // Kiểm tra định dạng số cho trường Phone
+    if (name === 'phone' && !handlePhoneError(value)) {
+      setErrorPhone('Số điện thoại không hợp lệ');
+    } else {
+      setErrorPhone('');
+      setStateUserDetails({
+        ...stateUserDetails,
+        [e.target.name]: e.target.value
+      })
+    }
   }
+
+
 
 
   const handleOnChangeAvatarDetails = async ({ fileList }) => {
@@ -340,11 +363,17 @@ const AdminUser = () => {
   }
 
   const onUpdateUser = () => {
-    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateUserDetails }, {
-      onSettled: () => {
-        queryUser.refetch()
-      }
-    })
+    if (errorPhone) {
+      // Nếu có lỗi, hiển thị thông báo hoặc thực hiện các hành động khác cần thiết
+      message.error('Số điện thoại không hợp lệ. Vui lòng kiểm tra lại.');
+    } else {
+      // Nếu không có lỗi, thực hiện cập nhật
+      mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateUserDetails }, {
+        onSettled: () => {
+          queryUser.refetch()
+        }
+      });
+    }
   }
 
 
@@ -361,12 +390,12 @@ const AdminUser = () => {
           };
         }} />
       </div>
-      <DrawerComponent title='Chi tiết người dùng' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="50%">
+      <DrawerComponent title='Chi tiết người dùng' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
         <Loading isLoading={isLoadingUpdate}>
           <Form
             name="basic"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 22 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             onFinish={onUpdateUser}
             autoComplete="off"
             form={form}
@@ -384,14 +413,22 @@ const AdminUser = () => {
               name="email"
               rules={[{ required: true, message: 'Please input your email!' }]}
             >
-              <InputComponent value={stateUserDetails.email} onChange={handleOnchangeDetails} name="email" />
+              <InputComponent value={stateUserDetails.email} onChange={handleOnchangeDetails} name="email" readOnly />
             </Form.Item>
             <Form.Item
               label="Phone"
               name="phone"
-              rules={[{ required: true, message: 'Please input your phone!' }]}
+              rules={[{ required: true, message: 'Please input your phone!' },
+              {
+                validator: (_, value) => {
+                  return Promise.resolve(handlePhoneError(value));
+                },
+              },
+              ]}
+              validateStatus={errorPhone ? 'error' : ''}
+              help={errorPhone}
             >
-              <InputComponent value={stateUserDetails.phone} onChange={handleOnchangeDetails} name="phone" />
+              <InputComponent value={stateUserDetails.phone} onChange={handleOnchangeDetails} name="phone" maxLength={10} />
             </Form.Item>
             <Form.Item
               label="Address"
@@ -437,5 +474,6 @@ const AdminUser = () => {
     </div>
   )
 }
+
 
 export default AdminUser

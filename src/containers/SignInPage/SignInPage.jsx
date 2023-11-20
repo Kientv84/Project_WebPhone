@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from './style'
+import { WrapperBackground, WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from './style'
 import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogo from '../../assets/images/SignIn.png'
 import { Image } from 'antd'
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import * as UserService from '../../services/UserService'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
@@ -13,12 +13,15 @@ import * as message from '../../components/Message/Message'
 import jwt_decode from "jwt-decode";
 import { useDispatch } from 'react-redux'
 import { updateUser } from '../../redux/slice/userslide'
+import tenlua3 from './tenlua3.png';
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false)
+  const location = useLocation()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
+  const [errorEmail, setErrorEmail] = useState('');
 
   const navigate = useNavigate()
 
@@ -30,7 +33,11 @@ const SignInPage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigate('/')
+      if (location?.state) {      //nếu mà có cái location này thì sẽ quay về trang có cái state
+        navigate(location?.state)
+      } else {                    //còn không thì nó sẽ quay về trang home
+        navigate('/')
+      }
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))
       if (data?.access_token) {
         const decoded = jwt_decode(data?.access_token)
@@ -54,12 +61,26 @@ const SignInPage = () => {
   const handleOnChangeEmail = (value) => {
     setEmail(value)
   }
+  const handleEmailError = (value) => {
+    // Kiểm tra định dạng email, bạn có thể thay đổi theo quy ước của bạn
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(value)) {
+      setErrorEmail('Email không hợp lệ');
+    } else {
+      setErrorEmail('');
+    }
+  };
 
   const handleOnChangePassword = (value) => {
     setPassword(value)
   }
 
   const handleSignIn = () => {
+    if (errorEmail) {
+      // Hiển thị thông báo lỗi hoặc thực hiện xử lý khác tùy vào yêu cầu của bạn
+      message.error(errorEmail);
+      return;
+    }
     mutation.mutate({
       email,
       password
@@ -71,12 +92,14 @@ const SignInPage = () => {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
+
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: `url(${tenlua3}) center/cover no-repeat`, height: '100vh' }}>
       <div style={{ width: '800px', height: '400px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
           <h1 style={{ fontSize: '30px', marginBottom: '5px' }}>Xin chào</h1>
           <p style={{ fontSize: '15px', marginBottom: '10px' }}>Đăng nhập hoặc tạo tài khoản</p>
-          <InputForm style={{ marginBottom: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
+          <InputForm style={{ marginBottom: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail}
+            onBlur={() => handleEmailError(email)} />
           <div style={{ position: 'relative' }}>
             <span
               onClick={() => setIsShowPassword(!isShowPassword)}
@@ -126,6 +149,7 @@ const SignInPage = () => {
         </WrapperContainerRight>
       </div>
     </div>
+
   )
 }
 

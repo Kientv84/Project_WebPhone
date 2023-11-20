@@ -20,6 +20,9 @@ const ProfilePage = () => {
     const [phone, setPhone] = useState('')
     const [address, setAddress] = useState('')
     const [avatar, setAvatar] = useState('')
+    const [errorPhone, setErrorPhone] = useState('');
+    const [hasError, setHasError] = useState(false);
+
     const mutation = useMutationHook(
         (data) => {
             const { id, access_token, ...rests } = data
@@ -49,20 +52,36 @@ const ProfilePage = () => {
         dispatch(updateUser({ ...res?.data, access_token: token }))
         // console.log('res', res)
     }
+
     const handleOnChangeEmail = (value) => {
         setEmail(value)
     }
+
     const handleOnChangeName = (value) => {
         setName(value)
     }
-    const handleOnChangePhone = (value) => {
-        setPhone(value)
 
+    const handleOnChangePhone = (value) => {
+        const formattedValue = value.replace(/\D/g, '').slice(0, 10);
+        setPhone(formattedValue)
+        handlePhoneError(formattedValue);
     }
+
     const handleOnChangeAddress = (value) => {
         setAddress(value)
 
     }
+
+    const handlePhoneError = (value) => {
+        // Kiểm tra định dạng số điện thoại, có thể thay đổi theo quy ước của bạn
+        const phonePattern = /^\d{10}$/;
+        if (!phonePattern.test(value)) {
+            setErrorPhone('Số điện thoại không hợp lệ');
+        } else {
+            setErrorPhone('');
+        }
+    }
+
     const handleOnChangeAvatar = async ({ fileList }) => {
         const file = fileList[0]
         if (!file.url && !file.preview) {
@@ -71,9 +90,14 @@ const ProfilePage = () => {
         setAvatar(file.preview)
     }
     const handleUpdate = () => {
+        if (errorPhone) {
+            // Hiển thị thông báo lỗi hoặc thực hiện xử lý khác tùy vào yêu cầu của bạn
+            message.error(errorPhone);
+            return;
+        }
         mutation.mutate({ id: user?.id, email, name, phone, address, avatar, access_token: user?.access_token })
-
     }
+
     return (
         <div style={{ width: '1270px', margin: '0 auto', height: '500px' }}>
             <WrapperHeader>Thông tin người dùng</WrapperHeader>
@@ -87,10 +111,22 @@ const ProfilePage = () => {
                         <WrapperLabel htmlFor='email'>Email</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id='email' value={email} onChange={handleOnChangeEmail} readOnly />
                     </WrapperInput>
-                    <WrapperInput>
+                    <WrapperInput >
                         <WrapperLabel htmlFor='phone'>Phone</WrapperLabel>
-                        <InputForm style={{ width: '300px' }} id='phone' value={phone} onChange={handleOnChangePhone} />
+                        <InputForm style={{ width: '300px' }} id='phone' value={phone} onChange={handleOnChangePhone} onBlur={() => handlePhoneError(phone)} />
+
                     </WrapperInput>
+                    {errorPhone && <span style={{
+                        color: 'red',
+                        marginTop: '-5px',
+                        marginLeft: '83px',
+                        height: '0'
+                    }}>{errorPhone}</span>}
+                    <WrapperInput>
+                        <WrapperLabel htmlFor='address'>Address</WrapperLabel>
+                        <InputForm style={{ width: '300px' }} id='address' value={address} onChange={handleOnChangeAddress} />
+                    </WrapperInput>
+
                     <WrapperInput>
                         <WrapperLabel htmlFor='avatar'>Avatar</WrapperLabel>
                         <WrapperUploadFile onChange={handleOnChangeAvatar} maxCount={1}>
@@ -106,11 +142,6 @@ const ProfilePage = () => {
                         )}
                         {/* <InputForm style={{ width: '300px' }} id='avatar' value={avatar} onChange={handleOnChangeAvatar} /> */}
                     </WrapperInput>
-                    <WrapperInput>
-                        <WrapperLabel htmlFor='address'>Address</WrapperLabel>
-                        <InputForm style={{ width: '300px' }} id='address' value={address} onChange={handleOnChangeAddress} />
-                    </WrapperInput>
-
                     <ButtonComponent
                         onClick={handleUpdate}
                         size={40}

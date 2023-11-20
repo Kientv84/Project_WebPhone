@@ -1,6 +1,5 @@
-import { Col, Row, Image, Rate, InputNumber } from 'antd'
+import { Col, Row, Image, Rate } from 'antd'
 import React, { useState } from 'react'
-import imageProduct from '../../assets/images/image.png.webp'
 import imageProductSmall from '../../assets/images/imagesmall1.png.webp'
 import { WrapperAddressProduct, WrapperInputNumber, WrapperPriceProduct, WrapperPriceTextProduct, WrapperQualityProduct, WrapperStyleColImage, WrapperStyleNameProduct, WrapperStyleImageSmall, WrapperStyleTextSell } from './style'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
@@ -9,11 +8,18 @@ import * as ProductService from '../../services/ProductService'
 import { useQuery } from 'react-query'
 import Loading from '../LoadingComponent/Loading'
 import "./style.css"
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { convertPrice } from '../../utils'
+import { addOrderProduct } from '../../redux/slice/orderSlide'
 
 const ProductDetailsComponent = ({ idProduct }) => {
     const [numProduct, setNumProduct] = useState(1)
     const user = useSelector((state) => state.user)
+    const navigate = useNavigate()
+    const location = useLocation()
+    const dispatch = useDispatch()
+
     const onChange = (value) => {
         setNumProduct(Number(value))
     }
@@ -35,11 +41,40 @@ const ProductDetailsComponent = ({ idProduct }) => {
     }
 
     const { isLoading, data: productDetails } = useQuery(['product-details', idProduct], fetchGetDetailsProduct, { enabled: !!idProduct })
-    console.log('productDetails', productDetails)
+
+    //chức năng click bỏ sản vô giỏ hàng
+    const handleAddOrderProduct = () => {
+        if (!user?.id) {  //nếu chưa đăng nhập sẽ qua trang đăng nhập
+            navigate('/sign-in', { state: location?.pathname })
+        } else {
+            // {
+            //     name: { type: String, required: true },
+            //     amount: { type: Number, required: true },
+            //     image: { type: String, required: true },
+            //     price: { type: Number, required: true },
+            //     product: {
+            //         type: mongoose.Schema.Types.ObjectId,
+            //         ref: 'Product',
+            //         required: true,
+            //     },
+            // },
+            dispatch(addOrderProduct({
+                orderItem: {
+                    name: productDetails?.name,
+                    amount: numProduct,
+                    image: productDetails?.image,
+                    price: productDetails?.price,
+                    product: productDetails?._id
+                }
+            }))
+        }
+    }
+
+    console.log('productDetails', productDetails, user)
 
     return (
         <Loading isLoading={isLoading}>
-            <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px' }}>
+            <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px', marginTop: '40px' }}>
                 <Col span={10} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '8px' }}>
                     <Image src={productDetails?.image} alt="image product" preview={false} />
                     <Row style={{ paddingTop: '10px', justifyContent: 'space-between' }}>
@@ -72,7 +107,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                         <WrapperStyleTextSell> | Đã bán 1000+</WrapperStyleTextSell>
                     </div>
                     <WrapperPriceProduct>
-                        <WrapperPriceTextProduct>{productDetails?.price}</WrapperPriceTextProduct>
+                        <WrapperPriceTextProduct>{convertPrice(productDetails?.price)}</WrapperPriceTextProduct>
                     </WrapperPriceProduct>
                     <WrapperAddressProduct>
                         <span>Giao đến </span>
@@ -101,6 +136,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                                 border: 'none',
                                 borderRadius: '4px'
                             }}
+                            onClick={handleAddOrderProduct}
                             textButton={'Chọn mua'}
                             styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
                         ></ButtonComponent>

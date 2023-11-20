@@ -46,7 +46,7 @@ export const renderOptions = (arr) => {
     }
     results.push({
         label: 'Thêm type',
-        value: 'Thêm type'
+        value: 'add_type'
     })
     return results
 }

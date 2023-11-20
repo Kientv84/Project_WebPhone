@@ -21,18 +21,18 @@ const HomePage = () => {
     const [limit, setLimit] = useState(6)
     const [typeProducts, setTypeProducts] = useState([])
 
-    
+
     const fetchProductAll = async (context) => {
         const limit = context?.queryKey && context?.queryKey[1]
         const search = context?.queryKey && context?.queryKey[2]
         const res = await ProductService.getAllProduct(search, limit)
         return res
     }
-    
+
     const fetchAllTypeProduct = async () => {
         const res = await ProductService.getAllTypeProduct()
         if (res?.status == 'OK')
-        setTypeProducts(res?.data)
+            setTypeProducts(res?.data)
     }
 
     const { isLoading, data: products, isPreviousData } = useQuery(['products', limit, searchDebounce], fetchProductAll, { retry: 3, retryDelay: 1000, keepPreviousData: true })
@@ -88,11 +88,8 @@ const HomePage = () => {
                             disabled={products?.totalProduct === products?.data?.length || products?.totalPage === 1}
                             styleTextButton={{ fontWeight: 500, color: products?.totalProduct === products?.data?.length && '#fff' }}
                             onClick={() => setLimit((prev) => prev + 6)}
-
                         />
                     </div>
-
-                    <NavbarComponent />
                 </div>
             </div>
         </Loading>

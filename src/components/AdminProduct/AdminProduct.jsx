@@ -20,7 +20,7 @@ const AdminProduct = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
-  const user = useSelector((state) => state?.user)
+  const product = useSelector((state) => state?.product)
   const searchInput = useRef(null);
 
   const [stateProduct, setStateProduct] = useState({
@@ -31,6 +31,8 @@ const AdminProduct = () => {
     image: '',
     type: '',
     countInStock: '',
+    newType: '',
+    discount: '',
   });
 
   const [stateProductDetails, setStateProductDetails] = useState({
@@ -41,6 +43,7 @@ const AdminProduct = () => {
     image: '',
     type: '',
     countInStock: '',
+    discount: '',
   });
 
   const [form] = Form.useForm();
@@ -48,10 +51,10 @@ const AdminProduct = () => {
   const mutation = useMutationHook(
     (data) => {
       const { name, price, description, rating, image, type,
-        countInStock } = data
+        countInStock, discount } = data
       const res = ProductService.createProduct({
         name, price,
-        description, rating, image, type, countInStock
+        description, rating, image, type, countInStock, discount
       })
       return res
     }
@@ -88,12 +91,11 @@ const AdminProduct = () => {
     }
   )
 
-  console.log('mutationDeletedMany', mutationDeletedMany)
+
   //
-  const getAllProduct = async () => {
-    const product = JSON.parse(localStorage.getItem("product"));
-    const res = await ProductService.getAllProduct(product?.access_token)
-    return { data: res?.data, key: 'products' }
+  const getAllProducts = async () => {
+    const res = await ProductService.getAllProduct()
+    return res
   }
 
   const fetchGetDetailsProduct = async (rowSelected) => {
@@ -106,7 +108,8 @@ const AdminProduct = () => {
         rating: res?.data?.rating,
         image: res?.data?.image,
         type: res?.data?.type,
-        countInStock: res?.data?.countInStock
+        countInStock: res?.data?.countInStock,
+        discount: res?.data?.discount,
       })
     }
     setIsLoadingUpdate(false)
@@ -130,7 +133,7 @@ const AdminProduct = () => {
   }
 
   const handleDeleteManyProducts = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+    mutationDeletedMany.mutate({ ids: ids, token: product?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -144,7 +147,7 @@ const AdminProduct = () => {
     })
   }
 
-  
+
   const fetchAllTypeProduct = async () => {
     const res = await ProductService.getAllTypeProduct()
     return res
@@ -157,7 +160,7 @@ const AdminProduct = () => {
   const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedmany } = mutationDeletedMany
 
 
-  const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
+  const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProducts })
   const typeProduct = useQuery({ queryKey: ['type-product'], queryFn: fetchAllTypeProduct })
   const { isLoading: isLoadingProducts, data: products } = queryProduct
   const renderAction = () => {
@@ -171,12 +174,9 @@ const AdminProduct = () => {
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    // setSearchText(selectedKeys[0]);
-    // setSearchedColumn(dataIndex);
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    // setSearchText('');
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -364,6 +364,7 @@ const AdminProduct = () => {
       image: '',
       type: '',
       countInStock: '',
+      discount: '',
     })
     form.resetFields()
   };
@@ -373,7 +374,7 @@ const AdminProduct = () => {
   }
 
   const handleDeleteProduct = () => {
-    mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
+    mutationDeleted.mutate({ id: rowSelected, token: product?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -395,7 +396,17 @@ const AdminProduct = () => {
   };
 
   const onFinish = () => {
-    mutation.mutate(stateProduct, {
+    const params = {
+      name: stateProduct.name,
+      price: stateProduct.price,
+      description: stateProduct.description,
+      rating: stateProduct.rating,
+      image: stateProduct.image,
+      type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
+      countInStock: stateProduct.countInStock,
+      discount: stateProduct.discount
+    }
+    mutation.mutate(params, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -426,15 +437,6 @@ const AdminProduct = () => {
       image: file.preview
     })
   }
- 
-
-  const handleDelteManyProducts = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
-      onSettled: () => {
-        queryProduct.refetch()
-      }
-    })
-  }
 
   const handleOnchangeAvatarDetails = async ({ fileList }) => {
     const file = fileList[0]
@@ -447,21 +449,8 @@ const AdminProduct = () => {
     })
   }
 
-
-
-  const handleOnChangeAvatarDetails = async ({ fileList }) => {
-    const file = fileList[0]
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setStateProductDetails({
-      ...stateProductDetails,
-      image: file.preview
-    })
-  }
-
   const onUpdateProduct = () => {
-    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateProductDetails }, {
+    mutationUpdate.mutate({ id: rowSelected, token: product?.access_token, ...stateProductDetails }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -475,7 +464,7 @@ const AdminProduct = () => {
         <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px' }} /></Button>
       </div>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDelteMany={handleDelteManyProducts} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyProducts} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: event => {
               setRowSelected(record._id)
@@ -566,16 +555,18 @@ const AdminProduct = () => {
               rules={[{ required: true, message: 'Please input your count image!' }]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
-                <Button >Select File</Button>
-                {stateProduct?.image && (
-                  <img src={stateProduct?.image} style={{
-                    height: '60px',
-                    width: '60px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    marginLeft: '10px'
-                  }} alt="avatar" />
-                )}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Button >Select File</Button>
+                  {stateProduct?.image && (
+                    <img src={stateProduct?.image} style={{
+                      height: '60px',
+                      width: '60px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      marginLeft: '10px'
+                    }} alt="avatar" />
+                  )}
+                </div>
               </WrapperUploadFile>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
@@ -586,13 +577,13 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </ModalComponent>
-      <DrawerComponent title='Chi tiết sản phẩm' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="90%">
+      <DrawerComponent title='Chi tiết sản phẩm' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
 
           <Form
             name="basic"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 22 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             onFinish={onUpdateProduct}
             autoComplete="on"
             form={form}
@@ -653,16 +644,18 @@ const AdminProduct = () => {
               rules={[{ required: true, message: 'Please input your count image!' }]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={1}>
-                <Button >Select File</Button>
-                {stateProductDetails?.image && (
-                  <img src={stateProductDetails?.image} style={{
-                    height: '60px',
-                    width: '60px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    marginLeft: '10px'
-                  }} alt="avatar" />
-                )}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Button >Select File</Button>
+                  {stateProductDetails?.image && (
+                    <img src={stateProductDetails?.image} style={{
+                      height: '60px',
+                      width: '60px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      marginLeft: '10px'
+                    }} alt="avatar" />
+                  )}
+                </div>
               </WrapperUploadFile>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
