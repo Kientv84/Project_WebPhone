@@ -11,11 +11,13 @@ export const WrapperTypeProduct = styled.div`
 
 export const WrapperButtonMore = styled(ButtonComponent)`
     &:hover{
-        background-color: 'rgba(0, 96, 255, 0.12) !important';
-        span{
-            color: '#fff';
+        color: #fff;
+        background: rgb(13, 92, 182)  ;
+        span {
+            color: #fff;
         }
     }
+    cursor: ${(props) => props.disabled ? 'not-allowed' : 'pointers'}
 `
 
 export const WrapperProducts = styled.div`

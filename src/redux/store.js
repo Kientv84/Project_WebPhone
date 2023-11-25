@@ -1,10 +1,42 @@
-import { configureStore } from '@reduxjs/toolkit'
-import counterReducer from './slice/counterslice'
-import userReduceer from './slice/userslice'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import productReducer from './slice/productSlide'
+import userReducer from './slice/userslide'
+import orderReducer from './slice/orderSlide.js'
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
+
+const persistConfig = {
+  key: 'root',
+  version: 1,
+  storage,
+  blacklist: ['product', 'user']
+}
+
+const rootReducer = combineReducers({
+  product: productReducer,
+  user: userReducer,
+  order: orderReducer
+})
+
+const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-    user: userReduceer
-  },
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 })
+
+export let persistor = persistStore(store)
