@@ -34,6 +34,7 @@ export const convertPrice = (price) => {
     }
 }
 
+
 export const renderOptions = (arr) => {
     let results = []
     if (arr) {
@@ -50,3 +51,4 @@ export const renderOptions = (arr) => {
     })
     return results
 }
+

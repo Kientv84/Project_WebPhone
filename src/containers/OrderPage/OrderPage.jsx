@@ -1,8 +1,7 @@
-import { Checkbox, Form } from 'antd'
+import { Form } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { CustomCheckbox, WrapperCountOrder, WrapperInfo, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperStyleHeaderDilivery, WrapperTotal } from './style';
+import { CustomCheckbox, WrapperCountOrder, WrapperInfo, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperStyleHeaderDelivery, WrapperTotal } from './style';
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons'
-
 import { WrapperInputNumber } from '../../components/ProductDetailsComponent/style';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +16,7 @@ import Loading from '../../components/LoadingComponent/Loading';
 import * as message from '../../components/Message/Message'
 import { updateUser } from '../../redux/slice/userslide';
 import { useNavigate } from 'react-router-dom';
-import StepComponent from '../../components/StepConponent/StepComponent';
+import StepComponent from '../../components/StepComponent/StepComponent';
 
 const OrderPage = () => {
   const order = useSelector((state) => state.order)
@@ -45,6 +44,7 @@ const OrderPage = () => {
   };
 
   const handleChangeCount = (type, idProduct, limited) => {
+    // console.log('first', order.countInStock)
     if (type === 'increase') {
       if (!limited) {
         dispatch(increaseAmount({ idProduct }))
@@ -60,17 +60,16 @@ const OrderPage = () => {
     dispatch(removeOrderProduct({ idProduct }))
   }
 
-  // const handleOnchangeCheckAll = (e) => {
-  //   if (e.target.checked) {
-  //     const newListChecked = []
-  //     order?.orderItems?.forEach((item) => {
-  //       newListChecked.push(item?.product)
-  //     })
-  //     setListChecked(newListChecked)
-  //   } else {
-  //     setListChecked([])
-  //   }
-  // }
+  const handleOnchangeCheckAll = (e) => {
+    if (e.target.checked) {
+      const newListChecked = order?.orderItems?.map((item) => item?.product).filter(Boolean) || [];
+      setListChecked(newListChecked);
+    } else {
+      setListChecked([]);
+    }
+  };
+
+
 
   useEffect(() => {
     dispatch(selectedOrder({ listChecked }))
@@ -96,14 +95,14 @@ const OrderPage = () => {
   }
 
   const priceMemo = useMemo(() => {
-    const result = order?.orderItemsSlected?.reduce((total, cur) => {
+    const result = order?.orderItemsSelected?.reduce((total, cur) => {
       return total + ((cur.price * cur.amount))
     }, 0)
     return result
   }, [order])
 
   const priceDiscountMemo = useMemo(() => {
-    const result = order?.orderItemsSlected?.reduce((total, cur) => {
+    const result = order?.orderItemsSelected?.reduce((total, cur) => {
       const totalDiscount = cur.discount ? cur.discount : 0
       return total + (priceMemo * (totalDiscount * cur.amount) / 100)
     }, 0)
@@ -113,19 +112,19 @@ const OrderPage = () => {
     return 0
   }, [order])
 
-  const diliveryPriceMemo = useMemo(() => {
-    if (priceMemo >= 20000 && priceMemo < 500000) {
-      return 10000
-    } else if (priceMemo >= 500000 || order?.orderItemsSlected?.length === 0) {
+  const deliveryPriceMemo = useMemo(() => {
+    if (priceMemo >= 1 && priceMemo < 200000) {
+      return 30000
+    } else if (priceMemo >= 500000 || order?.orderItemsSelected?.length === 0) {
       return 0
     } else {
-      return 20000
+      return 10000
     }
   }, [priceMemo])
 
   const totalPriceMemo = useMemo(() => {
-    return Number(priceMemo) - Number(priceDiscountMemo) + Number(diliveryPriceMemo)
-  }, [priceMemo, priceDiscountMemo, diliveryPriceMemo])
+    return Number(priceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo)
+  }, [priceMemo, priceDiscountMemo, deliveryPriceMemo])
 
   const handleRemoveAllOrder = () => {
     if (listChecked?.length > 1) {
@@ -134,7 +133,8 @@ const OrderPage = () => {
   }
 
   const handleAddCard = () => {
-    if (!order?.orderItemsSlected?.length) {
+    console.log('orderr', order)
+    if (!order?.orderItemsSelected?.length) {
       message.error('Vui lòng chọn sản phẩm')
     } else if (!user?.phone || !user.address || !user.name || !user.city) {
       setIsOpenModalUpdateInfo(true)
@@ -156,8 +156,9 @@ const OrderPage = () => {
   )
 
   const { isLoading, data } = mutationUpdate
+  // console.log('data', data)
 
-  const handleCancleUpdate = () => {
+  const handleCancelUpdate = () => {
     setStateUserDetails({
       name: '',
       email: '',
@@ -167,7 +168,8 @@ const OrderPage = () => {
     form.resetFields()
     setIsOpenModalUpdateInfo(false)
   }
-  const handleUpdateInforUser = () => {
+  const handleUpdateInfoUser = () => {
+    console.log('stateUserDetails', stateUserDetails)
     const { name, address, city, phone } = stateUserDetails
     if (name && address && city && phone) {
       mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails }, {
@@ -185,9 +187,10 @@ const OrderPage = () => {
       [e.target.name]: e.target.value
     })
   }
+
   const itemsDelivery = [
     {
-      title: '20.000 VND',
+      title: '30.000 VND',
       description: 'Dưới 200.000 VND',
     },
     {
@@ -199,21 +202,22 @@ const OrderPage = () => {
       description: 'Trên 500.000 VND',
     },
   ]
+
+
   return (
     <div style={{ background: '#f5f5fa', with: '100%', height: '100vh' }}>
       <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
         <h3 style={{ fontWeight: 'bold' }}>Giỏ hàng</h3>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <WrapperLeft>
-            <h4>Phí giao hàng</h4>
-            <WrapperStyleHeaderDilivery>
-              <StepComponent items={itemsDelivery} current={diliveryPriceMemo === 10000
-                ? 2 : diliveryPriceMemo === 20000 ? 1
-                  : order.orderItemsSlected.length === 0 ? 0 : 3} />
-            </WrapperStyleHeaderDilivery>
+
+            <WrapperStyleHeaderDelivery>
+              <StepComponent items={itemsDelivery} current={deliveryPriceMemo === 30000 ? 1 : deliveryPriceMemo === 10000 ? 2 : 3} />
+            </WrapperStyleHeaderDelivery>
+
             <WrapperStyleHeader>
               <span style={{ display: 'inline-block', width: '390px' }}>
-                
+                <CustomCheckbox onChange={handleOnchangeCheckAll} checked={listChecked?.length === order?.orderItems?.length}></CustomCheckbox>
                 <span> Tất cả ({order?.orderItems?.length} sản phẩm)</span>
               </span>
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -223,6 +227,7 @@ const OrderPage = () => {
                 <DeleteOutlined style={{ cursor: 'pointer' }} onClick={handleRemoveAllOrder} />
               </div>
             </WrapperStyleHeader>
+
             <WrapperListOrder>
               {order?.orderItems?.map((order) => {
                 return (
@@ -242,11 +247,18 @@ const OrderPage = () => {
                         <span style={{ fontSize: '13px', color: '#242424' }}>{convertPrice(order?.price)}</span>
                       </span>
                       <WrapperCountOrder>
-                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', order?.product, order?.amount === 1)}>
+                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
+                          onClick={() =>
+                            handleChangeCount('decrease', order?.product, order?.countInStock === 1)}
+                          disabled={order?.amount === 1}>
                           <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
                         </button>
-                        <WrapperInputNumber defaultValue={order?.amount} value={order?.amount} size="small" min={1} max={order?.countInstock} />
-                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', order?.product, order?.amount === order.countInstock, order?.amount === 1)}>
+                        <WrapperInputNumber defaultValue={order?.amount} value={order?.amount} size="small" min={1} max={order?.countInStock} />
+                        <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
+                          onClick={() =>
+                            handleChangeCount('increase', order?.product, order?.amount === order?.countInStock)}
+                          disabled={order?.amount === order?.countInStock
+                          }>
                           <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
                         </button>
                       </WrapperCountOrder>
@@ -257,7 +269,9 @@ const OrderPage = () => {
                 )
               })}
             </WrapperListOrder>
+
           </WrapperLeft>
+
           <WrapperRight>
             <div style={{ width: '100%' }}>
               <WrapperInfo>
@@ -278,7 +292,7 @@ const OrderPage = () => {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span>Phí giao hàng</span>
-                  <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>{convertPrice(diliveryPriceMemo)}</span>
+                  <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>{convertPrice(deliveryPriceMemo)}</span>
                 </div>
               </WrapperInfo>
               <WrapperTotal>
@@ -299,13 +313,13 @@ const OrderPage = () => {
                 border: 'none',
                 borderRadius: '4px'
               }}
-              textbutton={'Mua hàng'}
+              textButton={'Mua hàng'}
               styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             ></ButtonComponent>
           </WrapperRight>
         </div>
       </div>
-      <ModalComponent title="Cập nhật thông tin giao hàng" open={isOpenModalUpdateInfo} onCancel={handleCancleUpdate} onOk={handleUpdateInforUser}>
+      <ModalComponent title="Cập nhật thông tin giao hàng" open={isOpenModalUpdateInfo} onCancel={handleCancelUpdate} onOk={handleUpdateInfoUser}>
         <Loading isLoading={isLoading}>
           <Form
             name="basic"
@@ -338,7 +352,7 @@ const OrderPage = () => {
             </Form.Item>
 
             <Form.Item
-              label="Adress"
+              label="Address"
               name="address"
               rules={[{ required: true, message: 'Please input your  address!' }]}
             >

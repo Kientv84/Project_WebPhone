@@ -9,11 +9,19 @@ import * as ProductService from '../../services/ProductService'
 import { useQuery } from 'react-query'
 import Loading from '../LoadingComponent/Loading'
 import "./style.css"
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { addOrderProduct } from '../../redux/slice/orderSlide'
+import { convertPrice } from '../../utils'
 
 const ProductDetailsComponent = ({ idProduct }) => {
     const [numProduct, setNumProduct] = useState(1)
     const user = useSelector((state) => state.user)
+    const navigate = useNavigate()
+    const location = useLocation()
+    console.log('dd', location)
+    const dispatch = useDispatch()
+
     const onChange = (value) => {
         setNumProduct(Number(value))
     }
@@ -34,8 +42,27 @@ const ProductDetailsComponent = ({ idProduct }) => {
         }
     }
 
+
     const { isLoading, data: productDetails } = useQuery(['product-details', idProduct], fetchGetDetailsProduct, { enabled: !!idProduct })
-    console.log('productDetails', productDetails)
+    const handleAddOrderProduct = () => {
+        if (!user?.id) {
+            navigate('/sign-in', { state: location?.pathname })
+        } else {
+            // console.log('productDetails', productDetails)
+            dispatch(addOrderProduct({
+                orderItem: {
+                    name: productDetails?.name,
+                    amount: numProduct,
+                    image: productDetails?.image,
+                    price: productDetails?.price,
+                    product: productDetails?._id,
+                    discount: productDetails?.discount,
+                    countInStock: productDetails?.countInStock
+                }
+            }))
+        }
+    }
+    // console.log('productDetails', productDetails, user)
 
     return (
         <Loading isLoading={isLoading}>
@@ -69,10 +96,10 @@ const ProductDetailsComponent = ({ idProduct }) => {
                     {/* <StarFilled style={{ fontSize:'16px', color: '#FFC400' }} /><StarFilled/> */}
                     <div>
                         <Rate allowHalf defaultValue={productDetails?.rating} value={productDetails?.rating} />
-                        <WrapperStyleTextSell> | Đã bán 1000+</WrapperStyleTextSell>
+                        <WrapperStyleTextSell> | Đã bán </WrapperStyleTextSell>
                     </div>
                     <WrapperPriceProduct>
-                        <WrapperPriceTextProduct>{productDetails?.price}</WrapperPriceTextProduct>
+                        <WrapperPriceTextProduct>{convertPrice(productDetails?.price)}</WrapperPriceTextProduct>
                     </WrapperPriceProduct>
                     <WrapperAddressProduct>
                         <span>Giao đến </span>
@@ -101,6 +128,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                                 border: 'none',
                                 borderRadius: '4px'
                             }}
+                            onClick={handleAddOrderProduct}
                             textButton={'Chọn mua'}
                             styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
                         ></ButtonComponent>

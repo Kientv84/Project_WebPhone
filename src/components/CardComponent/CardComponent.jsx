@@ -20,7 +20,8 @@ const CardComponent = (props) => {
         width: 200,
       }}
       cover={<img alt="example" src={image} />}
-      onClick={() => handleDetailProduct(id)}
+      onClick={() => countInStock !== 0 && handleDetailProduct(id)}
+      disable={countInStock === 0}
     >
       <img
         src={logochinhhang}
@@ -35,18 +36,18 @@ const CardComponent = (props) => {
       />
 
       <StyleNameProduct> {name} </StyleNameProduct>
-        <WrapperReportText>
-          <span style={{ marginRight: '4px' }}>
-            <span>{rating} </span> <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)' }} />
-          </span>
-          <WrapperStyleTextSell> | Da ban {selled || 1000}+</WrapperStyleTextSell>
-        </WrapperReportText>
-        <WrapperPriceText>
-          <span style={{ marginRight: '8px' }}>{convertPrice(price)}</span>
-          <WrapperDiscountText>
-            - {discount || 5} %
-          </WrapperDiscountText>
-        </WrapperPriceText>
+      <WrapperReportText>
+        <span style={{ marginRight: '4px' }}>
+          <span>{rating} </span> <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)' }} />
+        </span>
+        <WrapperStyleTextSell> | Da ban {selled || 1000}+</WrapperStyleTextSell>
+      </WrapperReportText>
+      <WrapperPriceText>
+        <span style={{ marginRight: '8px' }}>{convertPrice(price)}</span>
+        <WrapperDiscountText>
+          - {discount || 5} %
+        </WrapperDiscountText>
+      </WrapperPriceText>
 
     </WrapperCardStyle>
   )

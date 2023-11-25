@@ -23,7 +23,7 @@ const AdminProduct = () => {
   const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
 
-  const [stateProduct, setStateProduct] = useState({
+  const initial = () => ({
     name: '',
     price: '',
     description: '',
@@ -31,27 +31,34 @@ const AdminProduct = () => {
     image: '',
     type: '',
     countInStock: '',
-  });
-
-  const [stateProductDetails, setStateProductDetails] = useState({
-    name: '',
-    price: '',
-    description: '',
-    rating: '',
-    image: '',
-    type: '',
-    countInStock: '',
-  });
+    newType: '',
+    discount: '',
+  })
+  const [stateProduct, setStateProduct] = useState(initial());
+  const [stateProductDetails, setStateProductDetails] = useState(initial());
 
   const [form] = Form.useForm();
 
   const mutation = useMutationHook(
     (data) => {
-      const { name, price, description, rating, image, type,
-        countInStock } = data
+      const {
+        name,
+        price,
+        description,
+        rating,
+        image,
+        type,
+        countInStock,
+        discount,
+      } = data
       const res = ProductService.createProduct({
-        name, price,
-        description, rating, image, type, countInStock
+        name,
+        price,
+        description,
+        rating, image,
+        type,
+        countInStock,
+        discount,
       })
       return res
     }
@@ -96,6 +103,7 @@ const AdminProduct = () => {
     return { data: res?.data, key: 'products' }
   }
 
+  // show ra các thông tin khi edit sản phẩm
   const fetchGetDetailsProduct = async (rowSelected) => {
     const res = await ProductService.getDetailsProduct(rowSelected)
     if (res?.data) {
@@ -106,15 +114,20 @@ const AdminProduct = () => {
         rating: res?.data?.rating,
         image: res?.data?.image,
         type: res?.data?.type,
-        countInStock: res?.data?.countInStock
+        countInStock: res?.data?.countInStock,
+        discount: res?.data?.discount,
       })
     }
     setIsLoadingUpdate(false)
   }
   // khi bấm edit sản phẩm nó giúp cho việc hiện ra lại các thông tin cần edit
   useEffect(() => {
-    form.setFieldsValue(stateProductDetails)
-  }, [form, stateProductDetails])
+    if (!isModalOpen) {
+      form.setFieldsValue(stateProductDetails)
+    } else {
+      form.setFieldsValue(initial())
+    }
+  }, [form, stateProductDetails, isModalOpen])
 
   useEffect(() => {
     if (rowSelected && isOpenDrawer) {
@@ -144,7 +157,7 @@ const AdminProduct = () => {
     })
   }
 
-  
+
   const fetchAllTypeProduct = async () => {
     const res = await ProductService.getAllTypeProduct()
     return res
@@ -390,12 +403,23 @@ const AdminProduct = () => {
       image: '',
       type: '',
       countInStock: '',
+      discount: '',
     })
     form.resetFields()
   };
 
   const onFinish = () => {
-    mutation.mutate(stateProduct, {
+    const params = {
+      name: stateProduct.name,
+      price: stateProduct.price,
+      description: stateProduct.description,
+      rating: stateProduct.rating,
+      image: stateProduct.image,
+      type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
+      countInStock: stateProduct.countInStock,
+      discount: stateProduct.discount,
+    }
+    mutation.mutate(params, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -426,7 +450,7 @@ const AdminProduct = () => {
       image: file.preview
     })
   }
- 
+
 
   const handleDelteManyProducts = (ids) => {
     mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {

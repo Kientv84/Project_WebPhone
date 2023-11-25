@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     orderItems: [],
-    orderItemsSlected: [],
+    orderItemsSelected: [],
     shippingAddress: {
     },
     paymentMethod: '',
@@ -14,8 +14,8 @@ const initialState = {
     isPaid: false,
     paidAt: '',
     isDelivered: false,
-    deliveredAt: '',
-    isSucessOrder: false,
+    deliveredAt: ''
+    // isSuccessOrder: false,
 }
 
 export const orderSlide = createSlice({
@@ -26,22 +26,22 @@ export const orderSlide = createSlice({
             const { orderItem } = action.payload
             const itemOrder = state?.orderItems?.find((item) => item?.product === orderItem.product)
             if (itemOrder) {
-                if (itemOrder.amount <= itemOrder.countInstock) {
-                    itemOrder.amount += orderItem?.amount
-                    state.isSucessOrder = true
-                    state.isErrorOrder = false
-                }
+                itemOrder.amount += orderItem?.amount
+                // if (itemOrder.amount <= itemOrder.countIntock) {
+                //     state.isSuccessOrder = true
+                //     state.isErrorOrder = false
+                // }
             } else {
                 state.orderItems.push(orderItem)
             }
         },
         resetOrder: (state) => {
-            state.isSucessOrder = false
+            state.isSuccessOrder = false
         },
         increaseAmount: (state, action) => {
             const { idProduct } = action.payload
             const itemOrder = state?.orderItems?.find((item) => item?.product === idProduct)
-            const itemOrderSelected = state?.orderItemsSlected?.find((item) => item?.product === idProduct)
+            const itemOrderSelected = state?.orderItemsSelected?.find((item) => item?.product === idProduct)
             itemOrder.amount++;
             if (itemOrderSelected) {
                 itemOrderSelected.amount++;
@@ -50,7 +50,7 @@ export const orderSlide = createSlice({
         decreaseAmount: (state, action) => {
             const { idProduct } = action.payload
             const itemOrder = state?.orderItems?.find((item) => item?.product === idProduct)
-            const itemOrderSelected = state?.orderItemsSlected?.find((item) => item?.product === idProduct)
+            const itemOrderSelected = state?.orderItemsSelected?.find((item) => item?.product === idProduct)
             itemOrder.amount--;
             if (itemOrderSelected) {
                 itemOrderSelected.amount--;
@@ -60,21 +60,23 @@ export const orderSlide = createSlice({
             const { idProduct } = action.payload
 
             const itemOrder = state?.orderItems?.filter((item) => item?.product !== idProduct)
-            const itemOrderSeleted = state?.orderItemsSlected?.filter((item) => item?.product !== idProduct)
+            const itemOrderSelected = state?.orderItemsSelected?.filter((item) => item?.product !== idProduct)
 
             state.orderItems = itemOrder;
-            state.orderItemsSlected = itemOrderSeleted;
+            state.orderItemsSelected = itemOrderSelected;
         },
         removeAllOrderProduct: (state, action) => {
             const { listChecked } = action.payload
 
             const itemOrders = state?.orderItems?.filter((item) => !listChecked.includes(item.product))
             const itemOrdersSelected = state?.orderItems?.filter((item) => !listChecked.includes(item.product))
+
             state.orderItems = itemOrders
-            state.orderItemsSlected = itemOrdersSelected
+            state.orderItemsSelected = itemOrdersSelected
 
         },
         selectedOrder: (state, action) => {
+            // console.log('selected', action.payload)
             const { listChecked } = action.payload
             const orderSelected = []
             state.orderItems.forEach((order) => {
@@ -82,7 +84,7 @@ export const orderSlide = createSlice({
                     orderSelected.push(order)
                 };
             });
-            state.orderItemsSlected = orderSelected
+            state.orderItemsSelected = orderSelected
         }
     },
 })

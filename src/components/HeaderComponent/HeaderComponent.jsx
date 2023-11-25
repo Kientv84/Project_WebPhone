@@ -18,11 +18,13 @@ import { searchProduct } from '../../redux/slice/productSlide';
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate()
   const user = useSelector((state) => state.user)
-  console.log('user ', user)
+  // console.log('user ', user)
   const dispatch = useDispatch()
   const [userName, setUserName] = useState('')
   const [userAvatar, setUserAvatar] = useState('')
   const [search, setSearch] = useState('')
+  const [isOpenPopup, setIsOpenPopup] = useState(false)
+  const order = useSelector((state) => state.order)
   const [loading, setLoading] = useState(false)
   const handleNavigateLogin = () => {
     navigate('/sign-in')
@@ -44,13 +46,32 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
 
   const content = (
     <div>
-      <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thông tin người dùng</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate('profile')}>Thông tin người dùng</WrapperContentPopup>
       {user?.isAdmin && (
-        <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quản lý hệ thống</WrapperContentPopup>
+        <WrapperContentPopup onClick={() => handleClickNavigate('admin')}>Quản lý hệ thống</WrapperContentPopup>
       )}
-      <WrapperContentPopup onClick={handleLogout}>Đăng Xuất</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate('my-order')}>Đơn hàng của tôi</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate()}>Đăng Xuất</WrapperContentPopup>
     </div>
   );
+
+  const handleClickNavigate = (type) => {
+    if (type === 'profile') {
+      navigate('/profile-user')
+    } else if (type === 'admin') {
+      navigate('/system/admin')
+    } else if (type === 'my-order') {
+      navigate('/my-order', {
+        state: {
+          id: user?.id,
+          token: user?.access_token
+        }
+      })
+    } else {
+      handleLogout()
+    }
+    setIsOpenPopup(false)
+  }
 
   const onSearch = (e) => {
     setSearch(e.target.value)
@@ -87,8 +108,8 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                 <UserOutlined style={{ fontSize: '30px' }} />
               )}
               {user?.access_token ? (
-                <Popover content={content} trigger="click" >
-                  <div style={{ cursor: 'pointer' }}>{userName?.length ? userName : user?.email}</div>
+                <Popover content={content} trigger="click" open={isOpenPopup} >
+                  <div style={{ cursor: 'pointer' }} onClick={() => setIsOpenPopup((prev) => !prev)}>{userName?.length ? userName : user?.email}</div>
                 </Popover>
               ) : (
                 <div onClick={handleNavigateLogin} style={{ cursor: 'pointer' }}>
@@ -103,7 +124,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           </Loading>
           {!isHiddenCart && (
             <div onClick={() => navigate('/order')} style={{ cursor: 'pointer' }}>
-              <Badge count={4} size='small'>
+              <Badge count={order?.orderItems?.length} size='small'>
                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
               </Badge>
               <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
