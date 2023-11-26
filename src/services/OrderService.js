@@ -1,7 +1,7 @@
 import { axiosJWT } from "./UserService"
 
 export const createOrder = async (data, access_token) => {
-    // console.log('acs', { access_token, data })
+    console.log('acs', { access_token, data })
     const res = await axiosJWT.post(`${process.env.REACT_APP_URL_BACKEND}/order/create`, data, {
         headers: {
             token: `Bearer ${access_token}`,
