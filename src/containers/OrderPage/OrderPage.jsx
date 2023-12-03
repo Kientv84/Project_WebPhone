@@ -14,7 +14,7 @@ import { useMutationHook } from '../../hooks/useMutationHook';
 import * as  UserService from '../../services/UserService'
 import Loading from '../../components/LoadingComponent/Loading';
 import * as message from '../../components/Message/Message'
-import { updateAddress } from '../../redux/slice/userslide';
+import { updateUser } from '../../redux/slice/userslide';
 import { useLocation, useNavigate } from 'react-router-dom';
 import StepComponent from '../../components/StepComponent/StepComponent';
 
@@ -178,7 +178,7 @@ const OrderPage = () => {
     if (name && address && city && phone) {
       mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails }, {
         onSuccess: () => {
-          dispatch(updateAddress({ name, address, city, phone }))
+          dispatch(updateUser({ name, address, city, phone }))
           setIsOpenModalUpdateInfo(false)
         }
       })
