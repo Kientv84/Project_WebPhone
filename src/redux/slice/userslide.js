@@ -29,6 +29,14 @@ export const userSlice = createSlice({
       state.isAdmin = isAdmin;
       state.city = city;
     },
+    updateAddress: (state, action) => {
+      const { name = '', address = '', phone = '', city = '' } = action.payload
+      // console.log('action', action)
+      state.name = name;
+      state.phone = phone;
+      state.address = address;
+      state.city = city;
+    },
     resetUser: (state) => {
       // console.log('action', action)
       state.name = '';
@@ -46,6 +54,6 @@ export const userSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { updateUser, resetUser } = userSlice.actions
+export const { updateUser, resetUser, updateAddress } = userSlice.actions
 
 export default userSlice.reducer

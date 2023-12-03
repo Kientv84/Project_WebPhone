@@ -76,7 +76,7 @@ const ProfilePage = () => {
     }
     return (
         <div style={{ width: '1270px', margin: '0 auto', height: '500px' }}>
-            <WrapperHeader>Thông tin người dùng</WrapperHeader>
+            <WrapperHeader>User Information</WrapperHeader>
             <Loading isLoading={isLoading}>
                 <WrapperContentProfile>
                     <WrapperInput>
@@ -121,8 +121,8 @@ const ProfilePage = () => {
                             padding: '2px 6px 6px',
                             marginLeft: 'auto'
                         }}
-                        textButton={'Cập nhật'}
-                        styleTextButton={{ color: '#42C8B7', fontSize: '15px', fontWeight: '700' }}
+                        textbutton={'Update'}
+                        styletextbutton={{ color: '#42C8B7', fontSize: '15px', fontWeight: '700' }}
                     ></ButtonComponent>
                 </WrapperContentProfile>
 

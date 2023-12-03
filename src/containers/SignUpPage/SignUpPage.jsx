@@ -55,7 +55,7 @@ const SignUpPage = () => {
       confirmPassword
     })
 
-    console.log('sign-up', email, password, confirmPassword)
+    // console.log('sign-up', email, password, confirmPassword)
   }
 
   const handleNavigateSignIn = () => {
@@ -66,8 +66,8 @@ const SignUpPage = () => {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
       <div style={{ width: '800px', height: '400px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
-          <h1 style={{ fontSize: '30px', marginBottom: '8px' }}>Xin chào</h1>
-          <p style={{ fontSize: '15px', marginBottom: '5px' }}>Đăng nhập hoặc tạo tài khoản</p>
+          <h1 style={{ fontSize: '30px', marginBottom: '8px' }}>Hello</h1>
+          <p style={{ fontSize: '15px', marginBottom: '5px' }}>Register</p>
           <InputForm style={{ marginBottom: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
           <div style={{ position: 'relative' }}>
             <span
@@ -127,11 +127,11 @@ const SignUpPage = () => {
                 borderRadius: '4px',
                 margin: '26px 0 10px'
               }}
-              textButton={'Đăng ký'}
-              styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+              textbutton={'Đăng ký'}
+              styletextbutton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             ></ButtonComponent>
           </Loading>
-          <p style={{ fontSize: " 15px" }}>Bạn đã có tài khoản? <WrapperTextLight onClick={handleNavigateSignIn}> Đăng nhập</WrapperTextLight></p>
+          <p style={{ fontSize: " 15px" }}>You already have an account yet? <WrapperTextLight onClick={handleNavigateSignIn}> Sign-In</WrapperTextLight></p>
         </WrapperContainerLeft>
 
         <WrapperContainerRight>

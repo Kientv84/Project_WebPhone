@@ -14,13 +14,14 @@ import { useMutationHook } from '../../hooks/useMutationHook';
 import * as  UserService from '../../services/UserService'
 import Loading from '../../components/LoadingComponent/Loading';
 import * as message from '../../components/Message/Message'
-import { updateUser } from '../../redux/slice/userslide';
-import { useNavigate } from 'react-router-dom';
+import { updateAddress } from '../../redux/slice/userslide';
+import { useLocation, useNavigate } from 'react-router-dom';
 import StepComponent from '../../components/StepComponent/StepComponent';
 
 const OrderPage = () => {
   const order = useSelector((state) => state.order)
   const user = useSelector((state) => state.user)
+  const location = useLocation()
 
   const [listChecked, setListChecked] = useState([])
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false)
@@ -133,10 +134,13 @@ const OrderPage = () => {
   }
 
   const handleAddCard = () => {
-    console.log('orderr', order)
+    // console.log('orderr', order)
     if (!order?.orderItemsSelected?.length) {
-      message.error('Vui lòng chọn sản phẩm')
-    } else if (!user?.phone || !user.address || !user.name || !user.city) {
+      message.error('Please choose a product')
+    } else if (!user?.id) {
+      navigate('/sign-in', { state: location?.pathname })
+    }
+    else if (!user?.phone || !user.address || !user.name || !user.city) {
       setIsOpenModalUpdateInfo(true)
     } else {
       navigate('/payment')
@@ -169,12 +173,12 @@ const OrderPage = () => {
     setIsOpenModalUpdateInfo(false)
   }
   const handleUpdateInfoUser = () => {
-    console.log('stateUserDetails', stateUserDetails)
+    // console.log('stateUserDetails', stateUserDetails)
     const { name, address, city, phone } = stateUserDetails
     if (name && address && city && phone) {
       mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails }, {
         onSuccess: () => {
-          dispatch(updateUser({ name, address, city, phone }))
+          dispatch(updateAddress({ name, address, city, phone }))
           setIsOpenModalUpdateInfo(false)
         }
       })
@@ -191,15 +195,15 @@ const OrderPage = () => {
   const itemsDelivery = [
     {
       title: '30.000 VND',
-      description: 'Dưới 200.000 VND',
+      description: 'Below 200.000 VND',
     },
     {
       title: '10.000 VND',
-      description: 'Từ 200.000 VND đến dưới 500.000 VND',
+      description: 'From 200.000 VND to below 500.000 VND',
     },
     {
       title: 'Free ship',
-      description: 'Trên 500.000 VND',
+      description: 'More 500.000 VND',
     },
   ]
 
@@ -207,7 +211,7 @@ const OrderPage = () => {
   return (
     <div style={{ background: '#f5f5fa', with: '100%', height: '100vh' }}>
       <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
-        <h3 style={{ fontWeight: 'bold' }}>Giỏ hàng</h3>
+        <h3 style={{ fontWeight: 'bold' }}>Cart</h3>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <WrapperLeft>
 
@@ -218,12 +222,12 @@ const OrderPage = () => {
             <WrapperStyleHeader>
               <span style={{ display: 'inline-block', width: '390px' }}>
                 <CustomCheckbox onChange={handleOnchangeCheckAll} checked={listChecked?.length === order?.orderItems?.length}></CustomCheckbox>
-                <span> Tất cả ({order?.orderItems?.length} sản phẩm)</span>
+                <span> Total ({order?.orderItems?.length} products)</span>
               </span>
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span>Đơn giá</span>
-                <span>Số lượng</span>
-                <span>Thành tiền</span>
+                <span>Unit Price</span>
+                <span>Quantity</span>
+                <span>Subtotal</span>
                 <DeleteOutlined style={{ cursor: 'pointer' }} onClick={handleRemoveAllOrder} />
               </div>
             </WrapperStyleHeader>
@@ -276,30 +280,30 @@ const OrderPage = () => {
             <div style={{ width: '100%' }}>
               <WrapperInfo>
                 <div>
-                  <span>Địa chỉ: </span>
+                  <span>Address: </span>
                   <span style={{ fontWeight: 'bold' }}>{`${user?.address} ${user?.city}`} </span>
-                  <span onClick={handleChangeAddress} style={{ color: '#9255FD', cursor: 'pointer' }}>Thay đổi</span>
+                  <span onClick={handleChangeAddress} style={{ color: '#9255FD', cursor: 'pointer' }}>Change</span>
                 </div>
               </WrapperInfo>
               <WrapperInfo>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>Tạm tính</span>
+                  <span>Subtotal</span>
                   <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>{convertPrice(priceMemo)}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>Giảm giá</span>
+                  <span>Discount</span>
                   <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>{convertPrice(priceDiscountMemo)}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>Phí giao hàng</span>
+                  <span>Delivery cost</span>
                   <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>{convertPrice(deliveryPriceMemo)}</span>
                 </div>
               </WrapperInfo>
               <WrapperTotal>
-                <span>Tổng tiền</span>
+                <span>Total</span>
                 <span style={{ display: 'flex', flexDirection: 'column' }}>
                   <span style={{ color: 'rgb(254, 56, 52)', fontSize: '24px', fontWeight: 'bold' }}>{convertPrice(totalPriceMemo)}</span>
-                  <span style={{ color: '#000', fontSize: '11px' }}>(Đã bao gồm VAT nếu có)</span>
+                  <span style={{ color: '#000', fontSize: '11px' }}>(Including VAT if applicable)</span>
                 </span>
               </WrapperTotal>
             </div>
@@ -313,13 +317,13 @@ const OrderPage = () => {
                 border: 'none',
                 borderRadius: '4px'
               }}
-              textButton={'Mua hàng'}
-              styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+              textbutton={'Buy'}
+              styletextbutton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             ></ButtonComponent>
           </WrapperRight>
         </div>
       </div>
-      <ModalComponent title="Cập nhật thông tin giao hàng" open={isOpenModalUpdateInfo} onCancel={handleCancelUpdate} onOk={handleUpdateInfoUser}>
+      <ModalComponent title="Update Information" open={isOpenModalUpdateInfo} onCancel={handleCancelUpdate} onOk={handleUpdateInfoUser}>
         <Loading isLoading={isLoading}>
           <Form
             name="basic"

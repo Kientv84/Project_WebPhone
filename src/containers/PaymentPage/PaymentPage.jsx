@@ -108,7 +108,8 @@ const PaymentPage = () => {
           itemsPrice: priceMemo,
           shippingPrice: deliveryPriceMemo,
           totalPrice: totalPriceMemo,
-          user: user?.id
+          user: user?.id,
+          email: user?.email,
         }
       )
     }
@@ -174,7 +175,7 @@ const PaymentPage = () => {
     setIsOpenModalUpdateInfo(false)
   }
   const handleUpdateInfoUser = () => {
-    console.log('stateUserDetails', stateUserDetails)
+    // console.log('stateUserDetails', stateUserDetails)
     const { name, address, city, phone } = stateUserDetails
     if (name && address && city && phone) {
       mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails }, {
@@ -233,9 +234,10 @@ const PaymentPage = () => {
         user: user?.id,
         isPaid: true,
         paidAt: details.update_time,
+        email: user?.email,
       }
     )
-    console.log('details, data', details, data)
+    // console.log('details, data', details, data)
   }
 
   const addPaypalScript = async () => {
@@ -262,12 +264,12 @@ const PaymentPage = () => {
     <div style={{ background: '#f5f5fa', with: '100%', height: '100vh' }}>
       <Loading isLoading={isLoadingAddOrder}>
         <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
-          <h3 style={{ fontWeight: 'bold' }}>Thanh toán</h3>
+          <h3 style={{ fontWeight: 'bold' }}>Payment</h3>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <WrapperLeft>
               <WrapperInfo>
                 <div>
-                  <Label>Chọn phương thức giao hàng</Label>
+                  <Label>Choose payment method</Label>
                   <WrapperRadio onChange={handleDelivery} value={delivery}>
                     <Radio value="fast"><span style={{ color: '#ea8500', fontWeight: 'bold' }}>FAST</span> Giao hàng tiết kiệm</Radio>
                     <Radio value="gojek"><span style={{ color: '#ea8500', fontWeight: 'bold' }}>GO_JEK</span> Giao hàng tiết kiệm</Radio>
@@ -276,10 +278,10 @@ const PaymentPage = () => {
               </WrapperInfo>
               <WrapperInfo>
                 <div>
-                  <Label>Chọn phương thức thanh toán</Label>
+                  <Label>Choose payment method</Label>
                   <WrapperRadio onChange={handlePayment} value={payment}>
-                    <Radio value="later_money"> Thanh toán tiền mặt khi nhận hàng</Radio>
-                    <Radio value="paypal"> Thanh toán bằng paypal</Radio>
+                    <Radio value="later_money"> Cash on Delivery" (COD)</Radio>
+                    <Radio value="paypal"> Pay with PayPal</Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo>
@@ -290,30 +292,30 @@ const PaymentPage = () => {
               <div style={{ width: '100%' }}>
                 <WrapperInfo>
                   <div>
-                    <span>Địa chỉ: </span>
+                    <span>Address: </span>
                     <span style={{ fontWeight: 'bold' }}>{`${user?.address} ${user?.city}`} </span>
-                    <span onClick={handleChangeAddress} style={{ color: '#9255FD', cursor: 'pointer' }}>Thay đổi</span>
+                    <span onClick={handleChangeAddress} style={{ color: '#9255FD', cursor: 'pointer' }}>Change</span>
                   </div>
                 </WrapperInfo>
                 <WrapperInfo>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>Tạm tính</span>
+                    <span>Subtotal</span>
                     <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>{convertPrice(priceMemo)}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>Giảm giá</span>
+                    <span>Discount</span>
                     <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>{convertPrice(priceDiscountMemo)}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span>Phí giao hàng</span>
+                    <span>Delivery Cost</span>
                     <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>{convertPrice(deliveryPriceMemo)}</span>
                   </div>
                 </WrapperInfo>
                 <WrapperTotal>
-                  <span>Tổng tiền</span>
+                  <span>Total</span>
                   <span style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ color: 'rgb(254, 56, 52)', fontSize: '24px', fontWeight: 'bold' }}>{convertPrice(totalPriceMemo)}</span>
-                    <span style={{ color: '#000', fontSize: '11px' }}>(Đã bao gồm VAT nếu có)</span>
+                    <span style={{ color: '#000', fontSize: '11px' }}>(Including VAT if applicable)</span>
                   </span>
                 </WrapperTotal>
               </div>
@@ -339,14 +341,14 @@ const PaymentPage = () => {
                     border: 'none',
                     borderRadius: '4px'
                   }}
-                  textButton={'Đặt hàng'}
-                  styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+                  textbutton={'Order Now'}
+                  styletextbutton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
                 ></ButtonComponent>
               )}
             </WrapperRight>
           </div>
         </div>
-        <ModalComponent title="Cập nhật thông tin giao hàng" open={isOpenModalUpdateInfo} onCancel={handleCancelUpdate} onOk={handleUpdateInfoUser}>
+        <ModalComponent title="Update shipping address" open={isOpenModalUpdateInfo} onCancel={handleCancelUpdate} onOk={handleUpdateInfoUser}>
           <Loading isLoading={isLoading}>
             <Form
               name="basic"

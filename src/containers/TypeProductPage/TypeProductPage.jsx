@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react'
-import NavBarComponent from '../../components/NavbarComponent/NavbarComponent'
+// import NavBarComponent from '../../components/NavbarComponent/NavbarComponent'
 import CardComponent from '../../components/CardComponent/CardComponent'
 import { Col, Pagination, Row } from 'antd'
-import { WrapperNavbar, WrapperProducts } from './style'
+import { WrapperNavbar, WrapperProducts, WrapperTypeProduct } from './style'
 import { useLocation } from 'react-router-dom'
 import * as ProductService from '../../services/ProductService'
 import { useEffect } from 'react'
@@ -10,6 +10,7 @@ import { useState } from 'react'
 import Loading from '../../components/LoadingComponent/Loading'
 import { useSelector } from 'react-redux'
 import { useDebounce } from '../../hooks/useDebounce'
+import TypeProduct from '../../components/TypeProduct/TypeProduct'
 
 const TypeProductPage = () => {
     const searchProduct = useSelector((state) => state?.product?.search)
@@ -23,6 +24,8 @@ const TypeProductPage = () => {
         limit: 10,
         total: 1,
     })
+    const [typeProducts, setTypeProducts] = useState([])
+
     const fetchProductType = async (type, page, limit) => {
         setLoading(true)
         const res = await ProductService.getProductType(type, page, limit)
@@ -50,9 +53,11 @@ const TypeProductPage = () => {
             <div style={{ width: '100%', background: '#efefef', height: 'calc(100vh - 64px)' }}>
                 <div style={{ width: '1270px', margin: '0 auto', height: '100%' }}>
                     <Row style={{ flexWrap: 'nowrap', paddingTop: '10px', height: 'calc(100% - 20px)' }}>
-                        <WrapperNavbar span={4} >
-                            <NavBarComponent />
-                        </WrapperNavbar>
+                        {/* <WrapperNavbar span={4} >
+                            {/* <NavBarComponent /> */}
+                        {/* <TypeProduct /> */}
+                        {/* </WrapperNavbar> */}
+
                         <Col span={20} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                             <WrapperProducts >
                                 {products?.filter((pro) => {
@@ -84,7 +89,7 @@ const TypeProductPage = () => {
                     </Row>
                 </div>
             </div>
-        </Loading>
+        </Loading >
     )
 }
 

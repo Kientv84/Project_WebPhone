@@ -14,8 +14,9 @@ const initialState = {
     isPaid: false,
     paidAt: '',
     isDelivered: false,
-    deliveredAt: ''
-    // isSuccessOrder: false,
+    deliveredAt: '',
+    isErrorOrder: false,
+    isSuccessOrder: false,
 }
 
 export const orderSlide = createSlice({
@@ -26,13 +27,17 @@ export const orderSlide = createSlice({
             const { orderItem } = action.payload
             const itemOrder = state?.orderItems?.find((item) => item?.product === orderItem.product)
             if (itemOrder) {
-                itemOrder.amount += orderItem?.amount
-                // if (itemOrder.amount <= itemOrder.countIntock) {
-                //     state.isSuccessOrder = true
-                //     state.isErrorOrder = false
-                // }
+                if (itemOrder.amount <= itemOrder.countInStock) {
+                    itemOrder.amount += orderItem?.amount
+                    state.isSuccessOrder = true
+                    state.isErrorOrder = false
+
+                } else {
+                    state.isErrorOrder = true
+                }
             } else {
                 state.orderItems.push(orderItem)
+                state.isSuccessOrder = true
             }
         },
         resetOrder: (state) => {
