@@ -4,7 +4,7 @@ import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogo from '../../assets/images/SignIn.png'
 import { Image } from 'antd'
-import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
+import { EyeFilled, EyeInvisibleFilled, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { useLocation, useNavigate } from 'react-router-dom'
 import * as UserService from '../../services/UserService'
 import { useMutationHook } from '../../hooks/useMutationHook'
@@ -35,6 +35,7 @@ const SignInPage = () => {
       if (location?.state) {
         navigate(location?.state)
       } else {
+        message.success('Đăng nhập thành công')
         navigate('/')
       }
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))
@@ -70,19 +71,24 @@ const SignInPage = () => {
       email,
       password
     })
+
+    console.log('sign-in', email, password)
   }
 
   const handleNavigateSignUp = () => {
     navigate('/sign-up')
   }
 
+  const handleNavigateForgotPass = () => {
+    navigate('/forgot-password')
+  }
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
       <div style={{ width: '800px', height: '400px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
-          <h1 style={{ fontSize: '30px', marginBottom: '5px' }}>Xin chào</h1>
-          <p style={{ fontSize: '15px', marginBottom: '10px' }}>Đăng nhập hoặc tạo tài khoản</p>
-          <InputForm style={{ marginBottom: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
+          <h1 style={{ fontSize: '30px', marginBottom: '5px', marginTop: '0px' }}>Login for member</h1>
+          <InputForm style={{ marginBottom: '10px', marginTop: '40px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
           <div style={{ position: 'relative' }}>
             <span
               onClick={() => setIsShowPassword(!isShowPassword)}
@@ -93,18 +99,10 @@ const SignInPage = () => {
                 right: '8px',
                 fontSize: '15px'
               }}>
-              {
-                isShowPassword ? (
-                  <EyeFilled />
-                ) : (
-                  <EyeInvisibleFilled />
-                )
-              }
             </span>
             <InputForm placeholder="password" type={isShowPassword ? "text" : "password"}
               value={password} onChange={handleOnChangePassword} />
           </div>
-
           {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>}
           <Loading isLoading={isLoading} >
             <ButtonComponent
@@ -123,8 +121,9 @@ const SignInPage = () => {
               styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             ></ButtonComponent>
           </Loading>
-          <p style={{ marginBottom: '-10px' }}><WrapperTextLight >Quên mật khẩu?</WrapperTextLight></p>
-          <p style={{ fontSize: " 15px" }}>Chưa có tài khoản? <WrapperTextLight onClick={handleNavigateSignUp}> Tạo tài khoản</WrapperTextLight></p>
+          <p style={{ marginBottom: '-10px' }} onClick={handleNavigateForgotPass}><WrapperTextLight >Forgot password?</WrapperTextLight></p>
+          <p style={{ fontSize: " 15px" }}>Already have an account? <WrapperTextLight onClick={handleNavigateSignUp}> Sign up</WrapperTextLight></p>
+
         </WrapperContainerLeft>
 
         <WrapperContainerRight>

@@ -361,12 +361,12 @@ const AdminUser = () => {
           };
         }} />
       </div>
-      <DrawerComponent title='Chi tiết người dùng' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="50%">
+      <DrawerComponent title='Chi tiết người dùng' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
         <Loading isLoading={isLoadingUpdate}>
           <Form
             name="basic"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 22 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             onFinish={onUpdateUser}
             autoComplete="off"
             form={form}

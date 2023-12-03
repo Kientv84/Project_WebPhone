@@ -36,9 +36,13 @@ const ProductDetailsComponent = ({ idProduct }) => {
 
     const handleChangeCount = (type) => {
         if (type === 'increase') {
-            setNumProduct(numProduct + 1)
+            if (numProduct < productDetails?.countInStock) {
+                setNumProduct(numProduct + 1);
+            }
         } else {
-            setNumProduct(numProduct - 1)
+            if (numProduct > 1) {
+                setNumProduct(numProduct - 1);
+            }
         }
     }
 
@@ -57,7 +61,8 @@ const ProductDetailsComponent = ({ idProduct }) => {
                     price: productDetails?.price,
                     product: productDetails?._id,
                     discount: productDetails?.discount,
-                    countInStock: productDetails?.countInStock
+                    countInStock: productDetails?.countInStock,
+                    description: productDetails?.description
                 }
             }))
         }
@@ -112,7 +117,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                             <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease')}>
                                 <MinusOutlined style={{ color: '#000', fontSize: '20px' }} />
                             </button>
-                            <WrapperInputNumber onChange={onChange} defaultValue={1} value={numProduct} size="middle" />
+                            <InputNumber onChange={onChange} defaultValue={1} value={numProduct} size="middle" />
                             <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase')}>
                                 <PlusOutlined style={{ color: '#000', fontSize: '20px' }} />
                             </button>
@@ -129,10 +134,10 @@ const ProductDetailsComponent = ({ idProduct }) => {
                                 borderRadius: '4px'
                             }}
                             onClick={handleAddOrderProduct}
-                            textButton={'Chọn mua'}
+                            textButton={'Add to cart'}
                             styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
                         ></ButtonComponent>
-                        <ButtonComponent
+                        {/* <ButtonComponent
                             size={40}
                             styleButton={{
                                 background: '#fff',
@@ -143,7 +148,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                             }}
                             textButton={'Mua trả sau'}
                             styleTextButton={{ color: 'rgb(13,92,182)', fontSize: '15px' }}
-                        ></ButtonComponent>
+                        ></ButtonComponent> */}
                     </div>
                 </Col>
             </Row>

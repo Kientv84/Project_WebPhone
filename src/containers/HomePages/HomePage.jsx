@@ -18,7 +18,7 @@ const HomePage = () => {
     const searchProduct = useSelector((state) => state?.product?.search)
     const searchDebounce = useDebounce(searchProduct, 1000)
     const [loading, setLoading] = useState(false)
-    const [limit, setLimit] = useState(6)
+    const [limit, setLimit] = useState(12)
     const [typeProducts, setTypeProducts] = useState([])
 
 
@@ -31,7 +31,7 @@ const HomePage = () => {
 
     const fetchAllTypeProduct = async () => {
         const res = await ProductService.getAllTypeProduct()
-        if (res?.status == 'OK')
+        if (res?.status === 'OK')
             setTypeProducts(res?.data)
     }
 
@@ -53,7 +53,7 @@ const HomePage = () => {
                 </WrapperTypeProduct>
             </div>
             <div className='body' style={{ width: '100%', backgroundColor: '#efefef' }}>
-                <div id="container" style={{ height: '1000px', width: '1270px', margin: '0 auto' }}>
+                <div id="container" style={{ height: 'auto', width: '1270px', margin: '0 auto' }}>
                     <SliderComponent arrImages={[slider1, slider2, slider3]} />
                     <WrapperProducts>
                         {products?.data?.map((product) => {
@@ -79,7 +79,7 @@ const HomePage = () => {
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
                         <WrapperButtonMore
                             textButton={isPreviousData ? 'Load more' : "Xem thêm"} type="outline" styleButton={{
-                                border: '1px solid rgb(10, 104, 255)',
+                                border: `1px solid ${products?.total === products?.data?.length ? '#ccc' : 'rgb(10, 104, 255)'}`,
                                 color: `${products?.totalProduct === products?.data?.length ? '#ccc' : 'rgb(10, 104, 255)'}`,
                                 width: '240px',
                                 height: '38px',
@@ -88,11 +88,8 @@ const HomePage = () => {
                             disabled={products?.totalProduct === products?.data?.length || products?.totalPage === 1}
                             styleTextButton={{ fontWeight: 500, color: products?.totalProduct === products?.data?.length && '#fff' }}
                             onClick={() => setLimit((prev) => prev + 6)}
-
                         />
                     </div>
-
-                    <NavbarComponent />
                 </div>
             </div>
         </Loading>

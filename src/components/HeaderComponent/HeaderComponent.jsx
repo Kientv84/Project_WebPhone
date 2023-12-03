@@ -13,6 +13,7 @@ import * as UserService from '../../services/UserService'
 import { resetUser } from '../../redux/slice/userslide';
 import Loading from '../LoadingComponent/Loading';
 import { searchProduct } from '../../redux/slice/productSlide';
+import Fuse from 'fuse.js';
 
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
@@ -26,6 +27,8 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [isOpenPopup, setIsOpenPopup] = useState(false)
   const order = useSelector((state) => state.order)
   const [loading, setLoading] = useState(false)
+
+
   const handleNavigateLogin = () => {
     navigate('/sign-in')
   }
@@ -73,16 +76,18 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     setIsOpenPopup(false)
   }
 
+
   const onSearch = (e) => {
-    setSearch(e.target.value)
-    dispatch(searchProduct(e.target.value))
+    const value = e.target.value
+    setSearch(value);
+    dispatch(searchProduct(value))
   }
 
   return (
     <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
       <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
         <Col span={5}>
-          <WrapperTextHeader onClick={() => navigate('/')}> WEBPHONE </WrapperTextHeader>
+          <WrapperTextHeader to='/'> WEBPHONE </WrapperTextHeader>
         </Col>
         {!isHiddenSearch && (
           <Col span={13}>

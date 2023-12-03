@@ -15,7 +15,7 @@ export const WrapperStyleHeader = styled.div`
 `
 
 export const WrapperContainer = styled.div`
-  width: 100%
+ 
 `
 
 export const WrapperValue = styled.div`
@@ -85,20 +85,29 @@ export const WrapperInfo = styled.div`
   padding: 17px 20px;
   border-bottom: 1px solid #f5f5f5;
   background: #fff;
-  border-top-right-radius: 6px;
-  border-top-left-radius: 6px;
-  // width: 100%
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  width: 100%
+`
+
+export const WrapperInfo1 = styled.div`
+  padding: 17px 20px;
+  border-bottom: 1px solid #f5f5f5;
+  background: #fff;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  width: 100%
 `
 
 export const WrapperItemOrderInfo = styled.div`
   padding: 17px 20px;
   border-bottom: 1px solid #f5f5f5;
   background: #fff;
-  border-top-right-radius: 6px;
-  border-top-left-radius: 6px;
-  // width: 100%
-  display: flex;
-  justify-content: center;
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  width: 100%
 `
 
 export const WrapperTotal = styled.div`

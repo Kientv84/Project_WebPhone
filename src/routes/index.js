@@ -1,5 +1,6 @@
 import AdminPage from "../containers/AdminPage/AdminPage";
 import DetailsOrderPage from "../containers/DetailsOrderPage/DetailsOrderPage";
+import ForgotPassPage from "../containers/ForgotPassPage/ForgotPassPage";
 import HomePage from "../containers/HomePages/HomePage";
 import MyOrderPage from "../containers/MyOrderPage/MyOrderPage";
 import NotFoundPage from "../containers/NotFoundPage/NotFoundPage";
@@ -62,13 +63,13 @@ export const routes = [
     {
         path: '/sign-in',
         page: SignInPage,
-        isShowHeader: false
+        isShowHeader: true
 
     },
     {
         path: '/sign-up',
         page: SignUpPage,
-        isShowHeader: false
+        isShowHeader: true
 
     },
     {
@@ -88,6 +89,12 @@ export const routes = [
         page: AdminPage,
         isShowHeader: false,
         isPrivate: true
+
+    },
+    {
+        path: '/forgot-password',
+        page: ForgotPassPage,
+        isShowHeader: true
 
     },
     {
