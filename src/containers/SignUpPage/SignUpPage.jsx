@@ -65,9 +65,8 @@ const SignUpPage = () => {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
       <div style={{ width: '800px', height: '400px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
-          <h1 style={{ fontSize: '30px', marginBottom: '8px', marginTop: 'auto' }}>Hello</h1>
-          <p style={{ fontSize: '15px', marginBottom: '5px' }}>Register</p>
-          <InputForm style={{ marginBottom: '8px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
+          <h1 style={{ fontSize: '30px', marginBottom: '8px', marginTop: '0px' }}>Register</h1>
+          <InputForm style={{ marginBottom: '8px', marginTop: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
           <div style={{ position: 'relative' }}>
             <span
               onClick={() => setIsShowPassword(!isShowPassword)}
@@ -78,6 +77,7 @@ const SignUpPage = () => {
                 right: '8px',
                 fontSize: '15px'
               }}>
+
             </span>
             <InputForm placeholder="password" type={isShowPassword ? "text" : "password"} style={{ marginBottom: '10px' }}
               value={password} onChange={handleOnChangePassword} />
