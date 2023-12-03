@@ -29,7 +29,7 @@ const SignUpPage = () => {
 
   useEffect(() => {
     if (isSuccess && data?.status === 'OK') {
-      message.success()
+      message.success('Đăng ký thành công')
       handleNavigateSignIn()
     } else if (isError) {
       message.error()
@@ -49,35 +49,12 @@ const SignUpPage = () => {
     setConfirmPassword(value)
   }
 
-  // const handleSignUp = () => {
-  //   mutation.mutate({
-  //     email,
-  //     password,
-  //     confirmPassword
-  //   })
-  //   if (isSuccess) {
-  //     message.success()
-  //     handleNavigateSignIn()
-  //   } else if (isError) {
-  //     message.error()
-  //   }
-  // }
   const handleSignUp = async () => {
-
     await mutation.mutate({
       email,
       password,
       confirmPassword
     });
-    // if (isSuccess) {
-    //   message.success("Đăng ký thành công");
-    //   handleNavigateSignIn();
-    // } else if (isError) {
-    //   // Xử lý lỗi không mong muốn
-    //   console.error("Có lỗi không mong muốn xảy ra khi đăng ký:", result.error);
-    //   message.error("Có lỗi không mong muốn xảy ra. Vui lòng thử lại sau.");
-    // }
-
   };
 
   const handleNavigateSignIn = () => {

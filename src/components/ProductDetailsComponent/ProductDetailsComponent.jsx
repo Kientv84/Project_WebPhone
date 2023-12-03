@@ -16,6 +16,7 @@ import * as message from '../../components/Message/Message'
 import { resetOrder } from '../../redux/slice/orderSlide.js'
 import LikeButtonComponent from '../LikeButtonComponent/LikeButtonComponent.jsx'
 import CommentComponent from '../CommentComponent/CommentComponent.jsx'
+import './style.css'
 
 const ProductDetailsComponent = ({ idProduct }) => {
     const [numProduct, setNumProduct] = useState(1)
@@ -154,7 +155,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                     <WrapperAddressProduct>
                         <span>Delivery To </span>
                         <span className='address'> {user?.address}  </span>
-                        <span className='change-address' onClick={handleChangeAddress} style={{ color: '#9255FD', cursor: 'pointer' }}>  Change Address</span>
+                        <span className='change-address' onClick={handleChangeAddress} style={{ color: 'rgb(66, 200, 183)', cursor: 'pointer' }}>Change Address</span>
                     </WrapperAddressProduct>
                     <LikeButtonComponent
                         datahref={process.env.REACT_APP_IS_LOCAL
