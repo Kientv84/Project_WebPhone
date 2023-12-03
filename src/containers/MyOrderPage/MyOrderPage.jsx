@@ -24,6 +24,7 @@ const MyOrderPage = () => {
   })
   const { isLoading, data } = queryOrder
   // console.log('data1', data)
+  // console.log('isloading', isLoading)
 
   const handleDetailsOrder = (id) => {
     navigate(`/details-order/${id}`, {
@@ -44,12 +45,20 @@ const MyOrderPage = () => {
   const handleCancelOrder = (order) => {
     mutation.mutate({ id: order._id, token: state?.token, orderItems: order?.orderItems }, {
       onSuccess: () => {
-        queryOrder.refetch()
+        message.success('Delete order Success')
+        if (!order._id) {
+          queryOrder.refetch()
+          window.location.reload();
+        }
+      },
+      onError: () => {
+        message.error('Delete order Failed')
       }
     })
   }
 
   const { isLoading: isLoadingCancel, isSuccess: isSuccessCancel, isError: isErrorCancel, data: dataCancel } = mutation
+  // console.log('mutation', mutation)
 
   useEffect(() => {
     if (isSuccessCancel && dataCancel?.status === 'OK') {
@@ -61,7 +70,7 @@ const MyOrderPage = () => {
 
   const renderProduct = (data) => {
     return data?.map((order) => {
-      return <WrapperHeaderItem>
+      return <WrapperHeaderItem key={order?._id}>
         <img src={order?.image}
           style={{
             width: '70px',
@@ -88,20 +97,20 @@ const MyOrderPage = () => {
     <Loading isLoading={isLoading || isLoadingCancel}>
       <WrapperContainer>
         <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
-          <h4>Đơn hàng của tôi</h4>
+          <h4>My Order</h4>
           <WrapperListOrder>
             {data?.map((order) => {
               return (
                 <WrapperItemOrder key={order?._id}>
                   <WrapperStatus>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Trạng thái</span>
-                    <div><span style={{ color: 'rgb(255, 66, 78)' }}>Giao hàng: </span>{`${order.isDelivered ? 'Đã giao hàng' : 'Chưa giao hàng'}`}</div>
-                    <div><span style={{ color: 'rgb(255, 66, 78)' }}>Thanh toán:</span>{`${order.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}`}</div>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}> Status </span>
+                    <div><span style={{ color: 'rgb(255, 66, 78)' }}>Is Delivered: </span>{`${order.isDelivered ? 'Delivered' : 'Not Delivered'}`}</div>
+                    <div><span style={{ color: 'rgb(255, 66, 78)' }}>Is Paid: </span>{`${order.isPaid ? 'Paid' : 'Unpaid'}`}</div>
                   </WrapperStatus>
                   {renderProduct(order?.orderItems)}
                   <WrapperFooterItem>
                     <div>
-                      <span style={{ color: 'rgb(255, 66, 78)' }}>Tổng tiền: </span>
+                      <span style={{ color: 'rgb(255, 66, 78)' }}>Total: </span>
                       <span
                         style={{ fontSize: '13px', color: 'rgb(56, 56, 61)', fontWeight: 700 }}
                       >{convertPrice(order?.totalPrice)}</span>
@@ -115,8 +124,8 @@ const MyOrderPage = () => {
                           border: '1px solid rgb(11, 116, 229)',
                           borderRadius: '4px'
                         }}
-                        textButton={'Hủy đơn hàng'}
-                        styleTextButton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
+                        textbutton={'Delete Order'}
+                        styletextbutton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
                       >
                       </ButtonComponent>
                       <ButtonComponent
@@ -127,8 +136,8 @@ const MyOrderPage = () => {
                           border: '1px solid rgb(11, 116, 229)',
                           borderRadius: '4px'
                         }}
-                        textButton={'Xem chi tiết'}
-                        styleTextButton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
+                        textbutton={'More Details'}
+                        styletextbutton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
                       >
                       </ButtonComponent>
                     </div>

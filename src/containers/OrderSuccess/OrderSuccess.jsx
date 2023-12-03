@@ -9,19 +9,20 @@ import { orderConstant } from '../../constant';
 const OrderSuccess = () => {
   const order = useSelector((state) => state.order)
   const location = useLocation()
-  console.log('location', location)
+  // console.log('location', location)
   const { state } = location
+  // console.log('state', state)
 
   return (
     <div style={{ background: '#f5f5fa', with: '100%', height: '100vh', marginTop: '0px' }}>
       <Loading isLoading={false}>
         <div style={{ height: '100%', width: '1270px', margin: '0px auto' }}>
-          <h3 style={{ fontWeight: 'bold' }}>Đã đặt hàng thành công</h3>
+          <h3 style={{ fontWeight: 'bold' }}>Order Success</h3>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div>
               <WrapperInfo1>
                 <div>
-                  <Label>Phương thức giao hàng</Label>
+                  <Label>Shipping method</Label>
                   <WrapperValue>
                     <span style={{ color: '#ea8500', fontWeight: 'bold' }}>{orderConstant[state?.delivery]}</span> Giao hàng tiết kiệm
                   </WrapperValue>
@@ -29,7 +30,7 @@ const OrderSuccess = () => {
               </WrapperInfo1>
               <WrapperInfo>
                 <div>
-                  <Label>Phương thức thanh toán</Label>
+                  <Label>Payment method</Label>
                   <WrapperValue>
                     {orderConstant[state?.payment?.later_money]}
                   </WrapperValue>
@@ -50,10 +51,10 @@ const OrderSuccess = () => {
                       </div>
                       <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '20px' }}>
                         <span>
-                          <span style={{ fontSize: '13px', color: '#242424' }}>Giá tiền: {convertPrice(order?.price)}</span>
+                          <span style={{ fontSize: '13px', color: '#242424' }}>Price: {convertPrice(order?.price)}</span>
                         </span>
                         <span>
-                          <span style={{ fontSize: '13px', color: '#242424' }}>Số lượng: {order?.amount}</span>
+                          <span style={{ fontSize: '13px', color: '#242424' }}>Quantity: {order?.amount}</span>
                         </span>
                       </div>
                     </WrapperItemOrder>
@@ -61,7 +62,7 @@ const OrderSuccess = () => {
                 })}
               </WrapperItemOrderInfo>
               <div>
-                <span style={{ fontSize: '16px', color: 'red' }}>Tổng tiền: {convertPrice(state?.totalPriceMemo)}</span>
+                <span style={{ fontSize: '16px', color: 'red' }}>Total: {convertPrice(state?.totalPriceMemo)}</span>
               </div>
             </div>
           </div>

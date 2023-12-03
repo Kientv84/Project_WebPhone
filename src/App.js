@@ -55,7 +55,7 @@ function App() {
     // Do something before request is sent
     const currentTime = new Date()
     const { decoded } = handleDecoded()
-    console.log('decoded', decoded)
+    // console.log('decoded', decoded)
     if (decoded?.exp < currentTime.getTime() / 1000) {
       const data = await UserService.refreshToken()
       config.headers['token'] = `Bearer ${data?.access_token}`

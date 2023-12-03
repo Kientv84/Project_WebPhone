@@ -95,7 +95,6 @@ const AdminProduct = () => {
     }
   )
 
-  console.log('mutationDeletedMany', mutationDeletedMany)
   //
   const getAllProduct = async () => {
     const product = JSON.parse(localStorage.getItem("product"));
@@ -494,7 +493,7 @@ const AdminProduct = () => {
 
   return (
     <div>
-      <WrapperHeader>Quản lý sản phẩm</WrapperHeader>
+      <WrapperHeader>Manage Products</WrapperHeader>
       <div style={{ marginTop: '10px' }}>
         <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px' }} /></Button>
       </div>
@@ -507,7 +506,7 @@ const AdminProduct = () => {
           };
         }} />
       </div>
-      <ModalComponent forceRender title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
+      <ModalComponent forceRender title="New Product" open={isModalOpen} onCancel={handleCancel} footer={null}>
         <Loading isLoading={isLoading}>
 
           <Form
@@ -610,7 +609,7 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </ModalComponent>
-      <DrawerComponent title='Chi tiết sản phẩm' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
+      <DrawerComponent title='Product Details' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
 
           <Form
@@ -697,9 +696,9 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-      <ModalComponent title="Xóa sản phẩm" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct}>
+      <ModalComponent title="Delete product" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct}>
         <Loading isLoading={isLoadingDeleted}>
-          <div>Bạn có chắc xóa sản phẩm này không?</div>
+          <div>Are you sure you want to delete this product?</div>
         </Loading>
       </ModalComponent>
     </div>

@@ -11,7 +11,7 @@ import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
 import jwt_decode from "jwt-decode";
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from '../../redux/slice/userslide'
 
 const SignInPage = () => {
@@ -19,7 +19,9 @@ const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('')
   const location = useLocation()
+  // console.log('locate', location)
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.user)
 
   const navigate = useNavigate()
 
@@ -28,10 +30,11 @@ const SignInPage = () => {
   )
 
   const { data, isLoading, isSuccess } = mutation
+  // console.log('first1111', mutation)
 
   useEffect(() => {
-    console.log('location', location)
-    if (isSuccess) {
+    // console.log('location', location)
+    if (isSuccess && data?.status === 'OK') {
       if (location?.state) {
         navigate(location?.state)
       } else {
@@ -39,6 +42,8 @@ const SignInPage = () => {
         navigate('/')
       }
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))
+      // localStorage.setItem('refresh_token', JSON.stringify(data?.refresh_token))
+      // console.log(data)
       if (data?.access_token) {
         const decoded = jwt_decode(data?.access_token)
         // console.log('decoded', decoded)
@@ -47,16 +52,18 @@ const SignInPage = () => {
         }
       }
     }
-  }, [isSuccess])
+  }, [isSuccess, data])
+
 
   const handleGetDetailsUser = async (id, token) => {
+    // console.log('token', token)
+    // const storage = localStorage.getItem('refresh_token')
+    // console.log('storage', storage)
+    // const refreshToken = JSON.parse(storage)
     const res = await UserService.getDetailsUser(id, token)
     dispatch(updateUser({ ...res?.data, access_token: token }))
     // console.log('res', res)
   }
-
-
-  console.log('mutation', mutation)
 
   const handleOnChangeEmail = (value) => {
     setEmail(value)
@@ -87,7 +94,7 @@ const SignInPage = () => {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
       <div style={{ width: '800px', height: '400px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
-          <h1 style={{ fontSize: '30px', marginBottom: '5px', marginTop: '0px' }}>Login for member</h1>
+          <h1 style={{ fontSize: '30px', marginBottom: '5px', marginTop: '0px' }}>Sign-In for member</h1>
           <InputForm style={{ marginBottom: '10px', marginTop: '40px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
           <div style={{ position: 'relative' }}>
             <span
@@ -117,13 +124,12 @@ const SignInPage = () => {
                 borderRadius: '4px',
                 margin: '26px 0 10px'
               }}
-              textButton={'Đăng nhập'}
-              styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+              textbutton={'Sign-In'}
+              styletextbutton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             ></ButtonComponent>
           </Loading>
-          <p style={{ marginBottom: '-10px' }} onClick={handleNavigateForgotPass}><WrapperTextLight >Forgot password?</WrapperTextLight></p>
-          <p style={{ fontSize: " 15px" }}>Already have an account? <WrapperTextLight onClick={handleNavigateSignUp}> Sign up</WrapperTextLight></p>
-
+          <p style={{ marginBottom: '-10px' }} onClick={handleNavigateForgotPass} ><WrapperTextLight >Forgot Password</WrapperTextLight></p>
+          <p style={{ fontSize: " 15px" }}>Don't have an account yet? <WrapperTextLight onClick={handleNavigateSignUp}> Register</WrapperTextLight></p>
         </WrapperContainerLeft>
 
         <WrapperContainerRight>

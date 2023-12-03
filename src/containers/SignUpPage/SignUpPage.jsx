@@ -25,16 +25,16 @@ const SignUpPage = () => {
   )
 
 
-  const { data, isLoading, error, success } = mutation
+  const { data, isLoading, isError, isSuccess } = mutation
 
   useEffect(() => {
-    if (success) {
-      message.success('Đăng ký thành công')
+    if (isSuccess && data?.status === 'OK') {
+      message.success()
       handleNavigateSignIn()
-    } else if (error) {
+    } else if (isError) {
       message.error()
     }
-  }, [error, success])
+  }, [isError, isSuccess])
 
 
   const handleOnChangeEmail = (value) => {
@@ -89,7 +89,7 @@ const SignUpPage = () => {
       <div style={{ width: '800px', height: '400px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
           <h1 style={{ fontSize: '30px', marginBottom: '8px', marginTop: 'auto' }}>Hello</h1>
-          <p style={{ fontSize: '15px', marginBottom: '5px' }}>Sign up for member</p>
+          <p style={{ fontSize: '15px', marginBottom: '5px' }}>Register</p>
           <InputForm style={{ marginBottom: '8px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
           <div style={{ position: 'relative' }}>
             <span
@@ -134,11 +134,11 @@ const SignUpPage = () => {
                 borderRadius: '4px',
                 margin: '26px 0 10px'
               }}
-              textButton={'Đăng ký'}
-              styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+              textbutton={'Register'}
+              styletextbutton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             ></ButtonComponent>
           </Loading>
-          <p style={{ fontSize: " 15px" }}>Do you already have an account? <WrapperTextLight onClick={handleNavigateSignIn}> Sign in</WrapperTextLight></p>
+          <p style={{ fontSize: " 15px" }}>You already have an account yet? <WrapperTextLight onClick={handleNavigateSignIn}> Sign-In</WrapperTextLight></p>
         </WrapperContainerLeft>
 
         <WrapperContainerRight>

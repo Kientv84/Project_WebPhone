@@ -6,7 +6,7 @@ import slider2 from "../../assets/images/slider2.webp"
 import slider3 from "../../assets/images/slider3.webp"
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import CardComponent from "../../components/CardComponent/CardComponent";
-import NavbarComponent from "../../components/NavbarComponent/NavbarComponent";
+// import NavbarComponent from "../../components/NavbarComponent/NavbarComponent";
 import { useQuery } from "react-query";
 import * as ProductService from '../../services/ProductService'
 import { useSelector } from "react-redux";
@@ -36,7 +36,6 @@ const HomePage = () => {
     }
 
     const { isLoading, data: products, isPreviousData } = useQuery(['products', limit, searchDebounce], fetchProductAll, { retry: 3, retryDelay: 1000, keepPreviousData: true })
-
     useEffect(() => {
         fetchAllTypeProduct()
     }, [])
@@ -67,26 +66,24 @@ const HomePage = () => {
                                     price={product.price}
                                     rating={product.rating}
                                     type={product.type}
-                                    selled={product.selled}
+                                    sold={product.selled}
                                     discount={product.discount}
                                     id={product._id}
                                 />
-
                             )
                         })}
-
                     </WrapperProducts>
                     <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
                         <WrapperButtonMore
-                            textButton={isPreviousData ? 'Load more' : "Xem thêm"} type="outline" styleButton={{
-                                border: `1px solid ${products?.total === products?.data?.length ? '#ccc' : 'rgb(10, 104, 255)'}`,
+                            textbutton={isPreviousData ? 'Loading..' : "Load more"} type="outline" styleButton={{
+                                border: '1px solid rgb(10, 104, 255)',
                                 color: `${products?.totalProduct === products?.data?.length ? '#ccc' : 'rgb(10, 104, 255)'}`,
                                 width: '240px',
                                 height: '38px',
                                 borderRadius: '4px',
                             }}
                             disabled={products?.totalProduct === products?.data?.length || products?.totalPage === 1}
-                            styleTextButton={{ fontWeight: 500, color: products?.totalProduct === products?.data?.length && '#fff' }}
+                            styletextbutton={{ fontWeight: 500, color: products?.totalProduct === products?.data?.length && '#fff' }}
                             onClick={() => setLimit((prev) => prev + 6)}
                         />
                     </div>

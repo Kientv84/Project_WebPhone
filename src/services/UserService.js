@@ -4,11 +4,13 @@ export const axiosJWT = axios.create()
 
 export const loginUser = async (data) => {
     const res = await axios.post(`${process.env.REACT_APP_URL_BACKEND}/user/sign-in`, data)
+    // console.log('first', res)
     return res.data
 }
 
 export const signupUser = async (data) => {
     const res = await axios.post(`${process.env.REACT_APP_URL_BACKEND}/user/sign-up`, data)
+    // console.log('first', res)
     return res.data
 }
 
@@ -23,6 +25,7 @@ export const getDetailsUser = async (id, access_token) => {
             token: `Bearer ${access_token}`,
         }
     })
+    // console.log(res.data)
     return res.data
 }
 
