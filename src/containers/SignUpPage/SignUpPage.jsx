@@ -27,7 +27,7 @@ const SignUpPage = () => {
   const { data, isLoading, isSuccess, isError } = mutation
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && data?.status === 'OK') {
       message.success()
       handleNavigateSignIn()
     } else if (isError) {
@@ -127,7 +127,7 @@ const SignUpPage = () => {
                 borderRadius: '4px',
                 margin: '26px 0 10px'
               }}
-              textbutton={'Đăng ký'}
+              textbutton={'Register'}
               styletextbutton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             ></ButtonComponent>
           </Loading>

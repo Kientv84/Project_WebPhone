@@ -11,7 +11,7 @@ import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
 import jwt_decode from "jwt-decode";
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from '../../redux/slice/userslide'
 
 const SignInPage = () => {
@@ -19,7 +19,9 @@ const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('')
   const location = useLocation()
+  // console.log('locate', location)
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.user)
 
   const navigate = useNavigate()
 
@@ -28,16 +30,19 @@ const SignInPage = () => {
   )
 
   const { data, isLoading, isSuccess } = mutation
+  // console.log('first1111', mutation)
 
   useEffect(() => {
     // console.log('location', location)
-    if (isSuccess) {
+    if (isSuccess && data?.status === 'OK') {
       if (location?.state) {
         navigate(location?.state)
       } else {
         navigate('/')
       }
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))
+      // localStorage.setItem('refresh_token', JSON.stringify(data?.refresh_token))
+      // console.log(data)
       if (data?.access_token) {
         const decoded = jwt_decode(data?.access_token)
         // console.log('decoded', decoded)
@@ -46,16 +51,18 @@ const SignInPage = () => {
         }
       }
     }
-  }, [isSuccess])
+  }, [isSuccess, data])
+
 
   const handleGetDetailsUser = async (id, token) => {
+    // console.log('token', token)
+    // const storage = localStorage.getItem('refresh_token')
+    // console.log('storage', storage)
+    // const refreshToken = JSON.parse(storage)
     const res = await UserService.getDetailsUser(id, token)
     dispatch(updateUser({ ...res?.data, access_token: token }))
     // console.log('res', res)
   }
-
-
-  // console.log('mutation', mutation)
 
   const handleOnChangeEmail = (value) => {
     setEmail(value)
