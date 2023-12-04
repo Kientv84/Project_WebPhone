@@ -506,6 +506,7 @@ const AdminProduct = () => {
           };
         }} />
       </div>
+
       <ModalComponent forceRender title="New Product" open={isModalOpen} onCancel={handleCancel} footer={null}>
         <Loading isLoading={isLoading}>
 
@@ -606,6 +607,7 @@ const AdminProduct = () => {
                 Submit
               </Button>
             </Form.Item>
+            {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>}
           </Form>
         </Loading>
       </ModalComponent>
