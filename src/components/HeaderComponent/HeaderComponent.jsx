@@ -13,7 +13,7 @@ import * as UserService from '../../services/UserService'
 import { resetUser } from '../../redux/slice/userslide';
 import Loading from '../LoadingComponent/Loading';
 import { searchProduct } from '../../redux/slice/productSlide';
-import Fuse from 'fuse.js';
+// import Fuse from 'fuse.js';
 
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
