@@ -70,9 +70,15 @@ export const WrapperInfo = styled.div`
   padding: 17px 20px;
   border-bottom: 1px solid #f5f5f5;
   background: #fff;
-  border-top-right-radius: 6px;
-  border-top-left-radius: 6px;
-  // width: 100%
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+`
+export const WrapperInfo1 = styled.div`
+  padding: 17px 20px;
+  border-bottom: 1px solid #f5f5f5;
+  background: #fff;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
 `
 
 export const WrapperTotal = styled.div`
@@ -87,10 +93,10 @@ export const WrapperTotal = styled.div`
 
 export const CustomCheckbox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #9255FD;
-    border-color: #9255FD;
+    background-color: rgb(66, 200, 183);
+    border-color: rgb(66, 200, 183);
   }
   .ant-checkbox:hover .ant-checkbox-inner {
-    border-color: #9255FD;
+    border-color: rgb(66, 200, 183);
   }
 `

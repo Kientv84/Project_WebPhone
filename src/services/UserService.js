@@ -14,6 +14,17 @@ export const signupUser = async (data) => {
     return res.data
 }
 
+export const forgotPassword = async (data) => {
+    const res = await axios.post(`${process.env.REACT_APP_URL_BACKEND}/user/forgot-password`, data)
+    return res.data;
+};
+
+export const resetPassword = async (id, token, data) => {
+    const res = await axios.post(`${process.env.REACT_APP_URL_BACKEND}/user/reset-password/${id}/${token}`, data)
+    return res.data;
+}
+
+
 export const getDetailsUser = async (id, access_token) => {
     const res = await axiosJWT.get(`${process.env.REACT_APP_URL_BACKEND}/user/get-details/${id}`, {
         headers: {

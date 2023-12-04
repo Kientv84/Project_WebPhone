@@ -1,6 +1,6 @@
 import { Form, Radio } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { Label, WrapperInfo, WrapperLeft, WrapperRadio, WrapperRight, WrapperTotal } from './style';
+import { Label, WrapperInfo, WrapperInfo1, WrapperInfo2, WrapperInfo3, WrapperLeft, WrapperRadio, WrapperRight, WrapperTotal } from './style';
 
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
@@ -261,13 +261,13 @@ const PaymentPage = () => {
   }, [])
 
   return (
-    <div style={{ background: '#f5f5fa', with: '100%', height: '100vh' }}>
+    <div style={{ padding: '0.1px 0', background: '#f5f5fa', with: '100%', height: '100vh' }}>
       <Loading isLoading={isLoadingAddOrder}>
         <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
           <h3 style={{ fontWeight: 'bold' }}>Payment</h3>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <WrapperLeft>
-              <WrapperInfo>
+              <WrapperInfo2>
                 <div>
                   <Label>Choose payment method</Label>
                   <WrapperRadio onChange={handleDelivery} value={delivery}>
@@ -275,8 +275,8 @@ const PaymentPage = () => {
                     <Radio value="gojek"><span style={{ color: '#ea8500', fontWeight: 'bold' }}>GO_JEK</span> Giao hàng tiết kiệm</Radio>
                   </WrapperRadio>
                 </div>
-              </WrapperInfo>
-              <WrapperInfo>
+              </WrapperInfo2>
+              <WrapperInfo3>
                 <div>
                   <Label>Choose payment method</Label>
                   <WrapperRadio onChange={handlePayment} value={payment}>
@@ -284,19 +284,19 @@ const PaymentPage = () => {
                     <Radio value="paypal"> Pay with PayPal</Radio>
                   </WrapperRadio>
                 </div>
-              </WrapperInfo>
+              </WrapperInfo3>
 
             </WrapperLeft>
 
             <WrapperRight>
               <div style={{ width: '100%' }}>
-                <WrapperInfo>
+                <WrapperInfo1>
                   <div>
                     <span>Address: </span>
                     <span style={{ fontWeight: 'bold' }}>{`${user?.address} ${user?.city}`} </span>
                     <span onClick={handleChangeAddress} style={{ color: '#9255FD', cursor: 'pointer' }}>Change</span>
                   </div>
-                </WrapperInfo>
+                </WrapperInfo1>
                 <WrapperInfo>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span>Subtotal</span>

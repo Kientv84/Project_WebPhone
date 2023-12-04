@@ -6,8 +6,8 @@ const ProductDetailsPage = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   return (
-    <div style={{ padding: '0.1px 100px', background: '#efefef' }}>
-      <h5 style={{ fontWeight: 'normal' }} > <span style={{ cursor: 'pointer', fontWeight: 'bold' }} onClick={() => { navigate('/') }}>Home Page</span> - Product Information</h5>
+    <div style={{ padding: '0.1px 100px', background: '#efefef', height: 'auto' }}>
+      <h5 style={{ fontWeight: 'normal', marginTop: '5px', fontSize: '13px' }} > <span style={{ cursor: 'pointer', fontWeight: 'bold', fontSize: '15px' }} onClick={() => { navigate('/') }}>Home Page</span> - Product Information</h5>
       <ProductDetailsComponent idProduct={id} />
     </div>
   )

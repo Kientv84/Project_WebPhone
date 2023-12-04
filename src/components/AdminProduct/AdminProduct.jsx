@@ -20,7 +20,7 @@ const AdminProduct = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
-  const user = useSelector((state) => state?.user)
+  const product = useSelector((state) => state?.product)
   const searchInput = useRef(null);
 
   const initial = () => ({
@@ -142,7 +142,7 @@ const AdminProduct = () => {
   }
 
   const handleDeleteManyProducts = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+    mutationDeletedMany.mutate({ ids: ids, token: product?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -385,7 +385,7 @@ const AdminProduct = () => {
   }
 
   const handleDeleteProduct = () => {
-    mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
+    mutationDeleted.mutate({ id: rowSelected, token: product?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -452,7 +452,7 @@ const AdminProduct = () => {
 
 
   const handleDelteManyProducts = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+    mutationDeletedMany.mutate({ ids: ids, token: product?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -484,7 +484,7 @@ const AdminProduct = () => {
   }
 
   const onUpdateProduct = () => {
-    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateProductDetails }, {
+    mutationUpdate.mutate({ id: rowSelected, token: product?.access_token, ...stateProductDetails }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -506,7 +506,6 @@ const AdminProduct = () => {
           };
         }} />
       </div>
-
       <ModalComponent forceRender title="New Product" open={isModalOpen} onCancel={handleCancel} footer={null}>
         <Loading isLoading={isLoading}>
 
@@ -611,13 +610,13 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </ModalComponent>
-      <DrawerComponent title='Product Details' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="90%">
+      <DrawerComponent title='Product Details' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
 
           <Form
             name="basic"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 22 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             onFinish={onUpdateProduct}
             autoComplete="on"
             form={form}

@@ -31,7 +31,7 @@ const HomePage = () => {
 
     const fetchAllTypeProduct = async () => {
         const res = await ProductService.getAllTypeProduct()
-        if (res?.status == 'OK')
+        if (res?.status === 'OK')
             setTypeProducts(res?.data)
     }
 
@@ -52,7 +52,7 @@ const HomePage = () => {
                 </WrapperTypeProduct>
             </div>
             <div className='body' style={{ width: '100%', backgroundColor: '#efefef' }}>
-                <div id="container" style={{ width: '1270px', margin: '0 auto' }}>
+                <div id="container" style={{ height: 'auto', width: '1270px', margin: '0 auto' }}>
                     <SliderComponent arrImages={[slider1, slider2, slider3]} />
                     <WrapperProducts>
                         {products?.data?.map((product) => {
@@ -85,7 +85,6 @@ const HomePage = () => {
                             disabled={products?.totalProduct === products?.data?.length || products?.totalPage === 1}
                             styletextbutton={{ fontWeight: 500, color: products?.totalProduct === products?.data?.length && '#fff' }}
                             onClick={() => setLimit((prev) => prev + 6)}
-
                         />
                     </div>
                 </div>

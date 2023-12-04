@@ -1,6 +1,6 @@
 import { Form } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { CustomCheckbox, WrapperCountOrder, WrapperInfo, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperStyleHeaderDelivery, WrapperTotal } from './style';
+import { CustomCheckbox, WrapperCountOrder, WrapperInfo, WrapperInfo1, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperStyleHeaderDelivery, WrapperTotal } from './style';
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { WrapperInputNumber } from '../../components/ProductDetailsComponent/style';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
@@ -178,7 +178,7 @@ const OrderPage = () => {
     if (name && address && city && phone) {
       mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails }, {
         onSuccess: () => {
-          dispatch(updateUser({ name, address, city, phone }))
+          dispatch(updateAddress({ name, address, city, phone }))
           setIsOpenModalUpdateInfo(false)
         }
       })
@@ -209,14 +209,14 @@ const OrderPage = () => {
 
 
   return (
-    <div style={{ background: '#f5f5fa', with: '100%', height: '100vh' }}>
+    <div style={{ padding: '0.1px 0', background: '#f5f5fa', with: '100%', height: '100vh' }}>
       <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
         <h3 style={{ fontWeight: 'bold' }}>Cart</h3>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <WrapperLeft>
-
+            <h4>Phí giao hàng</h4>
             <WrapperStyleHeaderDelivery>
-              <StepComponent items={itemsDelivery} current={deliveryPriceMemo === 30000 ? 1 : deliveryPriceMemo === 10000 ? 2 : 3} />
+              <StepComponent items={itemsDelivery} current={deliveryPriceMemo === 30000 ? 1 : deliveryPriceMemo === 10000 ? 2 : order.orderItemsSelected.length === 0 ? 0 : 3} />
             </WrapperStyleHeaderDelivery>
 
             <WrapperStyleHeader>
@@ -277,14 +277,14 @@ const OrderPage = () => {
           </WrapperLeft>
 
           <WrapperRight>
-            <div style={{ width: '100%' }}>
-              <WrapperInfo>
+            <div style={{ width: '100%', marginTop: '55px' }}>
+              <WrapperInfo1>
                 <div>
                   <span>Address: </span>
                   <span style={{ fontWeight: 'bold' }}>{`${user?.address} ${user?.city}`} </span>
                   <span onClick={handleChangeAddress} style={{ color: '#9255FD', cursor: 'pointer' }}>Change</span>
                 </div>
-              </WrapperInfo>
+              </WrapperInfo1>
               <WrapperInfo>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span>Subtotal</span>
