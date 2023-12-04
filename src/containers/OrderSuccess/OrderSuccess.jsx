@@ -7,7 +7,6 @@ import { useLocation } from 'react-router-dom';
 import { orderConstant } from '../../constant';
 
 const OrderSuccess = () => {
-  const order = useSelector((state) => state.order)
   const location = useLocation()
   // console.log('location', location)
   const { state } = location
@@ -24,7 +23,7 @@ const OrderSuccess = () => {
                 <div>
                   <Label>Shipping method</Label>
                   <WrapperValue>
-                    <span style={{ color: '#ea8500', fontWeight: 'bold' }}>{orderConstant[state?.delivery]}</span> Giao hàng tiết kiệm
+                    <span style={{ color: '#ea8500', fontWeight: 'bold' }}>{orderConstant.delivery[state?.delivery]}</span> Giao hàng tiết kiệm
                   </WrapperValue>
                 </div>
               </WrapperInfo1>
@@ -32,7 +31,7 @@ const OrderSuccess = () => {
                 <div>
                   <Label>Payment method</Label>
                   <WrapperValue>
-                    {orderConstant[state?.payment?.later_money]}
+                    {orderConstant.payment[state?.payment]}
                   </WrapperValue>
                 </div>
               </WrapperInfo>
