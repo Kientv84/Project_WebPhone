@@ -6,8 +6,12 @@ import { useLocation } from 'react-router-dom';
 import { orderConstant } from '../../constant';
 import { convertPrice } from '../../utils';
 
+<<<<<<< HEAD
 
 const OrderSucess = () => {
+=======
+const OrderSuccess = () => {
+>>>>>>> 7c5bcf4cfa6ad4aa0c7b48195d56095b4cb30701
   const location = useLocation()
   const { state } = location
   return (
@@ -16,11 +20,24 @@ const OrderSucess = () => {
         <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
           <h3>Đơn hàng đặt thành công</h3>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
+<<<<<<< HEAD
             <WrapperContainer>
+=======
+            <div>
+              <WrapperInfo1>
+                <div>
+                  <Label>Shipping method</Label>
+                  <WrapperValue>
+                    <span style={{ color: '#ea8500', fontWeight: 'bold' }}>{orderConstant.delivery[state?.delivery]}</span> Giao hàng tiết kiệm
+                  </WrapperValue>
+                </div>
+              </WrapperInfo1>
+>>>>>>> 7c5bcf4cfa6ad4aa0c7b48195d56095b4cb30701
               <WrapperInfo>
                 <div>
                   <Lable>Phương thức giao hàng</Lable>
                   <WrapperValue>
+<<<<<<< HEAD
                     <span style={{ color: '#ea8500', fontWeight: 'bold' }}>{orderConstant.delivery[state?.delivery]}</span> Giao hàng tiết kiệm
                   </WrapperValue>
                 </div>
@@ -30,6 +47,8 @@ const OrderSucess = () => {
                   <Lable>Phương thức thanh toán</Lable>
 
                   <WrapperValue>
+=======
+>>>>>>> 7c5bcf4cfa6ad4aa0c7b48195d56095b4cb30701
                     {orderConstant.payment[state?.payment]}
                   </WrapperValue>
                 </div>
