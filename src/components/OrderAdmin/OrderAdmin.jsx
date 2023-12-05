@@ -1,28 +1,42 @@
-import { Button, Space } from 'antd'
-import React from 'react'
+import { Button, Form, Select, Space } from 'antd'
+import React, { useState } from 'react'
 import { WrapperHeader } from './style'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'
 import { convertPrice } from '../../utils'
 import * as OrderService from '../../services/OrderService'
 import { useQuery } from 'react-query'
-import { SearchOutlined } from '@ant-design/icons'
+import { EditOutlined, SearchOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import { orderConstant } from '../../constant'
+import DrawerComponent from '../DrawerComponent/DrawerComponent'
 // import PieChartComponent from './PieChart'
 
 const OrderAdmin = () => {
   const user = useSelector((state) => state?.user)
-
+  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
 
   const getAllOrder = async () => {
     const res = await OrderService.getAllOrder(user?.access_token)
     return res
   }
 
-
   const queryOrder = useQuery({ queryKey: ['orders'], queryFn: getAllOrder })
   const { isLoading: isLoadingOrders, data: orders } = queryOrder
+  // console.log(queryOrder)
+
+  const renderAction = () => {
+    return (
+      <div>
+        <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
+      </div>
+    )
+  }
+
+  const handleDetailsProduct = () => {
+    setIsOpenDrawer(true)
+  }
+
 
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -123,12 +137,6 @@ const OrderAdmin = () => {
       ...getColumnSearchProps('isPaid')
     },
     {
-      title: 'Shipped',
-      dataIndex: 'isDelivered',
-      sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
-      ...getColumnSearchProps('isDelivered')
-    },
-    {
       title: 'Payment method',
       dataIndex: 'paymentMethod',
       sorter: (a, b) => a.paymentMethod.length - b.paymentMethod.length,
@@ -139,6 +147,19 @@ const OrderAdmin = () => {
       dataIndex: 'totalPrice',
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
       ...getColumnSearchProps('totalPrice')
+    },
+    {
+      title: 'Shipped',
+      dataIndex: 'isDelivered',
+      sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
+      ...getColumnSearchProps('isDelivered')
+    },
+    {
+      title: 'Update Delivered',
+      dataIndex: 'isDelivered',
+      render: renderAction,
+      sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
+      ...getColumnSearchProps('isDelivered')
     },
   ];
 
@@ -156,6 +177,24 @@ const OrderAdmin = () => {
     }
   })
 
+  const onUpdateProduct = async () => {
+    // Assuming you have an API endpoint to update the delivery state
+    try {
+      // console.log(orders?.data?._id, orders?.data.isDelivered, orders?.data?.access_token)
+      // Make an API call to update the delivery state
+      await OrderService.updateDeliveryState(orders?.data?._id, orders?.data.isDelivered, orders?.data?.access_token);
+
+      // Close the drawer after successful update
+      setIsOpenDrawer(false);
+
+      // Refetch the orders to update the table
+      queryOrder.refetch();
+    } catch (error) {
+      // Handle errors
+      console.error('Error updating delivery state:', error);
+    }
+  };
+
   return (
     <div>
       <WrapperHeader>Manage Orders</WrapperHeader>
@@ -165,6 +204,36 @@ const OrderAdmin = () => {
       <div style={{ marginTop: '20px' }}>
         <TableComponent columns={columns} isLoading={isLoadingOrders} data={dataTable} />
       </div>
+
+      <DrawerComponent title='Update Delivery State' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
+        {/* ... */}
+        <Form
+          name="updateDeliveryStateForm"
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 18 }}
+          onFinish={onUpdateProduct}
+          autoComplete="on"
+        >
+          {/* Assuming isDelivered is a boolean field */}
+          <Form.Item
+            label="Update Delivered"
+            name="isDelivered"
+            rules={[{ required: true, message: 'Please select the delivery state!' }]}
+          >
+            <Select>
+              <Select.Option value={true}>True</Select.Option>
+              <Select.Option value={false}>False</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Apply
+            </Button>
+          </Form.Item>
+        </Form>
+      </DrawerComponent>
+
     </div>
   )
 }

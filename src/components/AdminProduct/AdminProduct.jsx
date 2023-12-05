@@ -450,15 +450,6 @@ const AdminProduct = () => {
     })
   }
 
-
-  const handleDelteManyProducts = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: product?.access_token }, {
-      onSettled: () => {
-        queryProduct.refetch()
-      }
-    })
-  }
-
   const handleOnchangeAvatarDetails = async ({ fileList }) => {
     const file = fileList[0]
     if (!file.url && !file.preview) {
@@ -498,7 +489,7 @@ const AdminProduct = () => {
         <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px' }} /></Button>
       </div>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDelteMany={handleDelteManyProducts} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyProducts} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: event => {
               setRowSelected(record._id)
