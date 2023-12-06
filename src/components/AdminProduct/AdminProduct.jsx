@@ -20,10 +20,10 @@ const AdminProduct = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
-  const user = useSelector((state) => state?.user)
+  const product = useSelector((state) => state?.product)
   const searchInput = useRef(null);
 
-  const [stateProduct, setStateProduct] = useState({
+  const initial = () => ({
     name: '',
     price: '',
     description: '',
@@ -31,27 +31,34 @@ const AdminProduct = () => {
     image: '',
     type: '',
     countInStock: '',
-  });
-
-  const [stateProductDetails, setStateProductDetails] = useState({
-    name: '',
-    price: '',
-    description: '',
-    rating: '',
-    image: '',
-    type: '',
-    countInStock: '',
-  });
+    newType: '',
+    discount: '',
+  })
+  const [stateProduct, setStateProduct] = useState(initial());
+  const [stateProductDetails, setStateProductDetails] = useState(initial());
 
   const [form] = Form.useForm();
 
   const mutation = useMutationHook(
     (data) => {
-      const { name, price, description, rating, image, type,
-        countInStock } = data
+      const {
+        name,
+        price,
+        description,
+        rating,
+        image,
+        type,
+        countInStock,
+        discount,
+      } = data
       const res = ProductService.createProduct({
-        name, price,
-        description, rating, image, type, countInStock
+        name,
+        price,
+        description,
+        rating, image,
+        type,
+        countInStock,
+        discount,
       })
       return res
     }
@@ -88,7 +95,6 @@ const AdminProduct = () => {
     }
   )
 
-  console.log('mutationDeletedMany', mutationDeletedMany)
   //
   const getAllProduct = async () => {
     const product = JSON.parse(localStorage.getItem("product"));
@@ -96,6 +102,7 @@ const AdminProduct = () => {
     return { data: res?.data, key: 'products' }
   }
 
+  // show ra các thông tin khi edit sản phẩm
   const fetchGetDetailsProduct = async (rowSelected) => {
     const res = await ProductService.getDetailsProduct(rowSelected)
     if (res?.data) {
@@ -106,15 +113,20 @@ const AdminProduct = () => {
         rating: res?.data?.rating,
         image: res?.data?.image,
         type: res?.data?.type,
-        countInStock: res?.data?.countInStock
+        countInStock: res?.data?.countInStock,
+        discount: res?.data?.discount,
       })
     }
     setIsLoadingUpdate(false)
   }
   // khi bấm edit sản phẩm nó giúp cho việc hiện ra lại các thông tin cần edit
   useEffect(() => {
-    form.setFieldsValue(stateProductDetails)
-  }, [form, stateProductDetails])
+    if (!isModalOpen) {
+      form.setFieldsValue(stateProductDetails)
+    } else {
+      form.setFieldsValue(initial())
+    }
+  }, [form, stateProductDetails, isModalOpen])
 
   useEffect(() => {
     if (rowSelected && isOpenDrawer) {
@@ -130,7 +142,7 @@ const AdminProduct = () => {
   }
 
   const handleDeleteManyProducts = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+    mutationDeletedMany.mutate({ ids: ids, token: product?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -144,7 +156,7 @@ const AdminProduct = () => {
     })
   }
 
-  
+
   const fetchAllTypeProduct = async () => {
     const res = await ProductService.getAllTypeProduct()
     return res
@@ -245,27 +257,13 @@ const AdminProduct = () => {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{
-    //         backgroundColor: '#ffc069',
-    //         padding: 0,
-    //       }}
-    //       searchWords={[searchText]}
-    //       autoEscape
-    //       textToHighlight={text ? text.toString() : ''}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
   });
 
   const columns = [
     {
       title: 'Name',
       dataIndex: 'name',
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: (a, b) => a.name.localeCompare(b.name),
       ...getColumnSearchProps('name'), //search name
     },
     {
@@ -373,7 +371,7 @@ const AdminProduct = () => {
   }
 
   const handleDeleteProduct = () => {
-    mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
+    mutationDeleted.mutate({ id: rowSelected, token: product?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -390,12 +388,23 @@ const AdminProduct = () => {
       image: '',
       type: '',
       countInStock: '',
+      discount: '',
     })
     form.resetFields()
   };
 
   const onFinish = () => {
-    mutation.mutate(stateProduct, {
+    const params = {
+      name: stateProduct.name,
+      price: stateProduct.price,
+      description: stateProduct.description,
+      rating: stateProduct.rating,
+      image: stateProduct.image,
+      type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
+      countInStock: stateProduct.countInStock,
+      discount: stateProduct.discount,
+    }
+    mutation.mutate(params, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -426,10 +435,10 @@ const AdminProduct = () => {
       image: file.preview
     })
   }
- 
+
 
   const handleDelteManyProducts = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+    mutationDeletedMany.mutate({ ids: ids, token: product?.access_token }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -447,21 +456,8 @@ const AdminProduct = () => {
     })
   }
 
-
-
-  const handleOnChangeAvatarDetails = async ({ fileList }) => {
-    const file = fileList[0]
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setStateProductDetails({
-      ...stateProductDetails,
-      image: file.preview
-    })
-  }
-
   const onUpdateProduct = () => {
-    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateProductDetails }, {
+    mutationUpdate.mutate({ id: rowSelected, token: product?.access_token, ...stateProductDetails }, {
       onSettled: () => {
         queryProduct.refetch()
       }
@@ -470,7 +466,7 @@ const AdminProduct = () => {
 
   return (
     <div>
-      <WrapperHeader>Quản lý sản phẩm</WrapperHeader>
+      <WrapperHeader>Manage Products</WrapperHeader>
       <div style={{ marginTop: '10px' }}>
         <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px' }} /></Button>
       </div>
@@ -483,7 +479,7 @@ const AdminProduct = () => {
           };
         }} />
       </div>
-      <ModalComponent forceRender title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
+      <ModalComponent forceRender title="New Product" open={isModalOpen} onCancel={handleCancel} footer={null}>
         <Loading isLoading={isLoading}>
 
           <Form
@@ -586,13 +582,13 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </ModalComponent>
-      <DrawerComponent title='Chi tiết sản phẩm' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="90%">
+      <DrawerComponent title='Product Details' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
 
           <Form
             name="basic"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 22 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             onFinish={onUpdateProduct}
             autoComplete="on"
             form={form}
@@ -673,9 +669,9 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-      <ModalComponent title="Xóa sản phẩm" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct}>
+      <ModalComponent title="Delete product" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct}>
         <Loading isLoading={isLoadingDeleted}>
-          <div>Bạn có chắc xóa sản phẩm này không?</div>
+          <div>Are you sure you want to delete this product?</div>
         </Loading>
       </ModalComponent>
     </div>

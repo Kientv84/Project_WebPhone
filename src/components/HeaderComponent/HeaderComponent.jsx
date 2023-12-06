@@ -7,31 +7,45 @@ import {
   ShoppingCartOutlined
 } from '@ant-design/icons';
 import ButtonInputSearch from '..//ButtonInputSearch/ButtonInputSearch';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as UserService from '../../services/UserService'
 import { resetUser } from '../../redux/slice/userslide';
 import Loading from '../LoadingComponent/Loading';
 import { searchProduct } from '../../redux/slice/productSlide';
+import Fuse from 'fuse.js';
+import { setOrderItems } from '../../redux/slice/orderSlide';
+import { resetOrder1 } from '../../redux/slice/orderSlide';
 
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate()
   const user = useSelector((state) => state.user)
-  console.log('user ', user)
   const dispatch = useDispatch()
   const [userName, setUserName] = useState('')
   const [userAvatar, setUserAvatar] = useState('')
   const [search, setSearch] = useState('')
+  const [isOpenPopup, setIsOpenPopup] = useState(false)
+  const order = useSelector((state) => state.order)
   const [loading, setLoading] = useState(false)
+
   const handleNavigateLogin = () => {
     navigate('/sign-in')
+
+    const storedCartItems = localStorage.getItem('cartItems');
+    console.log('storedCartItems', storedCartItems)
+    if (storedCartItems) {
+      dispatch(setOrderItems(JSON.parse(storedCartItems)));
+    }
   }
+
   const handleLogout = async () => {
     setLoading(true)
     await UserService.logoutUser()
     dispatch(resetUser())
-    setLoading(false)
+    dispatch(resetOrder1());
+    localStorage.removeItem('cartItems')
+    setLoading(false);
     navigate('/');
   }
 
@@ -44,31 +58,61 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
 
   const content = (
     <div>
-      <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thông tin người dùng</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate('profile')}>My Information</WrapperContentPopup>
       {user?.isAdmin && (
-        <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quản lý hệ thống</WrapperContentPopup>
+        <WrapperContentPopup onClick={() => handleClickNavigate('admin')}>Management</WrapperContentPopup>
       )}
-      <WrapperContentPopup onClick={handleLogout}>Đăng Xuất</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate('my-order')}>My Order</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate()}>Log Out</WrapperContentPopup>
     </div>
   );
 
-  const onSearch = (e) => {
-    setSearch(e.target.value)
-    dispatch(searchProduct(e.target.value))
+  const handleClickNavigate = (type) => {
+    if (type === 'profile') {
+      navigate('/profile-user')
+    } else if (type === 'admin') {
+      navigate('/system/admin')
+    } else if (type === 'my-order') {
+      navigate('/my-order', {
+        state: {
+          id: user?.id,
+          token: user?.access_token
+        }
+      })
+    } else {
+      handleLogout()
+    }
+    setIsOpenPopup(false)
   }
+
+
+  const onSearch = (e) => {
+    const value = e.target.value.trim();
+    setSearch(value);
+    dispatch(searchProduct(value))
+  }
+
+
+  const handleCartClick = () => {
+    if (!user?.id) {
+      navigate('/sign-in');
+    } else {
+      navigate('/order');
+    }
+  };
 
   return (
     <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
       <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
         <Col span={5}>
-          <WrapperTextHeader onClick={() => navigate('/')}> WEBPHONE </WrapperTextHeader>
+          <WrapperTextHeader to='/'> WEBPHONE </WrapperTextHeader>
         </Col>
         {!isHiddenSearch && (
           <Col span={13}>
             <ButtonInputSearch
               size="large"
               placeholder="What do you need to find?"
-              textButton="Search"
+              textbutton="Search"
               onChange={onSearch}
             />
           </Col>
@@ -87,14 +131,14 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                 <UserOutlined style={{ fontSize: '30px' }} />
               )}
               {user?.access_token ? (
-                <Popover content={content} trigger="click" >
-                  <div style={{ cursor: 'pointer' }}>{userName?.length ? userName : user?.email}</div>
+                <Popover content={content} trigger="click" open={isOpenPopup} >
+                  <div style={{ cursor: 'pointer' }} onClick={() => setIsOpenPopup((prev) => !prev)}>{userName?.length ? userName : user?.email}</div>
                 </Popover>
               ) : (
                 <div onClick={handleNavigateLogin} style={{ cursor: 'pointer' }}>
-                  <WrapperTextHeaderSmall>Đăng Nhập/Đăng Ký</WrapperTextHeaderSmall>
+                  <WrapperTextHeaderSmall>Sign-In/ Sign-Up</WrapperTextHeaderSmall>
                   <div>
-                    <WrapperTextHeaderSmall>Tài Khoản</WrapperTextHeaderSmall>
+                    <WrapperTextHeaderSmall>Account</WrapperTextHeaderSmall>
                     <CaretDownOutlined />
                   </div>
                 </div>
@@ -102,11 +146,11 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </WrapperHeaderAccount>
           </Loading>
           {!isHiddenCart && (
-            <div onClick={() => navigate('/order')} style={{ cursor: 'pointer' }}>
-              <Badge count={4} size='small'>
+            <div onClick={handleCartClick} style={{ cursor: 'pointer' }}>
+              <Badge count={order?.orderItems?.length} size='small'>
                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
               </Badge>
-              <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
+              <WrapperTextHeaderSmall>Cart</WrapperTextHeaderSmall>
             </div>
           )}
         </Col>

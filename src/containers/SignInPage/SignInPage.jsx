@@ -4,21 +4,23 @@ import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogo from '../../assets/images/SignIn.png'
 import { Image } from 'antd'
-import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
+import { EyeFilled, EyeInvisibleFilled, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
+import { useLocation, useNavigate } from 'react-router-dom'
 import * as UserService from '../../services/UserService'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
 import jwt_decode from "jwt-decode";
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from '../../redux/slice/userslide'
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('')
+  const location = useLocation()
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.user)
 
   const navigate = useNavigate()
 
@@ -29,27 +31,35 @@ const SignInPage = () => {
   const { data, isLoading, isSuccess } = mutation
 
   useEffect(() => {
-    if (isSuccess) {
-      navigate('/')
+    if (isSuccess && data?.status === 'OK') {
+      if (location?.state) {
+        navigate(location?.state)
+      } else {
+        message.success('Logged in successfully')
+        navigate('/')
+      }
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))
+      // localStorage.setItem('refresh_token', JSON.stringify(data?.refresh_token))
+      // console.log(data)
       if (data?.access_token) {
         const decoded = jwt_decode(data?.access_token)
-        // console.log('decoded', decoded)
         if (decoded?.id) {
           handleGetDetailsUser(decoded.id, data?.access_token)
         }
       }
     }
-  }, [isSuccess])
+  }, [isSuccess, data])
+
 
   const handleGetDetailsUser = async (id, token) => {
+    // console.log('token', token)
+    // const storage = localStorage.getItem('refresh_token')
+    // console.log('storage', storage)
+    // const refreshToken = JSON.parse(storage)
     const res = await UserService.getDetailsUser(id, token)
     dispatch(updateUser({ ...res?.data, access_token: token }))
     // console.log('res', res)
   }
-
-
-  console.log('mutation', mutation)
 
   const handleOnChangeEmail = (value) => {
     setEmail(value)
@@ -64,26 +74,31 @@ const SignInPage = () => {
       email,
       password
     })
+
+    console.log('sign-in', email, password)
   }
 
   const handleNavigateSignUp = () => {
     navigate('/sign-up')
   }
 
+  const handleNavigateForgotPass = () => {
+    navigate('/forgot-password')
+  }
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
       <div style={{ width: '800px', height: '400px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
-          <h1 style={{ fontSize: '30px', marginBottom: '5px' }}>Xin chào</h1>
-          <p style={{ fontSize: '15px', marginBottom: '10px' }}>Đăng nhập hoặc tạo tài khoản</p>
-          <InputForm style={{ marginBottom: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
+          <h1 style={{ fontSize: '30px', marginBottom: '5px', marginTop: '0px' }}>Sign-In for member</h1>
+          <InputForm style={{ marginBottom: '10px', marginTop: '40px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnChangeEmail} />
           <div style={{ position: 'relative' }}>
             <span
               onClick={() => setIsShowPassword(!isShowPassword)}
               style={{
                 zIndex: 10,
                 position: 'absolute',
-                top: '3px',
+                top: '5px',
                 right: '8px',
                 fontSize: '15px'
               }}>
@@ -98,7 +113,6 @@ const SignInPage = () => {
             <InputForm placeholder="password" type={isShowPassword ? "text" : "password"}
               value={password} onChange={handleOnChangePassword} />
           </div>
-
           {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>}
           <Loading isLoading={isLoading} >
             <ButtonComponent
@@ -113,12 +127,12 @@ const SignInPage = () => {
                 borderRadius: '4px',
                 margin: '26px 0 10px'
               }}
-              textButton={'Đăng nhập'}
-              styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+              textbutton={'Sign-In'}
+              styletextbutton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             ></ButtonComponent>
           </Loading>
-          <p style={{ marginBottom: '-10px' }}><WrapperTextLight >Quên mật khẩu?</WrapperTextLight></p>
-          <p style={{ fontSize: " 15px" }}>Chưa có tài khoản? <WrapperTextLight onClick={handleNavigateSignUp}> Tạo tài khoản</WrapperTextLight></p>
+          <p style={{ marginBottom: '-10px' }} onClick={handleNavigateForgotPass} ><WrapperTextLight >Forgot Password</WrapperTextLight></p>
+          <p style={{ fontSize: " 15px" }}>Don't have an account yet? <WrapperTextLight onClick={handleNavigateSignUp}> Register</WrapperTextLight></p>
         </WrapperContainerLeft>
 
         <WrapperContainerRight>

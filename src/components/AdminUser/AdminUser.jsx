@@ -74,9 +74,9 @@ const AdminUser = () => {
   }
 
   const getAllUsers = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    // const user = JSON.parse(localStorage.getItem("user"));
     const res = await UserService.getAllUser(user?.access_token)
-    return { data: res?.data, key: 'user' }
+    return res
   }
 
   const fetchGetDetailsUser = async (rowSelected) => {
@@ -311,11 +311,11 @@ const AdminUser = () => {
 
   const confirmDelete = (onOk) => {
     Modal.confirm({
-      title: 'Xác nhận xóa',
-      content: 'Bạn có chắc chắn muốn xóa?',
-      okText: 'Xóa',
-      okType: 'danger',
-      cancelText: 'Hủy',
+      title: 'Confirm Deletion',
+      content: 'Are you sure you want to DELETE?',
+      okText: 'DELETE',
+      okType: 'Danger',
+      cancelText: 'Cancel',
       onOk,
     });
   };
@@ -350,7 +350,7 @@ const AdminUser = () => {
 
   return (
     <div>
-      <WrapperHeader>Quản lý người dùng</WrapperHeader>
+      <WrapperHeader>Manage Users</WrapperHeader>
       <div style={{ marginTop: '20px' }}>
         <TableComponent handleDeleteMany={handleDeleteManyUsers} columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
           return {
@@ -361,12 +361,12 @@ const AdminUser = () => {
           };
         }} />
       </div>
-      <DrawerComponent title='Chi tiết người dùng' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="50%">
+      <DrawerComponent title='User Details' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
         <Loading isLoading={isLoadingUpdate}>
           <Form
             name="basic"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 22 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             onFinish={onUpdateUser}
             autoComplete="off"
             form={form}
@@ -429,9 +429,9 @@ const AdminUser = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-      <ModalComponent forceRender title="Xóa người dùng" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser}>
+      <ModalComponent forceRender title="Delete user" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser}>
         <Loading isLoading={isLoadingDeleted}>
-          <div>Bạn có chắc xóa tài khoản này không?</div>
+          <div>Are you sure you want to delete this account?</div>
         </Loading>
       </ModalComponent>
     </div>

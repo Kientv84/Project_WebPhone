@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { convertPrice } from '../../utils'
 
 const CardComponent = (props) => {
-  const { countInStock, description, image, name, price, rating, type, selled, discount, id } = props
+  const { countInStock, description, image, name, price, rating, type, discount, sold, id } = props
   const navigate = useNavigate()
   const handleDetailProduct = (id) => {
     navigate(`/product-details/${id}`)
@@ -16,11 +16,10 @@ const CardComponent = (props) => {
     <WrapperCardStyle
       hoverable
       headStyle={{ width: '200px', height: '200px' }}
-      style={{
-        width: 200,
-      }}
+      style={{ width: 200 }}
       cover={<img alt="example" src={image} />}
       onClick={() => handleDetailProduct(id)}
+    // disable={countInStock === 0}
     >
       <img
         src={logochinhhang}
@@ -35,19 +34,18 @@ const CardComponent = (props) => {
       />
 
       <StyleNameProduct> {name} </StyleNameProduct>
-        <WrapperReportText>
-          <span style={{ marginRight: '4px' }}>
-            <span>{rating} </span> <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)' }} />
-          </span>
-          <WrapperStyleTextSell> | Da ban {selled || 1000}+</WrapperStyleTextSell>
-        </WrapperReportText>
-        <WrapperPriceText>
-          <span style={{ marginRight: '8px' }}>{convertPrice(price)}</span>
-          <WrapperDiscountText>
-            - {discount || 5} %
-          </WrapperDiscountText>
-        </WrapperPriceText>
-
+      <WrapperReportText>
+        <span style={{ marginRight: '4px' }}>
+          <span>{rating} </span> <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)' }} />
+        </span>
+        <WrapperStyleTextSell> | Sold {sold || 0}</WrapperStyleTextSell>
+      </WrapperReportText>
+      <WrapperPriceText>
+        <span style={{ marginRight: '8px' }}>{convertPrice(price)}</span>
+        <WrapperDiscountText>
+          - {discount || 5} %
+        </WrapperDiscountText>
+      </WrapperPriceText>
     </WrapperCardStyle>
   )
 }

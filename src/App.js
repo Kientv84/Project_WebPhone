@@ -2,18 +2,32 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { routes } from './routes/index';
 import DefaultComponent from './components/DefaultComponent/DefaultComponent';
-import axios from 'axios';
-import { useQuery } from 'react-query';
+// import axios from 'axios';
+// import { useQuery } from 'react-query';
 import { isJsonString } from './utils';
 import jwt_decode from "jwt-decode";
 import * as UserService from './services/UserService'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { updateUser } from './redux/slice/userslide';
 import Loading from './components/LoadingComponent/Loading';
 
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
+
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   const { storageData, decoded } = handleDecoded();
+
+  //   const fetchData = async () => {
+  //     if (decoded?.id) {
+  //       await handleGetDetailsUser(decoded.id, storageData);
+  //     }
+  //     setIsLoading(false);
+  //   };
+
+  //   fetchData();
+  // }, [handleGetDetailsUser]); // Include handleGetDetailsUser in the dependency array
 
   useEffect(() => {
     setIsLoading(true)
@@ -41,7 +55,7 @@ function App() {
     // Do something before request is sent
     const currentTime = new Date()
     const { decoded } = handleDecoded()
-    console.log('decoded', decoded)
+    // console.log('decoded', decoded)
     if (decoded?.exp < currentTime.getTime() / 1000) {
       const data = await UserService.refreshToken()
       config.headers['token'] = `Bearer ${data?.access_token}`
