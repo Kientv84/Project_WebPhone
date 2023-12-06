@@ -11,9 +11,6 @@ export const productSlide = createSlice({
   initialState,
   reducers: {
     searchProduct: (state, action) => {
-      console.log('Action Payload:', action.payload);
-      console.log('All Products:', state.allProducts);
-      console.log('Filtered Products:', state.filteredProducts);
       state.search = action.payload;
 
       // Filter the products based on the search term
