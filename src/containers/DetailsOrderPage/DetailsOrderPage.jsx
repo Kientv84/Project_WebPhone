@@ -1,5 +1,5 @@
 import React from 'react'
-import { WrapperAllPrice, WrapperContentInfo, WrapperHeaderUser, WrapperInfoUser, WrapperItem, WrapperItemLabel, WrapperLabel, WrapperNameProduct, WrapperProduct, WrapperStyleContent } from './style'
+import { WrapperAllPrice, WrapperContentInfo, WrapperHeaderUser, WrapperInfoUser, WrapperItem, WrapperItemLabel, WrapperLabel, WrapperNameProduct, WrapperProduct, WrapperStyleContent, WrapperStyleHeader } from './style'
 // import logo from '../../assets/images/logo.png'
 import { useLocation, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
@@ -15,7 +15,6 @@ const DetailsOrderPage = () => {
     const location = useLocation()
     const { state } = location
     const { id } = params
-    // console.log('id', id)
 
     const fetchDetailsOrder = async () => {
         const res = await OrderService.getDetailsOrder(id, state?.token)
@@ -43,9 +42,9 @@ const DetailsOrderPage = () => {
 
     return (
         <Loading isLoading={isLoading}>
-            <div style={{ width: '100%', background: '#f5f5fa' }}>
+            <div style={{ width: '100%', background: '#f5f5fa', paddingTop: '0.1px' }}>
                 <div style={{ width: '1270px', margin: '0 auto', height: '1270px' }}>
-                    <h4>Order Details</h4>
+                    <h3 style={{ marginTop: '5px' }}>Order Details</h3>
                     <WrapperHeaderUser>
                         <WrapperInfoUser>
                             <WrapperLabel>Recipient's address</WrapperLabel>
@@ -70,13 +69,14 @@ const DetailsOrderPage = () => {
                             </WrapperContentInfo>
                         </WrapperInfoUser>
                     </WrapperHeaderUser>
+
                     <WrapperStyleContent>
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ width: '670px' }}>Product</div>
+                        <WrapperStyleHeader style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ width: '670px', fontWeight: 'bold' }}>Product</div>
                             <WrapperItemLabel>Price</WrapperItemLabel>
                             <WrapperItemLabel>Quantity</WrapperItemLabel>
                             <WrapperItemLabel>Discount</WrapperItemLabel>
-                        </div>
+                        </WrapperStyleHeader>
                         {data?.orderItems?.map((order) => {
                             return (
                                 <WrapperProduct>
@@ -97,7 +97,7 @@ const DetailsOrderPage = () => {
                                             whiteSpace: 'nowrap',
                                             marginLeft: '10px',
                                             height: '70px',
-                                        }}>Phone Number</div>
+                                        }}>{order?.name}</div>
                                     </WrapperNameProduct>
                                     <WrapperItem>{convertPrice(order?.price)}</WrapperItem>
                                     <WrapperItem>{order?.amount}</WrapperItem>

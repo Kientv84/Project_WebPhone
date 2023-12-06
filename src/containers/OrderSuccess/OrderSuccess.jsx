@@ -13,10 +13,10 @@ const OrderSuccess = () => {
   // console.log('state', state)
 
   return (
-    <div style={{ background: '#f5f5fa', with: '100%', height: '100vh', marginTop: '0px' }}>
+    <div style={{ background: '#f5f5fa', with: '100%', height: '100vh', paddingTop: '0.1px' }}>
       <Loading isLoading={false}>
         <div style={{ height: '100%', width: '1270px', margin: '0px auto' }}>
-          <h3 style={{ fontWeight: 'bold' }}>Order Success</h3>
+          <h3 style={{ fontWeight: 'bold', marginTop: '5px' }}>Order Success</h3>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div>
               <WrapperInfo1>

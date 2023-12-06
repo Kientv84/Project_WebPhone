@@ -9,6 +9,8 @@ import * as UserService from '../../services/UserService'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
+import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
+
 
 
 const SignUpPage = () => {
@@ -73,11 +75,17 @@ const SignUpPage = () => {
               style={{
                 zIndex: 10,
                 position: 'absolute',
-                top: '3px',
+                top: '5px',
                 right: '8px',
                 fontSize: '15px'
               }}>
-
+              {
+                isShowPassword ? (
+                  <EyeFilled />
+                ) : (
+                  <EyeInvisibleFilled />
+                )
+              }
             </span>
             <InputForm placeholder="password" type={isShowPassword ? "text" : "password"} style={{ marginBottom: '10px' }}
               value={password} onChange={handleOnChangePassword} />
@@ -88,10 +96,17 @@ const SignUpPage = () => {
               style={{
                 zIndex: 10,
                 position: 'absolute',
-                top: '3px',
+                top: '5px',
                 right: '8px',
                 fontSize: '15px'
               }}>
+              {
+                isShowConfirmPassword ? (
+                  <EyeFilled />
+                ) : (
+                  <EyeInvisibleFilled />
+                )
+              }
             </span>
             <InputForm placeholder="confirm password" type={isShowConfirmPassword ? "text" : "password"}
               value={confirmPassword} onChange={handleOnChangeConfirmPassword} />
