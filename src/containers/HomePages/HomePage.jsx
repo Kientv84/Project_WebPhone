@@ -28,7 +28,7 @@ import ButtonInputSearch from "../../components/ButtonInputSearch/ButtonInputSea
 const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     const searchProduct = useSelector((state) => state?.product?.search)
     const searchDebounce = useDebounce(searchProduct, 1000)
-    // const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [limit, setLimit] = useState(12)
     const [typeProducts, setTypeProducts] = useState([])
 

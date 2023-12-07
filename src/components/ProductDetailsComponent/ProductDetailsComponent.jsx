@@ -212,11 +212,11 @@ const ProductDetailsComponent = ({ idProduct }) => {
                         <WrapperPriceProduct>
                             <WrapperPriceTextProduct>{convertPrice(productDetails?.price)}</WrapperPriceTextProduct>
                         </WrapperPriceProduct>
-                        <WrapperAddressProduct>
+                        {/* <WrapperAddressProduct>
                             <span>Delivery To </span>
                             <span className='address'> {user?.address}  </span>
                             <span className='change-address' onClick={handleChangeAddress} style={{ color: 'rgb(66, 200, 183)', cursor: 'pointer' }}>Change Address</span>
-                        </WrapperAddressProduct>
+                        </WrapperAddressProduct> */}
                         <LikeButtonComponent
                             datahref={process.env.REACT_APP_IS_LOCAL
                                 ? "https://developers.facebook.com/docs/plugins/"
