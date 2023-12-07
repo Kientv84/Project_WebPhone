@@ -1,5 +1,5 @@
 import { Button, Form, Space, Select } from 'antd'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import { WrapperHeader, WrapperUploadFile } from './style'
 import TableComponent from '../TableComponent/TableComponent'
@@ -21,6 +21,7 @@ const AdminProduct = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const product = useSelector((state) => state?.product)
+  // const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
 
   const initial = () => ({
@@ -55,7 +56,8 @@ const AdminProduct = () => {
         name,
         price,
         description,
-        rating, image,
+        rating,
+        image,
         type,
         countInStock,
         discount,
@@ -129,6 +131,8 @@ const AdminProduct = () => {
   }, [form, stateProductDetails, isModalOpen])
 
   useEffect(() => {
+    // console.log('rowSelected', rowSelected)
+    // console.log('isOpenDrawer', isOpenDrawer)
     if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true)
       fetchGetDetailsProduct(rowSelected)
@@ -138,7 +142,6 @@ const AdminProduct = () => {
   //
   const handleDetailsProduct = () => {
     setIsOpenDrawer(true)
-
   }
 
   const handleDeleteManyProducts = (ids) => {
@@ -166,7 +169,7 @@ const AdminProduct = () => {
   const { data, isLoading, isSuccess, isError } = mutation
   const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
   const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
-  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedmany } = mutationDeletedMany
+  const { data: dataDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
 
 
   const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
@@ -257,79 +260,67 @@ const AdminProduct = () => {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{
-    //         backgroundColor: '#ffc069',
-    //         padding: 0,
-    //       }}
-    //       searchWords={[searchText]}
-    //       autoEscape
-    //       textToHighlight={text ? text.toString() : ''}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
   });
 
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps('name'), //search name
-    },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      sorter: (a, b) => a.price - b.price,
-      filters: [
-        { text: '>= 10000000', value: '>=' },
-        { text: '<= 10000000', value: '<=' },
-      ],
-      onFilter: (value, record) => {
-        if (value === '>=') {
-          return record.price >= 10000000;
-        }
-        return record.price <= 10000000;
 
+
+  // Memoize some values to avoid unnecessary recalculations
+  const memoizedColumns = useMemo(() => {
+    return [
+      {
+        title: 'Name',
+        dataIndex: 'name',
+        sorter: (a, b) => a.name.length - b.name.length,
+        ...getColumnSearchProps('name'), // search name
       },
-    },
-    {
-      title: 'Rating',
-      dataIndex: 'rating',
-      sorter: (a, b) => a.rating - b.rating,
-      filters: [
-        { text: '>= 3.5', value: '>=' },
-        { text: '<= 3.5', value: '<=' },
-      ],
-      onFilter: (value, record) => {
-        if (value === '>=') {
-          return record.rating >= 3.5;
-        }
-        return record.rating <= 3.5;
-
+      {
+        title: 'Price',
+        dataIndex: 'price',
+        sorter: (a, b) => a.price - b.price,
+        filters: [
+          { text: '>= 10000000', value: '>=' },
+          { text: '<= 10000000', value: '<=' },
+        ],
+        onFilter: (value, record) => {
+          if (value === '>=') {
+            return record.price >= 10000000;
+          }
+          return record.price <= 10000000;
+        },
       },
-    },
-    {
-      title: 'Type',
-      dataIndex: 'type',
-      ...getColumnSearchProps('type'), //search type
+      {
+        title: 'Rating',
+        dataIndex: 'rating',
+        sorter: (a, b) => a.rating - b.rating,
+        filters: [
+          { text: '>= 3.5', value: '>=' },
+          { text: '<= 3.5', value: '<=' },
+        ],
+        onFilter: (value, record) => {
+          if (value === '>=') {
+            return record.rating >= 3.5;
+          }
+          return record.rating <= 3.5;
+        },
+      },
+      {
+        title: 'Type',
+        dataIndex: 'type',
+        ...getColumnSearchProps('type'), // search type
+      },
+      {
+        title: 'Action',
+        dataIndex: 'action',
+        render: renderAction,
+      },
+    ];
+  }, []);
 
-    },
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      render: renderAction,
-
-    },
-
-  ];
   const dataTable = products?.data?.length && products?.data?.map((product) => {
     return { ...product, key: product._id };
   })
 
+  //Thêm mới sp
   useEffect(() => {
     if (isSuccess && data?.status === 'OK') {
       message.success()
@@ -339,14 +330,16 @@ const AdminProduct = () => {
     }
   }, [isSuccess])
 
+  //Xoá nhiều sp
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
       message.success()
-    } else if (isErrorDeletedmany) {
+    } else if (isErrorDeletedMany) {
       message.error()
     }
   }, [isSuccessDeletedMany])
 
+  //Xoá 1 sp
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === 'OK') {
       message.success()
@@ -356,7 +349,7 @@ const AdminProduct = () => {
     }
   }, [isSuccessDeleted])
 
-
+  //Cập nhật sp
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === 'OK') {
       message.success()
@@ -461,19 +454,6 @@ const AdminProduct = () => {
     })
   }
 
-
-
-  const handleOnChangeAvatarDetails = async ({ fileList }) => {
-    const file = fileList[0]
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setStateProductDetails({
-      ...stateProductDetails,
-      image: file.preview
-    })
-  }
-
   const onUpdateProduct = () => {
     mutationUpdate.mutate({ id: rowSelected, token: product?.access_token, ...stateProductDetails }, {
       onSettled: () => {
@@ -489,7 +469,7 @@ const AdminProduct = () => {
         <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px' }} /></Button>
       </div>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDeleteMany={handleDeleteManyProducts} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyProducts} columns={memoizedColumns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: event => {
               setRowSelected(record._id)
@@ -696,6 +676,5 @@ const AdminProduct = () => {
     </div>
   )
 }
-
 
 export default AdminProduct

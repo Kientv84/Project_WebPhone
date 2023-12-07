@@ -4,14 +4,14 @@ import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogo from '../../assets/images/SignIn.png'
 import { Image } from 'antd'
-import { EyeFilled, EyeInvisibleFilled, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
+// import { EyeFilled, EyeInvisibleFilled, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { useLocation, useNavigate } from 'react-router-dom'
 import * as UserService from '../../services/UserService'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
 import jwt_decode from "jwt-decode";
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { updateUser } from '../../redux/slice/userslide'
 
 const SignInPage = () => {
@@ -21,7 +21,6 @@ const SignInPage = () => {
   const location = useLocation()
   // console.log('locate', location)
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.user)
 
   const navigate = useNavigate()
 
@@ -38,7 +37,7 @@ const SignInPage = () => {
       if (location?.state) {
         navigate(location?.state)
       } else {
-        message.success('Đăng nhập thành công')
+        message.success('Sign-in Success')
         navigate('/')
       }
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))

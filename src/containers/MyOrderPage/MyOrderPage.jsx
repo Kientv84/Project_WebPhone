@@ -66,7 +66,7 @@ const MyOrderPage = () => {
     } else if (isErrorCancel) {
       message.error()
     }
-  }, [isErrorCancel], [isSuccessCancel])
+  }, [isErrorCancel, isSuccessCancel, dataCancel])
 
   const renderProduct = (data) => {
     return data?.map((order) => {
@@ -96,8 +96,8 @@ const MyOrderPage = () => {
   return (
     <Loading isLoading={isLoading || isLoadingCancel}>
       <WrapperContainer>
-        <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
-          <h4>My Order</h4>
+        <div style={{ height: '100%', width: '1270px', margin: '0 auto', padding: '0.1px 0px ' }}>
+          <h4>My Orders</h4>
           <WrapperListOrder>
             {data?.map((order) => {
               return (

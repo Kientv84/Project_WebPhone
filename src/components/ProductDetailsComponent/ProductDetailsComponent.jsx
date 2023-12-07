@@ -1,4 +1,4 @@
-import { Col, Row, Image, Rate, InputNumber } from 'antd'
+import { Col, Row, Image, Rate } from 'antd'
 import React, { useEffect, useState } from 'react'
 // import imageProduct from '../../assets/images/image.png.webp'
 import imageProductSmall from '../../assets/images/imagesmall1.png.webp'
@@ -152,11 +152,11 @@ const ProductDetailsComponent = ({ idProduct }) => {
                     <WrapperPriceProduct>
                         <WrapperPriceTextProduct>{convertPrice(productDetails?.price)}</WrapperPriceTextProduct>
                     </WrapperPriceProduct>
-                    <WrapperAddressProduct>
+                    {/* <WrapperAddressProduct>
                         <span>Delivery To </span>
                         <span className='address'> {user?.address}  </span>
                         <span className='change-address' onClick={handleChangeAddress} style={{ color: 'rgb(66, 200, 183)', cursor: 'pointer' }}>Change Address</span>
-                    </WrapperAddressProduct>
+                    </WrapperAddressProduct> */}
                     <LikeButtonComponent
                         datahref={process.env.REACT_APP_IS_LOCAL
                             ? "https://developers.facebook.com/docs/plugins/"

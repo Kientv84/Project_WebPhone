@@ -16,7 +16,7 @@ const OrderSuccess = () => {
   return (
     <div style={{ background: '#f5f5fa', with: '100%', height: '100vh', marginTop: '0px' }}>
       <Loading isLoading={false}>
-        <div style={{ height: '100%', width: '1270px', margin: '0px auto' }}>
+        <div style={{ height: '100%', width: '1270px', margin: '0px auto', padding: '0.1px 0px ' }}>
           <h3 style={{ fontWeight: 'bold' }}>Order Success</h3>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div>

@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from './style'
+import React, { useState } from 'react'
+import { WrapperContainerLeft } from './style'
 import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
-import { Image } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
 import * as message from '../../components/Message/Message'
-
-
 
 const PasswordReset = () => {
     const [isShowPassword, setIsShowPassword] = useState(false)

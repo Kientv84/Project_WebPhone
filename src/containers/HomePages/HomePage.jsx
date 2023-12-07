@@ -6,7 +6,6 @@ import slider2 from "../../assets/images/slider2.webp"
 import slider3 from "../../assets/images/slider3.webp"
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import CardComponent from "../../components/CardComponent/CardComponent";
-// import NavbarComponent from "../../components/NavbarComponent/NavbarComponent";
 import { useQuery } from "react-query";
 import * as ProductService from '../../services/ProductService'
 import { useSelector } from "react-redux";
@@ -17,10 +16,9 @@ import { useDebounce } from "../../hooks/useDebounce";
 const HomePage = () => {
     const searchProduct = useSelector((state) => state?.product?.search)
     const searchDebounce = useDebounce(searchProduct, 1000)
-    const [loading, setLoading] = useState(false)
+    // const [loading, setLoading] = useState(false)
     const [limit, setLimit] = useState(12)
     const [typeProducts, setTypeProducts] = useState([])
-
 
     const fetchProductAll = async (context) => {
         const limit = context?.queryKey && context?.queryKey[1]
@@ -41,7 +39,7 @@ const HomePage = () => {
     }, [])
 
     return (
-        <Loading isLoading={isLoading || loading}>
+        <Loading isLoading={isLoading}>
             <div style={{ width: '1270px', margin: '0 auto' }}>
                 <WrapperTypeProduct>
                     {typeProducts.map((item) => {

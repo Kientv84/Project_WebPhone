@@ -278,9 +278,9 @@ const PaymentPage = () => {
               </WrapperInfo2>
               <WrapperInfo3>
                 <div>
-                  <Label>Choose payment method</Label>
+                  <Label>Choose delivery method</Label>
                   <WrapperRadio onChange={handlePayment} value={payment}>
-                    <Radio value="later_money"> Cash on Delivery" (COD)</Radio>
+                    <Radio value="later_money"> Cash on Delivery (COD)</Radio>
                     <Radio value="paypal"> Pay with PayPal</Radio>
                   </WrapperRadio>
                 </div>

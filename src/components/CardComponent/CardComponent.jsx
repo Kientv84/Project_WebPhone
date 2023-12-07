@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { convertPrice } from '../../utils'
 
 const CardComponent = (props) => {
-  const { countInStock, description, image, name, price, rating, type, discount, sold, id } = props
+  const { image, name, price, rating, discount, sold, id } = props
   // console.log('props', props)
   const navigate = useNavigate()
   const handleDetailProduct = (id) => {
@@ -24,6 +24,7 @@ const CardComponent = (props) => {
     >
       <img
         src={logochinhhang}
+        alt={''}
         style={{
           width: '68px',
           height: '14px',

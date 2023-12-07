@@ -1,41 +1,150 @@
-import { Button, Form, Select, Space } from 'antd'
-import React, { useState } from 'react'
+import { Button, Form, Select, Space, message } from 'antd'
+import React, { useEffect, useState } from 'react'
 import { WrapperHeader } from './style'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'
 import { convertPrice } from '../../utils'
 import * as OrderService from '../../services/OrderService'
 import { useQuery } from 'react-query'
-import { EditOutlined, SearchOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import { orderConstant } from '../../constant'
 import DrawerComponent from '../DrawerComponent/DrawerComponent'
-// import PieChartComponent from './PieChart'
+import PieChartComponent from './PieChart'
+import ModalComponent from '../ModalComponent/ModalComponent'
+import { useMutationHook } from '../../hooks/useMutationHook'
+import Loading from '../LoadingComponent/Loading'
 
 const OrderAdmin = () => {
   const user = useSelector((state) => state?.user)
+  const [rowSelected, setRowSelected] = useState('');
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+  const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+  const [stateOrderDelivery, setStateOrderDelivery] = useState({
+    isDelivered: '',
+  });
 
   const getAllOrder = async () => {
     const res = await OrderService.getAllOrder(user?.access_token)
     return res
   }
 
+  const mutationUpdate = useMutationHook(
+    (data) => {
+      const { id, token, ...rests } = data
+      const res = OrderService.updateDeliveryState(
+        id, token,
+        { ...rests } // này là data nên phải là object
+      )
+      return res
+    }
+  )
+
+  const mutationDeleted = useMutationHook(
+    (data) => {
+      const { id, token } = data
+      const res = OrderService.deleteOrder(
+        id, token
+      )
+      return res
+    }
+  )
+
+  const mutationDeletedMany = useMutationHook(
+    (data) => {
+      const { token, ...ids } = data
+      const res = OrderService.deleteManyOrder(
+        ids, token
+      )
+      return res
+    }
+  )
+
+
+  const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
+  const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
+  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
+
   const queryOrder = useQuery({ queryKey: ['orders'], queryFn: getAllOrder })
   const { isLoading: isLoadingOrders, data: orders } = queryOrder
-  // console.log(queryOrder)
 
+  // console.log(queryOrder)
   const renderAction = () => {
     return (
       <div>
-        <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
+        <DeleteOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
+        <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsOpenDrawer(true)} />
       </div>
     )
   }
 
-  const handleDetailsProduct = () => {
-    setIsOpenDrawer(true)
+  const handleDeleteOrder = () => {
+    mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
+      onSettled: () => {
+        queryOrder.refetch()
+      }
+    })
   }
+
+  const handleDeleteManyOrders = (ids) => {
+    // console.log('accc', user?.access_token)
+    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
+      onSettled: () => {
+        queryOrder.refetch()
+      }
+    })
+  }
+
+  // show ra tình trạng đơn hàng
+  const fetchGetDetailsOrder = async (rowSelected) => {
+    const res = await OrderService.getDetailsOrder(rowSelected, user?.access_token)
+    console.log('res', res)
+    if (res?.data) {
+      setStateOrderDelivery({
+        isDelivered: res?.data?.isDelivered
+      })
+    }
+    setIsLoadingUpdate(false)
+  }
+
+  //Cập nhật giao hàng
+  useEffect(() => {
+    if (isSuccessUpdated && dataUpdated?.status === 'OK') {
+      message.success('Update Success')
+      setIsOpenDrawer(false);
+    } else if (isErrorUpdated) {
+      message.error('Update Fail')
+    }
+  }, [isSuccessUpdated])
+
+  //Xoá nhiều 
+  useEffect(() => {
+    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+      message.success("Delete orders Success")
+    } else if (isErrorDeletedMany) {
+      message.error()
+    }
+  }, [isSuccessDeletedMany])
+
+  //Xoá 1 
+  useEffect(() => {
+    if (isSuccessDeleted && dataDeleted?.status === 'OK') {
+      message.success()
+      setIsModalOpenDelete(false)
+    } else if (isErrorDeleted) {
+      message.error()
+    }
+  }, [isSuccessDeleted])
+
+  useEffect(() => {
+    // console.log('rowSelected', rowSelected)
+    // console.log('isOpenDrawer', isOpenDrawer)
+    if (rowSelected && isOpenDrawer) {
+      setIsLoadingUpdate(true)
+      fetchGetDetailsOrder(rowSelected)
+    }
+  }, [rowSelected, isOpenDrawer])
 
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -164,7 +273,7 @@ const OrderAdmin = () => {
   ];
 
   const dataTable = orders?.data?.length && orders?.data?.map((order) => {
-    console.log('order', order)
+    // console.log('order', order)
     return {
       ...order, key: order._id,
       userName: order?.shippingAddress?.fullName,
@@ -172,67 +281,72 @@ const OrderAdmin = () => {
       address: order?.shippingAddress?.address,
       paymentMethod: orderConstant.payment[order?.paymentMethod],
       isPaid: order?.isPaid ? 'TRUE' : 'FALSE',
-      isDelivered: order?.isDelivered ? 'TRUE' : 'FALSE',
+      isDelivered: order?.isDelivered ? 'Delivered' : 'Not Shipped',
       totalPrice: convertPrice(order?.totalPrice)
     }
   })
 
-  const onUpdateProduct = async () => {
-    // Assuming you have an API endpoint to update the delivery state
-    try {
-      // console.log(orders?.data?._id, orders?.data.isDelivered, orders?.data?.access_token)
-      // Make an API call to update the delivery state
-      await OrderService.updateDeliveryState(orders?.data?._id, orders?.data.isDelivered, orders?.data?.access_token);
-
-      // Close the drawer after successful update
-      setIsOpenDrawer(false);
-
-      // Refetch the orders to update the table
-      queryOrder.refetch();
-    } catch (error) {
-      // Handle errors
-      console.error('Error updating delivery state:', error);
-    }
+  const onUpdateDelivery = () => {
+    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateOrderDelivery }, {
+      onSettled: () => {
+        queryOrder.refetch()
+      }
+    })
   };
 
   return (
     <div>
       <WrapperHeader>Manage Orders</WrapperHeader>
       <div style={{ height: 200, width: 200 }}>
-        {/* <PieChartComponent data={orders?.data} /> */}
+        <PieChartComponent data={orders?.data} />
       </div>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent columns={columns} isLoading={isLoadingOrders} data={dataTable} />
+        <TableComponent handleDeleteMany={handleDeleteManyOrders} columns={columns} isLoading={isLoadingOrders} data={dataTable} onRow={(record, rowIndex) => {
+          return {
+            onClick: event => {
+              setRowSelected(record._id)
+            }
+          };
+        }} />
       </div>
 
-      <DrawerComponent title='Update Delivery State' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
+      <DrawerComponent title='Update Delivery' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
         {/* ... */}
-        <Form
-          name="updateDeliveryStateForm"
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
-          onFinish={onUpdateProduct}
-          autoComplete="on"
-        >
-          {/* Assuming isDelivered is a boolean field */}
-          <Form.Item
-            label="Update Delivered"
-            name="isDelivered"
-            rules={[{ required: true, message: 'Please select the delivery state!' }]}
+        <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
+          <Form
+            name="updateDeliveryStateForm"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
+            onFinish={onUpdateDelivery}
+            autoComplete="on"
           >
-            <Select>
-              <Select.Option value={true}>True</Select.Option>
-              <Select.Option value={false}>False</Select.Option>
-            </Select>
-          </Form.Item>
+            {/* Assuming isDelivered is a boolean field */}
+            <Form.Item
+              label="Delivery State:"
+              name="isDelivered"
+              rules={[{ required: true, message: 'Please select the delivery state!' }]}
+            >
+              <Select defaultValue={stateOrderDelivery.isDelivered !== null ? stateOrderDelivery.isDelivered : undefined}
+                onChange={(value) => setStateOrderDelivery({ isDelivered: value })}>
+                <Select.Option value={true}>True</Select.Option>
+                <Select.Option value={false}>False</Select.Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Apply
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
+              <Button type="primary" htmlType="submit">
+                Apply
+              </Button>
+            </Form.Item>
+          </Form>
+        </Loading>
       </DrawerComponent>
+
+      <ModalComponent title="Delete order" open={isModalOpenDelete} onCancel={() => setIsModalOpenDelete(false)} onOk={handleDeleteOrder}>
+        <Loading isLoading={isLoadingDeleted}>
+          <div>Are you sure you want to delete this order?</div>
+        </Loading>
+      </ModalComponent>
 
     </div>
   )

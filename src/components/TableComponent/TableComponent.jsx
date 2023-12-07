@@ -47,7 +47,7 @@ const TableComponent = (props) => {
                     padding: '10px',
                     cursor: 'pointer',
                 }} onClick={handleDeleteAll}>
-                    Xóa tất cả
+                    Delete All
                 </div>
             )}
             <button onClick={exportExcel}>Export Excel</button>
