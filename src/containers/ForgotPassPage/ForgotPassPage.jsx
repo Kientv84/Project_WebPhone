@@ -38,34 +38,6 @@ const ForgotPassPage = () => {
         });
     }
 
-
-    //     axios.post('http://localhost:3000/api/user/forgot-password', { email })
-    //         .then(res => {
-    //             if (res?.data?.status === "Success") {
-    //                 handleNavigateSignIn()
-    //             }
-    //         }).catch(err => console.log(err))
-    // };
-    // const sendLink = async () => {
-    //     try {
-    //         if (!email) {
-    //             message.error('Please enter your email address');
-    //             return;
-    //         }
-    //         const res = await axios.post('http://localhost:3000/api/user/forgot-password', { email });
-    //         if (res?.data?.status === 'Success') {
-    //             handleNavigateSignIn();
-    //         }
-    //     } catch (err) {
-    //         if (err?.response?.data?.status === "ERR" && err?.response?.data?.message) {
-    //             message.error(err?.response?.data?.message);
-    //         } else {
-    //             console.error(err);
-    //             message.error("An unexpected error occurred. Please try again later.");
-    //         }
-    //     }
-    // };
-
     const handleNavigateSignIn = () => {
         navigate('/sign-in')
     }

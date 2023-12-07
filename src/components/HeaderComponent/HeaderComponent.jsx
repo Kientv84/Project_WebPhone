@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Badge, Col, Popover } from 'antd';
-import { WrapperHeaderAccount, WrapperHeader, WrapperTextHeader, WrapperTextHeaderSmall, WrapperContentPopup } from './style';
+import { WrapperHeaderAccount, WrapperHeader, WrapperTextHeader, WrapperTextHeaderSmall, WrapperContentPopup, WrapperTextHeaderSmall1 } from './style';
 import {
   UserOutlined,
   CaretDownOutlined,
   ShoppingCartOutlined
 } from '@ant-design/icons';
 import ButtonInputSearch from '..//ButtonInputSearch/ButtonInputSearch';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as UserService from '../../services/UserService'
 import { resetUser } from '../../redux/slice/userslide';
 import Loading from '../LoadingComponent/Loading';
 import { searchProduct } from '../../redux/slice/productSlide';
 // import Fuse from 'fuse.js';
+import { setOrderItems } from '../../redux/slice/orderSlide';
+import { resetOrder1 } from '../../redux/slice/orderSlide';
 
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate()
   const user = useSelector((state) => state.user)
-  // console.log('user ', user)
   const dispatch = useDispatch()
   const [userName, setUserName] = useState('')
   const [userAvatar, setUserAvatar] = useState('')
@@ -28,15 +29,23 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const order = useSelector((state) => state.order)
   const [loading, setLoading] = useState(false)
 
-
   const handleNavigateLogin = () => {
     navigate('/sign-in')
+
+    const storedCartItems = localStorage.getItem('cartItems');
+    console.log('storedCartItems', storedCartItems)
+    if (storedCartItems) {
+      dispatch(setOrderItems(JSON.parse(storedCartItems)));
+    }
   }
+
   const handleLogout = async () => {
     setLoading(true)
     await UserService.logoutUser()
     dispatch(resetUser())
-    setLoading(false)
+    dispatch(resetOrder1());
+    localStorage.removeItem('cartItems')
+    setLoading(false);
     navigate('/');
   }
 
@@ -78,10 +87,19 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
 
 
   const onSearch = (e) => {
-    const value = e.target.value
+    const value = e.target.value.trim();
     setSearch(value);
     dispatch(searchProduct(value))
   }
+
+
+  const handleCartClick = () => {
+    if (!user?.id) {
+      navigate('/sign-in');
+    } else {
+      navigate('/order');
+    }
+  };
 
   return (
     <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
@@ -128,11 +146,11 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </WrapperHeaderAccount>
           </Loading>
           {!isHiddenCart && (
-            <div onClick={() => navigate('/order')} style={{ cursor: 'pointer' }}>
+            <div onClick={handleCartClick} style={{ cursor: 'pointer', display: 'inline-block', verticalAlign: 'middle' }}>
               <Badge count={order?.orderItems?.length} size='small'>
                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
               </Badge>
-              <WrapperTextHeaderSmall>Cart</WrapperTextHeaderSmall>
+              <WrapperTextHeaderSmall1>Cart</WrapperTextHeaderSmall1>
             </div>
           )}
         </Col>

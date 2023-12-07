@@ -96,8 +96,13 @@ const MyOrderPage = () => {
   return (
     <Loading isLoading={isLoading || isLoadingCancel}>
       <WrapperContainer>
+<<<<<<< HEAD
         <div style={{ height: '100%', width: '1270px', margin: '0 auto', padding: '0.1px 0px ' }}>
           <h4>My Orders</h4>
+=======
+        <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
+          <h3 style={{ marginTop: '5px' }}>My Order</h3>
+>>>>>>> master
           <WrapperListOrder>
             {data?.map((order) => {
               return (

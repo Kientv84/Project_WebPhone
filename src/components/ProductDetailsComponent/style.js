@@ -5,10 +5,16 @@ export const WrapperStyleImageSmall = styled(Image)`
     height: 64px;
     width: 64px;
 `
+export const WrapperStyleImageSmall1 = styled(Image)`
+    height: 60px;
+    width: 60px;
+`
 
 export const WrapperStyleColImage = styled(Col)`
     flex-basis: unset;
     display: flex;
+    justify-content: center;  // Căn giữa ảnh trong Col
+    align-items: center;
 `
 
 export const WrapperStyleNameProduct = styled.h1`
@@ -43,6 +49,19 @@ export const WrapperPriceTextProduct = styled.h1`
     font-weight: 500;
     padding: 10px;
     margin-top: 10px;
+`
+export const WrapperDecriptionTextProduct = styled.h1`
+    display: flex;
+    align-items: center;
+    color: rgb(39, 39, 42);
+    gap: 8px;
+    font-size: 20px;
+    line-height: 40px;
+    margin-right: 8px;
+    font-weight: 200;
+    padding: 10px;
+    margin-top: 10px;
+    white-space: pre-line;
 `
 
 export const WrapperAddressProduct = styled.div`

@@ -47,7 +47,6 @@ const ProfilePage = () => {
     const handleGetDetailsUser = async (id, token) => {
         const res = await UserService.getDetailsUser(id, token)
         dispatch(updateUser({ ...res?.data, access_token: token }))
-        // console.log('res', res)
     }
     const handleOnChangeEmail = (value) => {
         setEmail(value)

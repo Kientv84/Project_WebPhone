@@ -19,7 +19,6 @@ const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('')
   const location = useLocation()
-  // console.log('locate', location)
   const dispatch = useDispatch()
 
   const navigate = useNavigate()
@@ -29,15 +28,13 @@ const SignInPage = () => {
   )
 
   const { data, isLoading, isSuccess } = mutation
-  // console.log('first1111', mutation)
 
   useEffect(() => {
-    // console.log('location', location)
     if (isSuccess && data?.status === 'OK') {
       if (location?.state) {
         navigate(location?.state)
       } else {
-        message.success('Sign-in Success')
+        message.success('Logged in successfully')
         navigate('/')
       }
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))
@@ -45,7 +42,6 @@ const SignInPage = () => {
       // console.log(data)
       if (data?.access_token) {
         const decoded = jwt_decode(data?.access_token)
-        // console.log('decoded', decoded)
         if (decoded?.id) {
           handleGetDetailsUser(decoded.id, data?.access_token)
         }
@@ -101,10 +97,17 @@ const SignInPage = () => {
               style={{
                 zIndex: 10,
                 position: 'absolute',
-                top: '3px',
+                top: '5px',
                 right: '8px',
                 fontSize: '15px'
               }}>
+              {
+                isShowPassword ? (
+                  <EyeFilled />
+                ) : (
+                  <EyeInvisibleFilled />
+                )
+              }
             </span>
             <InputForm placeholder="password" type={isShowPassword ? "text" : "password"}
               value={password} onChange={handleOnChangePassword} />
