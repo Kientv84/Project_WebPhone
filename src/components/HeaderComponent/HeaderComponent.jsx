@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Badge, Col, Popover } from 'antd';
-import { WrapperHeaderAccount, WrapperHeader, WrapperTextHeader, WrapperTextHeaderSmall, WrapperContentPopup } from './style';
+import { WrapperHeaderAccount, WrapperHeader, WrapperTextHeader, WrapperTextHeaderSmall, WrapperContentPopup, WrapperTextHeaderSmall1 } from './style';
 import {
   UserOutlined,
   CaretDownOutlined,
@@ -146,11 +146,11 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </WrapperHeaderAccount>
           </Loading>
           {!isHiddenCart && (
-            <div onClick={handleCartClick} style={{ cursor: 'pointer' }}>
+            <div onClick={handleCartClick} style={{ cursor: 'pointer', display: 'inline-block', verticalAlign: 'middle' }}>
               <Badge count={order?.orderItems?.length} size='small'>
                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
               </Badge>
-              <WrapperTextHeaderSmall>Cart</WrapperTextHeaderSmall>
+              <WrapperTextHeaderSmall1>Cart</WrapperTextHeaderSmall1>
             </div>
           )}
         </Col>

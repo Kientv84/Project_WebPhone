@@ -2,8 +2,6 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   search: '',
-  allProducts: [], // Include allProducts in your initial state
-  filteredProducts: [],
 }
 
 export const productSlide = createSlice({
@@ -12,12 +10,6 @@ export const productSlide = createSlice({
   reducers: {
     searchProduct: (state, action) => {
       state.search = action.payload;
-
-      // Filter the products based on the search term
-      state.filteredProducts = state.allProducts.filter(product =>
-        product?.name.toLowerCase().includes(action.payload.toLowerCase())
-
-      );
     },
   },
 })

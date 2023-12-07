@@ -68,3 +68,9 @@
     border-top: none;
     border-bottom: none;
 }
+
+:where(.css-dev-only-do-not-override-zcfrx9).ant-image .ant-image-img {
+    /* width: 100%; */
+    height: auto;
+    vertical-align: middle;
+}

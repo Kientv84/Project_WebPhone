@@ -150,7 +150,7 @@ const PaymentPage = () => {
       });
       dispatch(removeAllOrderProduct({ listChecked: arrayOrdered }))
       message.success('Đặt hàng thành công')
-      navigate('/orderSuccess', {
+      navigate('/order-success', {
         state: {
           delivery,
           payment,

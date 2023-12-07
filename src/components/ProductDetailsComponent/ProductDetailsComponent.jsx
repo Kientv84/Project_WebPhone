@@ -2,7 +2,7 @@ import { Col, Row, Image, Rate, InputNumber, Form } from 'antd'
 import React, { useEffect, useState } from 'react'
 // import imageProduct from '../../assets/images/image.png.webp'
 import imageProductSmall from '../../assets/images/imagesmall1.png.webp'
-import { WrapperAddressProduct, WrapperInputNumber, WrapperPriceProduct, WrapperPriceTextProduct, WrapperQualityProduct, WrapperStyleColImage, WrapperStyleNameProduct, WrapperStyleImageSmall, WrapperStyleTextSell } from './style'
+import { WrapperAddressProduct, WrapperInputNumber, WrapperPriceProduct, WrapperPriceTextProduct, WrapperQualityProduct, WrapperStyleColImage, WrapperStyleNameProduct, WrapperStyleImageSmall, WrapperStyleTextSell, WrapperDecriptionTextProduct, WrapperStyleImageSmall1 } from './style'
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons'
 import ButtonComponent from '../ButtonComponent/ButtonComponent'
 import * as ProductService from '../../services/ProductService'
@@ -30,6 +30,8 @@ const ProductDetailsComponent = ({ idProduct }) => {
     const order = useSelector((state) => state.order)
     const [ErrorLimitOrder, setErrorLimitOrder] = useState(false)
     const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false)
+
+
     const [stateUserDetails, setStateUserDetails] = useState({
         name: '',
         phone: '',
@@ -171,32 +173,31 @@ const ProductDetailsComponent = ({ idProduct }) => {
         })
     }
 
-    // console.log('productDetails', productDetails, user)
+    const [currentImage, setCurrentImage] = useState(productDetails?.image);
+
+    const handleThumbnailClick = (thumbnailImage) => {
+        setCurrentImage(thumbnailImage);
+    };
+
+    useEffect(() => {
+        // Set initial image
+        setCurrentImage(productDetails?.image);
+    }, [productDetails?.image]);
 
     return (
         <div>
             <Loading isLoading={isLoading}>
                 <Row style={{ padding: '25px', background: '#fff', borderRadius: '4px' }}>
                     <Col span={10} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '8px' }}>
-                        <Image src={productDetails?.image} alt="image product" preview={false} />
-                        <Row style={{ paddingTop: '10px', justifyContent: 'space-between' }}>
+                        <Image src={currentImage} alt="image product" preview={false} />
+                        <Row style={{ paddingTop: '10px', marginLeft: '100px' }}>
                             <WrapperStyleColImage span={4}>
-                                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
+                                <WrapperStyleImageSmall src={productDetails?.image1} alt="image small" preview={false}
+                                    onClick={() => handleThumbnailClick(productDetails?.image1)} />
                             </WrapperStyleColImage>
                             <WrapperStyleColImage span={4}>
-                                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
-                            </WrapperStyleColImage>
-                            <WrapperStyleColImage span={4}>
-                                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
-                            </WrapperStyleColImage>
-                            <WrapperStyleColImage span={4}>
-                                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
-                            </WrapperStyleColImage>
-                            <WrapperStyleColImage span={4}>
-                                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
-                            </WrapperStyleColImage>
-                            <WrapperStyleColImage span={4}>
-                                <WrapperStyleImageSmall src={imageProductSmall} alt="image small" preview={false} />
+                                <WrapperStyleImageSmall src={productDetails?.image2} alt="image small" preview={false}
+                                    onClick={() => handleThumbnailClick(productDetails?.image2)} />
                             </WrapperStyleColImage>
                         </Row>
                     </Col>
@@ -233,6 +234,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                                 </button>
                             </WrapperQualityProduct>
                         </div>
+
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <div>
                                 <ButtonComponent
@@ -253,7 +255,12 @@ const ProductDetailsComponent = ({ idProduct }) => {
                                 {ErrorLimitOrder && <span style={{ color: 'red', display: 'flex', alignItems: 'center' }} >Sold Out</span>}
                             </div>
                         </div>
+
                     </Col>
+                    <div style={{ margin: '10px 0 20px', padding: '10px 0', borderBottom: '1px solid #e5e5e5', }}>
+                        <div style={{ marginBottom: '5px', fontSize: '20px' }}>Description</div>
+                        <WrapperDecriptionTextProduct>{(productDetails?.description)}</WrapperDecriptionTextProduct>
+                    </div>
                     <CommentComponent datahref={process.env.REACT_APP_IS_LOCAL
                         ? "https://developers.facebook.com/docs/plugins/comments#configurator"
                         : window.location.href} width="1265" />

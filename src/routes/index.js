@@ -19,7 +19,7 @@ export const routes = [
     {
         path: '/',
         page: HomePage,
-        isShowHeader: true
+        isShowHeader: false
     },
     {
         path: '/order',
@@ -44,7 +44,7 @@ export const routes = [
 
     },
     {
-        path: '/orderSuccess',
+        path: '/order-success',
         page: OrderSuccess,
         isShowHeader: true
 

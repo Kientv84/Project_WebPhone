@@ -55,7 +55,7 @@ const PasswordReset = () => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
             <div style={{ width: '400px', height: '300px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
                 <WrapperContainerLeft>
-                    <h1 style={{ fontSize: '30px', marginBottom: '8px', marginTop: '0px' }}>Enter Password</h1>
+                    <h1 style={{ fontSize: '30px', marginBottom: '8px', marginTop: '0px' }}>Enter New Password</h1>
                     <div style={{ position: 'relative' }}>
                         <span
                             onClick={() => setIsShowPassword(!isShowPassword)}
