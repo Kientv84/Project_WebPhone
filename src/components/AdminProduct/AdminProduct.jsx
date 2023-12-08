@@ -27,6 +27,7 @@ const AdminProduct = () => {
     name: '',
     price: '',
     description: '',
+    promotion: '',
     rating: '',
     image: '',
     image1: '',
@@ -47,6 +48,7 @@ const AdminProduct = () => {
         name,
         price,
         description,
+        promotion,
         rating,
         image,
         image1,
@@ -59,6 +61,7 @@ const AdminProduct = () => {
         name,
         price,
         description,
+        promotion,
         rating, image,
         image1,
         image2,
@@ -116,6 +119,7 @@ const AdminProduct = () => {
         name: res?.data?.name,
         price: res?.data?.price,
         description: res?.data?.description,
+        promotion: res?.data?.promotion,
         rating: res?.data?.rating,
         image: res?.data?.image,
         image1: res?.data?.image1,
@@ -366,6 +370,7 @@ const AdminProduct = () => {
       name: '',
       price: '',
       description: '',
+      promotion: '',
       rating: '',
       image: '',
       image1: '',
@@ -394,6 +399,7 @@ const AdminProduct = () => {
       name: '',
       price: '',
       description: '',
+      promotion: '',
       rating: '',
       image: '',
       image1: '',
@@ -410,6 +416,7 @@ const AdminProduct = () => {
       name: stateProduct.name,
       price: stateProduct.price,
       description: stateProduct.description,
+      promotion: stateProduct.promotion,
       rating: stateProduct.rating,
       image: stateProduct.image,
       image1: stateProduct.image1,
@@ -578,6 +585,13 @@ const AdminProduct = () => {
               <Input.TextArea value={stateProduct.description} onChange={handleOnchange} name="description" />
             </Form.Item>
             <Form.Item
+              label="Promotion"
+              name="promotion"
+              rules={[{ required: true, message: 'Please input your count promotion!' }]}
+            >
+              <Input.TextArea value={stateProduct.promotion} onChange={handleOnchange} name="promotion" />
+            </Form.Item>
+            <Form.Item
               label="Rating"
               name="rating"
               rules={[{ required: true, message: 'Please input your count rating!' }]}
@@ -705,6 +719,13 @@ const AdminProduct = () => {
               rules={[{ required: true, message: 'Please input your count description!' }]}
             >
               <Input.TextArea value={stateProductDetails.description} onChange={handleOnchangeDetails} name="description" />
+            </Form.Item>
+            <Form.Item
+              label="Promotion"
+              name="promotion"
+              rules={[{ required: true, message: 'Please input your count promotion!' }]}
+            >
+              <Input.TextArea value={stateProductDetails.promotion} onChange={handleOnchangeDetails} name="promotion" />
             </Form.Item>
             <Form.Item
               label="Rating"
