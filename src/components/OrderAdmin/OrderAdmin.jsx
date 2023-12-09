@@ -99,7 +99,7 @@ const OrderAdmin = () => {
   // show ra tình trạng đơn hàng
   const fetchGetDetailsOrder = async (rowSelected) => {
     const res = await OrderService.getDetailsOrder(rowSelected, user?.access_token)
-    console.log('res', res)
+    // console.log('res', res)
     if (res?.data) {
       setStateOrderDelivery({
         isDelivered: res?.data?.isDelivered
@@ -326,7 +326,7 @@ const OrderAdmin = () => {
               name="isDelivered"
               rules={[{ required: true, message: 'Please select the delivery state!' }]}
             >
-              <Select defaultValue={stateOrderDelivery.isDelivered !== null ? stateOrderDelivery.isDelivered : undefined}
+              <Select defaultValue={stateOrderDelivery.isDelivered}
                 onChange={(value) => setStateOrderDelivery({ isDelivered: value })}>
                 <Select.Option value={true}>True</Select.Option>
                 <Select.Option value={false}>False</Select.Option>

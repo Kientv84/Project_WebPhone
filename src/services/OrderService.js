@@ -52,7 +52,7 @@ export const getAllOrder = async (access_token) => {
 }
 
 export const updateDeliveryState = async (id, access_token, data) => {
-    // console.log('test', id, access_token, data)
+    console.log('test', id, access_token, data)
     const res = await axiosJWT.put(`${process.env.REACT_APP_URL_BACKEND}/order/update-delivery-state/${id}`, data, {
         headers: {
             token: `Bearer ${access_token}`,
