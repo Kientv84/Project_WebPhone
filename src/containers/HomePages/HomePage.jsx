@@ -60,7 +60,6 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     const [search, setSearch] = useState('')
     const [isOpenPopup, setIsOpenPopup] = useState(false)
     const order = useSelector((state) => state.order)
-    //   const [loading, setLoading] = useState(false)
 
     const handleNavigateLogin = () => {
         navigate('/sign-in')
@@ -193,7 +192,9 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                         <SliderComponent arrImages={[slider1, slider2, slider3]} />
                         <WrapperProducts>
                             {products?.data?.filter((product) => {
-                                return search.toLowerCase() === '' ? product : product.name.toLowerCase().includes(search)
+                                const searchLower = search.toLowerCase();
+                                const productNameLower = product.name.toLowerCase();
+                                return productNameLower.includes(searchLower);
                             }).map((product) => {
                                 return (
                                     <CardComponent
