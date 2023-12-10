@@ -42,9 +42,9 @@ const DetailsOrderPage = () => {
 
     return (
         <Loading isLoading={isLoading}>
-            <div style={{ width: '100%', background: '#f5f5fa', paddingTop: '0.1px' }}>
-                <div style={{ width: '1270px', margin: '0 auto', height: '1270px' }}>
-                    <h3 style={{ marginTop: '5px' }}>Order Details</h3>
+            <div style={{ width: '100%', background: '#f5f5fa' }}>
+                <div style={{ width: '1270px', margin: '0 auto', height: '1270px', padding: '0.1px 0px' }}>
+                    <h4>Order Details</h4>
                     <WrapperHeaderUser>
                         <WrapperInfoUser>
                             <WrapperLabel>Recipient's address</WrapperLabel>
@@ -82,6 +82,7 @@ const DetailsOrderPage = () => {
                                 <WrapperProduct>
                                     <WrapperNameProduct>
                                         <img src={order?.image}
+                                            alt={''}
                                             style={{
                                                 width: '70px',
                                                 height: '70px',
@@ -123,7 +124,7 @@ const DetailsOrderPage = () => {
                     </WrapperStyleContent>
                 </div>
             </div>
-        </Loading>
+        </Loading >
     )
 }
 

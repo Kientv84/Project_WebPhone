@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { orderConstant } from '../../constant';
 
 const OrderSuccess = () => {
+  const order = useSelector((state) => state.order)
   const location = useLocation()
   // console.log('location', location)
   const { state } = location
@@ -15,8 +16,8 @@ const OrderSuccess = () => {
   return (
     <div style={{ background: '#f5f5fa', with: '100%', height: '100vh', paddingTop: '0.1px' }}>
       <Loading isLoading={false}>
-        <div style={{ height: '100%', width: '1270px', margin: '0px auto' }}>
-          <h3 style={{ fontWeight: 'bold', marginTop: '5px' }}>Order Success</h3>
+        <div style={{ height: '100%', width: '1270px', margin: '0px auto', padding: '0.1px 0px ' }}>
+          <h3 style={{ fontWeight: 'bold' }}>Order Success</h3>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div>
               <WrapperInfo1>

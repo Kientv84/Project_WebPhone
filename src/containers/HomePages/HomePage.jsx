@@ -6,7 +6,6 @@ import slider2 from "../../assets/images/slider2.webp"
 import slider3 from "../../assets/images/slider3.webp"
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import CardComponent from "../../components/CardComponent/CardComponent";
-// import NavbarComponent from "../../components/NavbarComponent/NavbarComponent";
 import { useQuery } from "react-query";
 import * as ProductService from '../../services/ProductService'
 import { useDispatch, useSelector } from "react-redux";
@@ -32,7 +31,6 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     const [loading, setLoading] = useState(false)
     const [limit, setLimit] = useState(12)
     const [typeProducts, setTypeProducts] = useState([])
-
 
     const fetchProductAll = async (context) => {
         const limit = context?.queryKey && context?.queryKey[1]

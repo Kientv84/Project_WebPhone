@@ -40,6 +40,8 @@ export const deleteProduct = async (id, access_token) => {
 }
 
 export const deleteManyProduct = async (data, access_token) => {
+    // console.log('data', data)
+    // console.log('access_token', access_token)
     const res = await axiosJWT.post(`${process.env.REACT_APP_URL_BACKEND}/product/delete-many`, data, {
         headers: {
             token: `Bearer ${access_token}`,

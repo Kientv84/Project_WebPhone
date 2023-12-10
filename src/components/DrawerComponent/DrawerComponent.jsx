@@ -1,4 +1,4 @@
-import { Drawer, Modal } from 'antd'
+import { Modal } from 'antd'
 import React from 'react'
 
 const DrawerComponent = ({ title = 'Drawer', okType, isOpen = false, children, ...rests }) => {

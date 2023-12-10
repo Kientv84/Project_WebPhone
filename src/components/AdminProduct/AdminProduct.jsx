@@ -1,5 +1,5 @@
 import { Button, Form, Space, Select, Input } from 'antd'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import { WrapperHeader, WrapperUploadFile } from './style'
 import TableComponent from '../TableComponent/TableComponent'
@@ -21,6 +21,7 @@ const AdminProduct = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const product = useSelector((state) => state?.product)
+  // const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
 
   const initial = () => ({
@@ -141,6 +142,8 @@ const AdminProduct = () => {
   }, [form, stateProductDetails, isModalOpen])
 
   useEffect(() => {
+    // console.log('rowSelected', rowSelected)
+    // console.log('isOpenDrawer', isOpenDrawer)
     if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true)
       fetchGetDetailsProduct(rowSelected)
@@ -150,7 +153,6 @@ const AdminProduct = () => {
   //
   const handleDetailsProduct = () => {
     setIsOpenDrawer(true)
-
   }
 
   const handleDeleteManyProducts = (ids) => {
@@ -178,7 +180,7 @@ const AdminProduct = () => {
   const { data, isLoading, isSuccess, isError } = mutation
   const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
   const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
-  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedmany } = mutationDeletedMany
+  const { data: dataDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
 
 
   const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
@@ -195,12 +197,9 @@ const AdminProduct = () => {
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    // setSearchText(selectedKeys[0]);
-    // setSearchedColumn(dataIndex);
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    // setSearchText('');
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -271,63 +270,65 @@ const AdminProduct = () => {
     },
   });
 
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      ...getColumnSearchProps('name'), //search name
-    },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      sorter: (a, b) => a.price - b.price,
-      filters: [
-        { text: '>= 10000000', value: '>=' },
-        { text: '<= 10000000', value: '<=' },
-      ],
-      onFilter: (value, record) => {
-        if (value === '>=') {
-          return record.price >= 10000000;
-        }
-        return record.price <= 10000000;
 
+
+  // Memoize some values to avoid unnecessary recalculations
+  const memoizedColumns = useMemo(() => {
+    return [
+      {
+        title: 'Name',
+        dataIndex: 'name',
+        sorter: (a, b) => a.name.length - b.name.length,
+        ...getColumnSearchProps('name'), // search name
       },
-    },
-    {
-      title: 'Rating',
-      dataIndex: 'rating',
-      sorter: (a, b) => a.rating - b.rating,
-      filters: [
-        { text: '>= 3.5', value: '>=' },
-        { text: '<= 3.5', value: '<=' },
-      ],
-      onFilter: (value, record) => {
-        if (value === '>=') {
-          return record.rating >= 3.5;
-        }
-        return record.rating <= 3.5;
-
+      {
+        title: 'Price',
+        dataIndex: 'price',
+        sorter: (a, b) => a.price - b.price,
+        filters: [
+          { text: '>= 10000000', value: '>=' },
+          { text: '<= 10000000', value: '<=' },
+        ],
+        onFilter: (value, record) => {
+          if (value === '>=') {
+            return record.price >= 10000000;
+          }
+          return record.price <= 10000000;
+        },
       },
-    },
-    {
-      title: 'Type',
-      dataIndex: 'type',
-      ...getColumnSearchProps('type'), //search type
+      {
+        title: 'Rating',
+        dataIndex: 'rating',
+        sorter: (a, b) => a.rating - b.rating,
+        filters: [
+          { text: '>= 3.5', value: '>=' },
+          { text: '<= 3.5', value: '<=' },
+        ],
+        onFilter: (value, record) => {
+          if (value === '>=') {
+            return record.rating >= 3.5;
+          }
+          return record.rating <= 3.5;
+        },
+      },
+      {
+        title: 'Type',
+        dataIndex: 'type',
+        ...getColumnSearchProps('type'), // search type
+      },
+      {
+        title: 'Action',
+        dataIndex: 'action',
+        render: renderAction,
+      },
+    ];
+  }, []);
 
-    },
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      render: renderAction,
-
-    },
-
-  ];
   const dataTable = products?.data?.length && products?.data?.map((product) => {
     return { ...product, key: product._id };
   })
 
+  //Thêm mới sp
   useEffect(() => {
     if (isSuccess && data?.status === 'OK') {
       message.success()
@@ -337,14 +338,16 @@ const AdminProduct = () => {
     }
   }, [isSuccess])
 
+  //Xoá nhiều sp
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
       message.success()
-    } else if (isErrorDeletedmany) {
+    } else if (isErrorDeletedMany) {
       message.error()
     }
   }, [isSuccessDeletedMany])
 
+  //Xoá 1 sp
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === 'OK') {
       message.success()
@@ -354,7 +357,7 @@ const AdminProduct = () => {
     }
   }, [isSuccessDeleted])
 
-
+  //Cập nhật sp
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === 'OK') {
       message.success()
@@ -420,7 +423,7 @@ const AdminProduct = () => {
       rating: stateProduct.rating,
       image: stateProduct.image,
       image1: stateProduct.image1,
-      image2: stateProduct.image1,
+      image2: stateProduct.image2,
       type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
       countInStock: stateProduct.countInStock,
       discount: stateProduct.discount,
@@ -457,12 +460,25 @@ const AdminProduct = () => {
     })
   }
 
+  const handleOnchangeAvatar1 = async ({ fileList }) => {
+    const file = fileList[0]
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setStateProduct({
+      ...stateProduct,
+      image1: file.preview
+    })
+  }
 
-  const handleDelteManyProducts = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: product?.access_token }, {
-      onSettled: () => {
-        queryProduct.refetch()
-      }
+  const handleOnchangeAvatar2 = async ({ fileList }) => {
+    const file = fileList[0]
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setStateProduct({
+      ...stateProduct,
+      image2: file.preview
     })
   }
 
@@ -514,7 +530,7 @@ const AdminProduct = () => {
         <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px' }} /></Button>
       </div>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDelteMany={handleDelteManyProducts} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyProducts} columns={memoizedColumns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: event => {
               setRowSelected(record._id)
@@ -606,9 +622,9 @@ const AdminProduct = () => {
               <InputComponent value={stateProduct.discount} onChange={handleOnchange} name="discount" />
             </Form.Item>
             <Form.Item
-              label="Image"
+              label="Image Product"
               name="image"
-              rules={[{ required: true, message: 'Please input your count image!' }]}
+              rules={[{ required: true, message: 'Please input your count image product!' }]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -630,11 +646,11 @@ const AdminProduct = () => {
               name="image1"
               rules={[{ required: true, message: 'Please input your count image product!' }]}
             >
-              <WrapperUploadFile onChange={handleOnchangeAvatarDetailsProduct} maxCount={1}>
+              <WrapperUploadFile onChange={handleOnchangeAvatar1} maxCount={1}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Button >Select File</Button>
-                  {stateProductDetails?.image1 && (
-                    <img src={stateProductDetails?.image1} style={{
+                  {stateProduct?.image1 && (
+                    <img src={stateProduct?.image1} style={{
                       height: '60px',
                       width: '60px',
                       borderRadius: '50%',
@@ -650,11 +666,11 @@ const AdminProduct = () => {
               name="image2"
               rules={[{ required: true, message: 'Please input your count image product!' }]}
             >
-              <WrapperUploadFile onChange={handleOnchangeAvatarDetailsProduct2} maxCount={1}>
+              <WrapperUploadFile onChange={handleOnchangeAvatar2} maxCount={1}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Button >Select File</Button>
-                  {stateProductDetails?.image2 && (
-                    <img src={stateProductDetails?.image2} style={{
+                  {stateProduct?.image2 && (
+                    <img src={stateProduct?.image2} style={{
                       height: '60px',
                       width: '60px',
                       borderRadius: '50%',
@@ -670,6 +686,7 @@ const AdminProduct = () => {
                 Submit
               </Button>
             </Form.Item>
+            {data?.status === 'ERR' && <span style={{ color: 'red' }}>{data?.message}</span>}
           </Form>
         </Loading>
       </ModalComponent>
@@ -817,6 +834,5 @@ const AdminProduct = () => {
     </div>
   )
 }
-
 
 export default AdminProduct

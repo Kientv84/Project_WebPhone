@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from './style'
+import { WrapperContainerLeft } from './style'
 import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
-import { Image } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
@@ -10,8 +9,6 @@ import * as message from '../../components/Message/Message'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import * as UserService from '../../services/UserService'
 import Loading from '../../components/LoadingComponent/Loading'
-
-
 
 const PasswordReset = () => {
     const [isShowPassword, setIsShowPassword] = useState(false)

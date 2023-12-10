@@ -31,14 +31,14 @@ export const userSlice = createSlice({
       state.city = city ? city : state.city;
       state.refreshToken = refreshToken ? refreshToken : state.refreshToken;
     },
-    updateAddress: (state, action) => {
-      const { name = '', address = '', phone = '', city = '' } = action.payload
-      // console.log('action', action)
-      state.name = name;
-      state.phone = phone;
-      state.address = address;
-      state.city = city;
-    },
+    // updateAddress: (state, action) => {
+    //   const { name = '', address = '', phone = '', city = '' } = action.payload
+    //   // console.log('action', action)
+    //   state.name = name;
+    //   state.phone = phone;
+    //   state.address = address;
+    //   state.city = city;
+    // },
     resetUser: (state) => {
       // console.log('action', action)
       state.name = '';

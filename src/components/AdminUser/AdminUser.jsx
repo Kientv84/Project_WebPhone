@@ -111,9 +111,9 @@ const AdminUser = () => {
 
   }
 
-  const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
+  const { data: dataUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
   const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
-  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
+  const { data: dataDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
 
 
   const queryUser = useQuery({ queryKey: ['user'], queryFn: getAllUsers })
@@ -267,7 +267,7 @@ const AdminUser = () => {
     } else if (isErrorDeleted) {
       message.error()
     }
-  }, [isSuccessDeleted])
+  }, [isSuccessDeleted, isErrorDeleted, dataDeleted])
 
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
@@ -275,7 +275,7 @@ const AdminUser = () => {
     } else if (isErrorDeletedMany) {
       message.error()
     }
-  }, [isSuccessDeletedMany])
+  }, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany])
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === 'OK') {
@@ -284,7 +284,7 @@ const AdminUser = () => {
     } else if (isErrorUpdated) {
       message.error()
     }
-  }, [isSuccessUpdated])
+  }, [isSuccessUpdated, isErrorUpdated, dataUpdated])
 
   const handleCancelDrawer = () => {
     setIsOpenDrawer(false);
@@ -309,16 +309,16 @@ const AdminUser = () => {
     })
   }
 
-  const confirmDelete = (onOk) => {
-    Modal.confirm({
-      title: 'Confirm Deletion',
-      content: 'Are you sure you want to DELETE?',
-      okText: 'DELETE',
-      okType: 'Danger',
-      cancelText: 'Cancel',
-      onOk,
-    });
-  };
+  // const confirmDelete = (onOk) => {
+  //   Modal.confirm({
+  //     title: 'Confirm Deletion',
+  //     content: 'Are you sure you want to DELETE?',
+  //     okText: 'DELETE',
+  //     okType: 'Danger',
+  //     cancelText: 'Cancel',
+  //     onOk,
+  //   });
+  // };
 
   const handleOnchangeDetails = (e) => {
     setStateUserDetails({

@@ -66,7 +66,7 @@ const MyOrderPage = () => {
     } else if (isErrorCancel) {
       message.error()
     }
-  }, [isErrorCancel], [isSuccessCancel])
+  }, [isErrorCancel, isSuccessCancel, dataCancel])
 
   const renderProduct = (data) => {
     return data?.map((order) => {

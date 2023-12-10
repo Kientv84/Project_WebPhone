@@ -13,7 +13,7 @@ const AdminPage = () => {
     getItem('Orders', 'order', <ShoppingCartOutlined />),
   ];
 
-  const [keySelected, setKeySelected] = useState('')
+  const [keySelected, setKeySelected] = useState('user')
 
   const renderPage = (key) => {
     switch (key) {

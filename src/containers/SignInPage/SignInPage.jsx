@@ -11,7 +11,7 @@ import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
 import jwt_decode from "jwt-decode";
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { updateUser } from '../../redux/slice/userslide'
 
 const SignInPage = () => {
@@ -20,7 +20,6 @@ const SignInPage = () => {
   const [password, setPassword] = useState('')
   const location = useLocation()
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.user)
 
   const navigate = useNavigate()
 
