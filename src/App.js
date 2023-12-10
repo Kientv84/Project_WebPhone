@@ -10,6 +10,7 @@ import * as UserService from './services/UserService'
 import { useDispatch } from 'react-redux'
 import { updateUser } from './redux/slice/userslide';
 import Loading from './components/LoadingComponent/Loading';
+import DefautFooterComponent from './components/DefautFooterComponent/DefautFooterComponent';
 
 function App() {
   const dispatch = useDispatch();
@@ -81,10 +82,12 @@ function App() {
             {routes.map((route) => {
               const Page = route.page
               const Layout = route.isShowHeader ? DefaultComponent : Fragment
+              const LayoutFooter = route.isShowFooter ? DefautFooterComponent : Fragment
               return (
                 <Route key={route.path} path={route.path} element={
                   <Layout>
                     <Page />
+                    <LayoutFooter />
                   </Layout>
                 } />
               )
