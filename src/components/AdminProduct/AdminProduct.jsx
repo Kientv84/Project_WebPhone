@@ -197,12 +197,9 @@ const AdminProduct = () => {
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    // setSearchText(selectedKeys[0]);
-    // setSearchedColumn(dataIndex);
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    // setSearchText('');
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -426,7 +423,7 @@ const AdminProduct = () => {
       rating: stateProduct.rating,
       image: stateProduct.image,
       image1: stateProduct.image1,
-      image2: stateProduct.image1,
+      image2: stateProduct.image2,
       type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
       countInStock: stateProduct.countInStock,
       discount: stateProduct.discount,
@@ -460,6 +457,28 @@ const AdminProduct = () => {
     setStateProduct({
       ...stateProduct,
       image: file.preview
+    })
+  }
+
+  const handleOnchangeAvatar1 = async ({ fileList }) => {
+    const file = fileList[0]
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setStateProduct({
+      ...stateProduct,
+      image1: file.preview
+    })
+  }
+
+  const handleOnchangeAvatar2 = async ({ fileList }) => {
+    const file = fileList[0]
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setStateProduct({
+      ...stateProduct,
+      image2: file.preview
     })
   }
 
@@ -603,9 +622,9 @@ const AdminProduct = () => {
               <InputComponent value={stateProduct.discount} onChange={handleOnchange} name="discount" />
             </Form.Item>
             <Form.Item
-              label="Image"
+              label="Image Product"
               name="image"
-              rules={[{ required: true, message: 'Please input your count image!' }]}
+              rules={[{ required: true, message: 'Please input your count image product!' }]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -627,11 +646,11 @@ const AdminProduct = () => {
               name="image1"
               rules={[{ required: true, message: 'Please input your count image product!' }]}
             >
-              <WrapperUploadFile onChange={handleOnchangeAvatarDetailsProduct} maxCount={1}>
+              <WrapperUploadFile onChange={handleOnchangeAvatar1} maxCount={1}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Button >Select File</Button>
-                  {stateProductDetails?.image1 && (
-                    <img src={stateProductDetails?.image1} style={{
+                  {stateProduct?.image1 && (
+                    <img src={stateProduct?.image1} style={{
                       height: '60px',
                       width: '60px',
                       borderRadius: '50%',
@@ -647,11 +666,11 @@ const AdminProduct = () => {
               name="image2"
               rules={[{ required: true, message: 'Please input your count image product!' }]}
             >
-              <WrapperUploadFile onChange={handleOnchangeAvatarDetailsProduct2} maxCount={1}>
+              <WrapperUploadFile onChange={handleOnchangeAvatar2} maxCount={1}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Button >Select File</Button>
-                  {stateProductDetails?.image2 && (
-                    <img src={stateProductDetails?.image2} style={{
+                  {stateProduct?.image2 && (
+                    <img src={stateProduct?.image2} style={{
                       height: '60px',
                       width: '60px',
                       borderRadius: '50%',

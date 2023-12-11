@@ -19,7 +19,8 @@ export const routes = [
     {
         path: '/',
         page: HomePage,
-        isShowHeader: false
+        isShowHeader: false,
+        isShowFooter: true
     },
     {
         path: '/order',
@@ -76,8 +77,8 @@ export const routes = [
     {
         path: '/product-details/:id',
         page: ProductDetailsPage,
-        isShowHeader: true
-
+        isShowHeader: true,
+        isShowFooter: true
     },
     {
         path: '/profile-user',
