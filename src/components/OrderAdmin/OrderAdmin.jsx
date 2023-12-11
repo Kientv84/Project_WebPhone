@@ -273,7 +273,6 @@ const OrderAdmin = () => {
   ];
 
   const dataTable = orders?.data?.length && orders?.data?.map((order) => {
-    // console.log('order', order)
     return {
       ...order, key: order._id,
       userName: order?.shippingAddress?.fullName,
@@ -297,8 +296,9 @@ const OrderAdmin = () => {
   return (
     <div>
       <WrapperHeader>Manage Orders</WrapperHeader>
-      <div style={{ height: 200, width: 200 }}>
+      <div style={{ height: 200, width: 200, display: 'flex', flexDirection: 'row' }}>
         <PieChartComponent data={orders?.data} />
+        {/* <PieChartComponent data={orders?.totalPrice} /> */}
       </div>
       <div style={{ marginTop: '20px' }}>
         <TableComponent handleDeleteMany={handleDeleteManyOrders} columns={columns} isLoading={isLoadingOrders} data={dataTable} onRow={(record, rowIndex) => {
