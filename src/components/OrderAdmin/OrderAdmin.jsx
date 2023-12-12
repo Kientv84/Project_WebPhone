@@ -6,7 +6,7 @@ import InputComponent from '../InputComponent/InputComponent'
 import { convertPrice } from '../../utils'
 import * as OrderService from '../../services/OrderService'
 import { useQuery } from 'react-query'
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, MoneyCollectTwoTone, SearchOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import { orderConstant } from '../../constant'
 import DrawerComponent from '../DrawerComponent/DrawerComponent'
@@ -19,9 +19,11 @@ const OrderAdmin = () => {
   const user = useSelector((state) => state?.user)
   const [rowSelected, setRowSelected] = useState('');
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+  const [isOpenDrawerPayment, setIsOpenDrawerPayment] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [stateOrderDelivery, setStateOrderDelivery] = useState({ isDelivered: true });
+  const [stateOrderPayment, setStateOrderPayment] = useState({ idPaid: true });
 
 
   const getAllOrder = async () => {
@@ -39,6 +41,18 @@ const OrderAdmin = () => {
       return res
     }
   )
+
+  const mutationUpdatePayment = useMutationHook(
+    (data) => {
+      const { id, token, ...rests } = data
+      const res = OrderService.updatePaymentState(
+        id, token,
+        { ...rests } // này là data nên phải là object
+      )
+      return res
+    }
+  )
+
 
   const mutationDeleted = useMutationHook(
     (data) => {
@@ -62,6 +76,7 @@ const OrderAdmin = () => {
 
 
   const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
+  const { data: dataUpdatedPayment, isLoading: isLoadingUpdatedPayment, isSuccess: isSuccessUpdatedPayment, isError: isErrorUpdatedPayment } = mutationUpdatePayment
   const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
   const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
 
@@ -74,6 +89,14 @@ const OrderAdmin = () => {
       <div>
         <DeleteOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
         <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsOpenDrawer(true)} />
+      </div>
+    )
+  }
+
+  const renderActionPay = () => {
+    return (
+      <div>
+        <MoneyCollectTwoTone style={{ color: 'green', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsOpenDrawerPayment(true)} />
       </div>
     )
   }
@@ -98,7 +121,19 @@ const OrderAdmin = () => {
   // show ra tình trạng đơn hàng
   const fetchGetDetailsOrder = async (rowSelected) => {
     const res = await OrderService.getDetailsOrder(rowSelected, user?.access_token)
-    console.log('StateOrderDelivery', stateOrderDelivery)
+    // console.log('StateOrderDelivery', stateOrderDelivery)
+    // if (res?.data) {
+    //   // setStateOrderDelivery({
+    //   //   isDelivered: res?.data?.isDelivered
+    //   // })
+    // }
+    setIsLoadingUpdate(false)
+  }
+
+  //Show tinh trang thanh toan
+  const fetchGetDetailsOrderPayment = async (rowSelected) => {
+    const res = await OrderService.getDetailsOrder(rowSelected, user?.access_token)
+    // console.log('StateOrderDelivery', stateOrderDelivery)
     // if (res?.data) {
     //   // setStateOrderDelivery({
     //   //   isDelivered: res?.data?.isDelivered
@@ -110,12 +145,22 @@ const OrderAdmin = () => {
   //Cập nhật giao hàng
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-      message.success('Update Success')
+      message.success('Update Delivery Success')
       setIsOpenDrawer(false);
     } else if (isErrorUpdated) {
       message.error('Update Fail')
     }
-  }, [isSuccessUpdated])
+  }, [isSuccessUpdated, isErrorUpdated])
+
+  //Cập nhật payment
+  useEffect(() => {
+    if (isSuccessUpdatedPayment && dataUpdatedPayment?.status === 'OK') {
+      message.success('Update Payment Success')
+      setIsOpenDrawerPayment(false);
+    } else if (isErrorUpdatedPayment) {
+      message.error('Update Fail')
+    }
+  }, [isSuccessUpdatedPayment, isErrorUpdatedPayment])
 
   //Xoá nhiều 
   useEffect(() => {
@@ -129,7 +174,7 @@ const OrderAdmin = () => {
   //Xoá 1 
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === 'OK') {
-      message.success()
+      message.success("Delete order Success")
       setIsModalOpenDelete(false)
     } else if (isErrorDeleted) {
       message.error()
@@ -143,6 +188,14 @@ const OrderAdmin = () => {
       fetchGetDetailsOrder(rowSelected)
     }
   }, [rowSelected, isOpenDrawer])
+
+  useEffect(() => {
+    // console.log('rowSelected', rowSelected)
+    if (rowSelected && isOpenDrawerPayment) {
+      setIsLoadingUpdate(true)
+      fetchGetDetailsOrderPayment(rowSelected)
+    }
+  }, [rowSelected, isOpenDrawerPayment])
 
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -238,12 +291,6 @@ const OrderAdmin = () => {
       ...getColumnSearchProps('address')
     },
     {
-      title: 'Paid',
-      dataIndex: 'isPaid',
-      sorter: (a, b) => a.isPaid.length - b.isPaid.length,
-      ...getColumnSearchProps('isPaid')
-    },
-    {
       title: 'Payment method',
       dataIndex: 'paymentMethod',
       sorter: (a, b) => a.paymentMethod.length - b.paymentMethod.length,
@@ -254,6 +301,19 @@ const OrderAdmin = () => {
       dataIndex: 'totalPrice',
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
       ...getColumnSearchProps('totalPrice')
+    },
+    {
+      title: 'Paid',
+      dataIndex: 'isPaid',
+      sorter: (a, b) => a.isPaid.length - b.isPaid.length,
+      ...getColumnSearchProps('isPaid')
+    },
+    {
+      title: 'Update Payment',
+      dataIndex: 'isPaid',
+      render: renderActionPay,
+      sorter: (a, b) => a.isPaid.length - b.isPaid.length,
+      ...getColumnSearchProps('isPaid')
     },
     {
       title: 'Shipped',
@@ -291,12 +351,20 @@ const OrderAdmin = () => {
     })
   };
 
+  const onUpdatePayment = () => {
+    mutationUpdatePayment.mutate({ id: rowSelected, token: user?.access_token, ...stateOrderPayment }, {
+      onSettled: () => {
+        queryOrder.refetch()
+      }
+    })
+  };
+
+
   return (
     <div>
       <WrapperHeader>Manage Orders</WrapperHeader>
       <div style={{ height: 200, width: 200, display: 'flex', flexDirection: 'row' }}>
         <PieChartComponent data={orders?.data} />
-        {/* <PieChartComponent data={orders?.totalPrice} /> */}
       </div>
       <div style={{ marginTop: '20px' }}>
         <TableComponent handleDeleteMany={handleDeleteManyOrders} columns={columns} isLoading={isLoadingOrders} data={dataTable} onRow={(record, rowIndex) => {
@@ -318,7 +386,6 @@ const OrderAdmin = () => {
             onFinish={onUpdateDelivery}
             autoComplete="on"
           >
-            {/* Assuming isDelivered is a boolean field */}
             <Form.Item
               label="Delivery State:"
               name="isDelivered"
@@ -326,6 +393,36 @@ const OrderAdmin = () => {
             >
               <Select defaultValue={stateOrderDelivery.isDelivered}
                 onChange={(value) => setStateOrderDelivery({ isDelivered: value })}>
+                <Select.Option value={true}>True</Select.Option>
+                <Select.Option value={false}>False</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
+              <Button type="primary" htmlType="submit">
+                Apply
+              </Button>
+            </Form.Item>
+          </Form>
+        </Loading>
+      </DrawerComponent>
+
+      <DrawerComponent title='Update Payment' isOpen={isOpenDrawerPayment} onCancel={() => setIsOpenDrawerPayment(false)} footer={null}>
+        <Loading isLoading={isLoadingUpdatedPayment}>
+          <Form
+            name="updatePaymentStateForm"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
+            onFinish={onUpdatePayment}
+            autoComplete="on"
+          >
+            <Form.Item
+              label="Payment State:"
+              name="isPaid"
+              rules={[{ required: true, message: 'Please select the payment state!' }]}
+            >
+              <Select defaultValue={stateOrderPayment.isPaid}
+                onChange={(value) => setStateOrderPayment({ isPaid: value })}>
                 <Select.Option value={true}>True</Select.Option>
                 <Select.Option value={false}>False</Select.Option>
               </Select>
