@@ -116,18 +116,21 @@ const MyOrderPage = () => {
                       >{convertPrice(order?.totalPrice)}</span>
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
-                      <ButtonComponent
-                        onClick={() => handleCancelOrder(order)}
-                        size={40}
-                        styleButton={{
-                          height: '36px',
-                          border: '1px solid rgb(11, 116, 229)',
-                          borderRadius: '4px'
-                        }}
-                        textbutton={'Delete Order'}
-                        styletextbutton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
-                      >
-                      </ButtonComponent>
+                      {!order.isDelivered && (
+                        <ButtonComponent
+                          onClick={() => handleCancelOrder(order)}
+                          size={40}
+                          styleButton={{
+                            height: '36px',
+                            border: '1px solid rgb(11, 116, 229)',
+                            borderRadius: '4px'
+                          }}
+                          textbutton={'Delete Order'}
+                          styletextbutton={{ color: 'rgb(11, 116, 229)', fontSize: '14px' }}
+                        >
+                          {/* Nội dung nút */}
+                        </ButtonComponent>
+                      )}
                       <ButtonComponent
                         onClick={() => handleDetailsOrder(order?._id)}
                         size={40}
