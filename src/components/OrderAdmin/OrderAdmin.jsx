@@ -21,9 +21,8 @@ const OrderAdmin = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
-  const [stateOrderDelivery, setStateOrderDelivery] = useState({
-    isDelivered: '',
-  });
+  const [stateOrderDelivery, setStateOrderDelivery] = useState({ isDelivered: true });
+
 
   const getAllOrder = async () => {
     const res = await OrderService.getAllOrder(user?.access_token)
@@ -99,12 +98,12 @@ const OrderAdmin = () => {
   // show ra tình trạng đơn hàng
   const fetchGetDetailsOrder = async (rowSelected) => {
     const res = await OrderService.getDetailsOrder(rowSelected, user?.access_token)
-    // console.log('res', res)
-    if (res?.data) {
-      setStateOrderDelivery({
-        isDelivered: res?.data?.isDelivered
-      })
-    }
+    console.log('StateOrderDelivery', stateOrderDelivery)
+    // if (res?.data) {
+    //   // setStateOrderDelivery({
+    //   //   isDelivered: res?.data?.isDelivered
+    //   // })
+    // }
     setIsLoadingUpdate(false)
   }
 
@@ -139,7 +138,6 @@ const OrderAdmin = () => {
 
   useEffect(() => {
     // console.log('rowSelected', rowSelected)
-    // console.log('isOpenDrawer', isOpenDrawer)
     if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true)
       fetchGetDetailsOrder(rowSelected)
