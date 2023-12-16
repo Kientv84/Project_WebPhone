@@ -74,7 +74,6 @@ const AdminUser = () => {
   }
 
   const getAllUsers = async () => {
-    // const user = JSON.parse(localStorage.getItem("user"));
     const res = await UserService.getAllUser(user?.access_token)
     return res
   }
