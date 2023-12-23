@@ -209,7 +209,7 @@ const OrderPage = () => {
 
 
   return (
-    <div style={{ padding: '0.1px 0', background: '#f5f5fa', with: '100%', height: '100vh' }}>
+    <div style={{ padding: '0.1px 0', background: '#f5f5fa', with: '100%', height: 'auto' }}>
       <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
         <h3 style={{ fontWeight: 'bold' }}>Cart</h3>
         <div style={{ display: 'flex', justifyContent: 'center' }}>

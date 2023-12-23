@@ -1,5 +1,5 @@
 import { Button, Form, Select, Space, message } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { WrapperHeader } from './style'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'

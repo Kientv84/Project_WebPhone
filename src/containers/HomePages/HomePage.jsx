@@ -1,6 +1,16 @@
 import React, { useEffect } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
-import { WrapperButtonMore, WrapperContentPopup, WrapperHeader, WrapperHeaderAccount, WrapperProducts, WrapperTextHeader, WrapperTextHeaderSmall, WrapperTextHeaderSmall1, WrapperTypeProduct } from "./style"
+import {
+    WrapperButtonMore,
+    WrapperContentPopup,
+    WrapperHeader,
+    WrapperHeaderAccount,
+    WrapperProducts,
+    WrapperTextHeader,
+    WrapperTextHeaderSmall,
+    WrapperTextHeaderSmall1,
+    WrapperTypeProduct
+} from "./style"
 import slider1 from "../../assets/images/slider1.webp"
 import slider2 from "../../assets/images/slider2.webp"
 import slider3 from "../../assets/images/slider3.webp"
@@ -123,9 +133,8 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
 
     return (
         <div>
-            <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center'}}>
-                <WrapperHeader style={{
-                    justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
+            <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
+                <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
                     <Col span={5}>
                         <WrapperTextHeader to='/'> WEBPHONE </WrapperTextHeader>
                     </Col>
@@ -179,7 +188,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                 </WrapperHeader>
             </div>
             <Loading isLoading={isLoading || loading}>
-                <div style={{ width: '1270px', margin: '0 auto' }}>
+                <div className="type-product" style={{ width: '1270px', margin: '0 auto' }}>
                     <WrapperTypeProduct>
                         {typeProducts.map((item) => {
                             return (
@@ -201,7 +210,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                                     <CardComponent
                                         key={product._id}
                                         countInStock={product.countInStock}
-                                        description={product.description}
+                                        // description={product.description}
                                         image={product.image}
                                         name={product.name}
                                         price={product.price}

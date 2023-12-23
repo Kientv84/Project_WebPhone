@@ -13,6 +13,7 @@ import { useQuery } from 'react-query'
 import DrawerComponent from '../DrawerComponent/DrawerComponent'
 import { useSelector } from 'react-redux'
 import ModalComponent from '../ModalComponent/ModalComponent'
+import FooterComponent from '../FooterComponent/FooterComponent'
 
 const AdminProduct = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -622,7 +623,7 @@ const AdminProduct = () => {
               <InputComponent value={stateProduct.discount} onChange={handleOnchange} name="discount" />
             </Form.Item>
             <Form.Item
-              label="Image Product"
+              label="Image"
               name="image"
               rules={[{ required: true, message: 'Please input your count image product!' }]}
             >

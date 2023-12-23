@@ -1,7 +1,7 @@
 import { Table } from 'antd';
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react';
 import Loading from '../LoadingComponent/Loading';
-import { Excel } from "antd-table-saveas-excel"
+import { Excel } from "antd-table-saveas-excel";
 
 const TableComponent = (props) => {
     const { selectionType = 'checkbox', data: dataSource = [], isLoading = false, columns = [], handleDeleteMany } = props

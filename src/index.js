@@ -7,12 +7,10 @@ import { Provider } from 'react-redux'
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { PersistGate } from 'redux-persist/integration/react';
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 // Create a client
 const queryClient = new QueryClient()
-
 
 root.render(
   // <React.StrictMode>

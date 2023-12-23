@@ -1,6 +1,5 @@
 import { useEffect } from "react"
 import { useState } from "react"
-// import { useMutation } from "react-query"
 
 export const useDebounce = (value, delay) => {
     const [valueDebounce, setValueDebounce] = useState('')
@@ -11,8 +10,6 @@ export const useDebounce = (value, delay) => {
         return () => {
             clearTimeout(handle)
         }
-    }, [value, delay])
-
+    }, [value])
     return valueDebounce
-
 }

@@ -68,6 +68,8 @@ export const WrapperDecriptionTextProduct = styled.h1`
     white-space: pre-line;
     min-height: fit-content;
     transition: min-height 1s ease;
+
+  
 `
 
 export const WrapperAddressProduct = styled.div`
@@ -157,11 +159,4 @@ export const BoxDecriptionContent = styled.div`
     text-align: justify;
     width: 100%;
     margin-top: 10px
-`
-
-export const Icontick = styled.i`
-    content: url(data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 48 48'%3E%3Cpath fill='%234caf50' d='M44 24c0 11.045-8.955 20-20 20S4 35.045 4 24 12.955 4 24 4s20 8.955 20 20'/%3E%3Cpath fill='%23ccff90' d='M34.602 14.602 21 28.199l-5.602-5.598-2.797 2.797L21 33.801l16.398-16.402z'/%3E%3C/svg%3E);
-    margin-right: 4px;
-    position: relative;
-    top: 2px;
 `
