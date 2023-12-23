@@ -8,10 +8,12 @@ import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
 import { updateUser } from '../../redux/slice/userslide'
-import { Button } from 'antd'
+import { Button, Typography } from 'antd'
 import { UploadOutlined } from '@ant-design/icons';
 import { getBase64 } from '../../utils'
-
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "../../ultis/firebase";
+import { Box, TextField } from '@mui/material'
 
 const ProfilePage = () => {
     const user = useSelector((state) => state.user)
@@ -44,6 +46,42 @@ const ProfilePage = () => {
         }
     }, [isSuccess, isError])
 
+    function handleUpload(file) {
+        if (!file) {
+            message.error("Please choose an image to upload");
+            return;
+        }
+
+        const storageRef = ref(storage, `/files/${file.name + Date.now()}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => { },
+            (err) => {
+                console.error(err);
+                message.error("Error uploading image");
+            },
+            async () => {
+                try {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    setAvatar(downloadURL);
+                } catch (error) {
+                    console.error(error);
+                    message.error("Error getting download URL");
+                }
+            }
+        );
+    }
+
+    const handleOnChangeAvatar = async ({ fileList }) => {
+        const file = fileList[0];
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        handleUpload(file); // Gọi hàm handleUpload thay vì setAvatar(file.preview)
+    };
+
     const handleGetDetailsUser = async (id, token) => {
         const res = await UserService.getDetailsUser(id, token)
         dispatch(updateUser({ ...res?.data, access_token: token }))
@@ -56,19 +94,17 @@ const ProfilePage = () => {
     }
     const handleOnChangePhone = (value) => {
         setPhone(value)
-
     }
     const handleOnChangeAddress = (value) => {
         setAddress(value)
-
     }
-    const handleOnChangeAvatar = async ({ fileList }) => {
-        const file = fileList[0]
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setAvatar(file.preview)
-    }
+    // const handleOnChangeAvatar = async ({ fileList }) => {
+    //     const file = fileList[0]
+    //     if (!file.url && !file.preview) {
+    //         file.preview = await getBase64(file.originFileObj);
+    //     }
+    //     setAvatar(file.preview)
+    // }
     const handleUpdate = () => {
         mutation.mutate({ id: user?.id, email, name, phone, address, avatar, access_token: user?.access_token })
 
@@ -103,6 +139,44 @@ const ProfilePage = () => {
                                 objectFit: 'cover'
                             }} alt="avatar" />
                         )}
+                        {/* {avatar ? (
+                            <>
+                                <Typography variant="subtitle2" mb={1}>
+                                    Ảnh sự kiện:
+                                </Typography>
+                                <Box display={"flex"} alignItems={"center"} gap={2}>
+                                    <Box
+                                        component={"img"}
+                                        src={avatar}
+                                        width={200}
+                                        height={200}
+                                        sx={{ objectFit: "cover", borderRadius: "8px" }}
+                                    />
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        onClick={() => setAvatar("")}
+                                    >
+                                        Xóa
+                                    </Button>
+                                </Box>
+                            </>
+                        ) : (
+                            <>
+                                <Typography variant="subtitle2" mb={1}>
+                                    Upload ảnh nên sự kiện:
+                                </Typography>
+                                <TextField
+                                    type="file"
+                                    placeholder="Upload ảnh sự kiện"
+                                    size="small"
+                                    fullWidth
+                                    onChange={handleUpload}
+                                    accept="avatar/png, avatar/gif, avatar/jpeg"
+                                    multiline={false}
+                                />
+                            </>
+                        )} */}
                         {/* <InputForm style={{ width: '300px' }} id='avatar' value={avatar} onChange={handleOnChangeAvatar} /> */}
                     </WrapperInput>
                     <WrapperInput>

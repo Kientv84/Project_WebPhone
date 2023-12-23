@@ -1,6 +1,16 @@
 import React, { useEffect } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
-import { WrapperButtonMore, WrapperContentPopup, WrapperHeader, WrapperHeaderAccount, WrapperProducts, WrapperTextHeader, WrapperTextHeaderSmall, WrapperTextHeaderSmall1, WrapperTypeProduct } from "./style"
+import {
+    WrapperButtonMore,
+    WrapperContentPopup,
+    WrapperHeader,
+    WrapperHeaderAccount,
+    WrapperProducts,
+    WrapperTextHeader,
+    WrapperTextHeaderSmall,
+    WrapperTextHeaderSmall1,
+    WrapperTypeProduct
+} from "./style"
 import slider1 from "../../assets/images/slider1.webp"
 import slider2 from "../../assets/images/slider2.webp"
 import slider3 from "../../assets/images/slider3.webp"
@@ -200,7 +210,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                                     <CardComponent
                                         key={product._id}
                                         countInStock={product.countInStock}
-                                        description={product.description}
+                                        // description={product.description}
                                         image={product.image}
                                         name={product.name}
                                         price={product.price}

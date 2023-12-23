@@ -2,8 +2,6 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { routes } from './routes/index';
 import DefaultComponent from './components/DefaultComponent/DefaultComponent';
-// import axios from 'axios';
-// import { useQuery } from 'react-query';
 import { isJsonString } from './utils';
 import jwt_decode from "jwt-decode";
 import * as UserService from './services/UserService'
@@ -15,20 +13,6 @@ import DefautFooterComponent from './components/DefautFooterComponent/DefautFoot
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
-
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   const { storageData, decoded } = handleDecoded();
-
-  //   const fetchData = async () => {
-  //     if (decoded?.id) {
-  //       await handleGetDetailsUser(decoded.id, storageData);
-  //     }
-  //     setIsLoading(false);
-  //   };
-
-  //   fetchData();
-  // }, [handleGetDetailsUser]); // Include handleGetDetailsUser in the dependency array
 
   useEffect(() => {
     setIsLoading(true)
@@ -42,12 +26,10 @@ function App() {
   const handleDecoded = () => {
     let storageData = localStorage.getItem('access_token')
     let decoded = {}
-    // console.log('storageData', storageData, isJsonString(JSON.stringify(storageData)));
     if (storageData && isJsonString(storageData)) {
       storageData = JSON.parse(storageData);
       decoded = jwt_decode(storageData)
     }
-    // console.log('decoded', decoded);
     return { decoded, storageData }
   }
 
@@ -56,7 +38,6 @@ function App() {
     // Do something before request is sent
     const currentTime = new Date()
     const { decoded } = handleDecoded()
-    // console.log('decoded', decoded)
     if (decoded?.exp < currentTime.getTime() / 1000) {
       const data = await UserService.refreshToken()
       config.headers['token'] = `Bearer ${data?.access_token}`
@@ -70,12 +51,10 @@ function App() {
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token)
     dispatch(updateUser({ ...res?.data, access_token: token }))
-
-    // console.log('res', res)
   }
 
   return (
-    <div>
+    <div style={{ height: '100vh', width: '100%' }}>
       <Loading isLoading={isLoading} >
         <Router>
           <Routes>
@@ -95,7 +74,7 @@ function App() {
           </Routes>
         </Router>
       </Loading>
-    </div>
+    </div >
   )
 };
 
