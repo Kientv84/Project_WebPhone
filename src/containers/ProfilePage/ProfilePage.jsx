@@ -74,14 +74,6 @@ const ProfilePage = () => {
         );
     }
 
-    const handleOnChangeAvatar = async ({ fileList }) => {
-        const file = fileList[0];
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        handleUpload(file); // Gọi hàm handleUpload thay vì setAvatar(file.preview)
-    };
-
     const handleGetDetailsUser = async (id, token) => {
         const res = await UserService.getDetailsUser(id, token)
         dispatch(updateUser({ ...res?.data, access_token: token }))
@@ -98,13 +90,13 @@ const ProfilePage = () => {
     const handleOnChangeAddress = (value) => {
         setAddress(value)
     }
-    // const handleOnChangeAvatar = async ({ fileList }) => {
-    //     const file = fileList[0]
-    //     if (!file.url && !file.preview) {
-    //         file.preview = await getBase64(file.originFileObj);
-    //     }
-    //     setAvatar(file.preview)
-    // }
+    const handleOnChangeAvatar = async ({ fileList }) => {
+        const file = fileList[0]
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setAvatar(file.preview)
+    }
     const handleUpdate = () => {
         mutation.mutate({ id: user?.id, email, name, phone, address, avatar, access_token: user?.access_token })
 
