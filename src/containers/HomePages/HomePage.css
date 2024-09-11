@@ -1,0 +1,8 @@
+.header {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  width: 100%;
+  background: #42c8b7;
+  display: flex;
+}
