@@ -1,85 +1,84 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { WrapperHeader, WrapperUploadFile } from './style'
-import { Button, Form, Modal, Space } from 'antd'
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
-import TableComponent from '../TableComponent/TableComponent'
-import InputComponent from '../InputComponent/InputComponent'
-import DrawerComponent from '../DrawerComponent/DrawerComponent'
-import Loading from '../LoadingComponent/Loading'
-import ModalComponent from '../ModalComponent/ModalComponent'
-import { getBase64 } from '../../utils'
-import * as UserService from '../../services/UserService'
-import * as message from '../../components/Message/Message'
-import { useSelector } from 'react-redux'
-import { useMutationHook } from '../../hooks/useMutationHook'
-import { useQuery } from 'react-query'
-
+import React, { useEffect, useRef, useState } from "react";
+import { WrapperHeader, WrapperUploadFile } from "./style";
+import { Button, Form, Modal, Space } from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import TableComponent from "../TableComponent/TableComponent";
+import InputComponent from "../InputComponent/InputComponent";
+import DrawerComponent from "../DrawerComponent/DrawerComponent";
+import Loading from "../LoadingComponent/Loading";
+import ModalComponent from "../ModalComponent/ModalComponent";
+import { getBase64 } from "../../utils";
+import * as UserService from "../../services/UserService";
+import * as message from "../../components/Message/Message";
+import { useSelector } from "react-redux";
+import { useMutationHook } from "../../hooks/useMutationHook";
+import { useQuery } from "react-query";
+import { storage } from "../../ultis/firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 const AdminUser = () => {
-  const [rowSelected, setRowSelected] = useState('');
+  const [rowSelected, setRowSelected] = useState("");
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
-  const user = useSelector((state) => state?.user)
+  const user = useSelector((state) => state?.user);
   const searchInput = useRef(null);
 
   const [stateUserDetails, setStateUserDetails] = useState({
-    name: '',
-    email: '',
-    phone: '',
+    name: "",
+    email: "",
+    phone: "",
     isAdmin: false,
-    avatar: '',
-    address: ''
+    avatar: "",
+    address: "",
   });
 
   const [form] = Form.useForm();
 
-  const mutationUpdate = useMutationHook(
-    (data) => {
-      const { id, token, ...rests } = data
-      const res = UserService.updateUser(
-        id,
-        { ...rests }, token // này là data nên phải là object
-      )
-      return res
-    }
-  )
+  const mutationUpdate = useMutationHook((data) => {
+    const { id, token, ...rests } = data;
+    const res = UserService.updateUser(
+      id,
+      { ...rests },
+      token // này là data nên phải là object
+    );
+    return res;
+  });
 
-  const mutationDeleted = useMutationHook(
-    (data) => {
-      const { id, token } = data
-      const res = UserService.deleteUser(
-        id, token
-      )
-      return res
-    }
-  )
+  const mutationDeleted = useMutationHook((data) => {
+    const { id, token } = data;
+    const res = UserService.deleteUser(id, token);
+    return res;
+  });
 
-  const mutationDeletedMany = useMutationHook(
-    (data) => {
-      const { token, ...ids } = data
-      const res = UserService.deleteManyUser(
-        ids, token
-      )
-      return res
-    }
-  )
+  const mutationDeletedMany = useMutationHook((data) => {
+    const { token, ...ids } = data;
+    const res = UserService.deleteManyUser(ids, token);
+    return res;
+  });
 
   const handleDeleteManyUsers = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
-      onSettled: () => {
-        queryUser.refetch()
+    mutationDeletedMany.mutate(
+      { ids: ids, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryUser.refetch();
+        },
       }
-    })
-  }
+    );
+  };
 
   const getAllUsers = async () => {
-    const res = await UserService.getAllUser(user?.access_token)
-    return res
-  }
+    const res = await UserService.getAllUser(user?.access_token);
+    return res;
+  };
 
   const fetchGetDetailsUser = async (rowSelected) => {
-    const res = await UserService.getDetailsUser(rowSelected)
+    const res = await UserService.getDetailsUser(rowSelected);
     if (res?.data) {
       setStateUserDetails({
         name: res?.data?.name,
@@ -88,44 +87,61 @@ const AdminUser = () => {
         isAdmin: res?.data?.isAdmin,
         avatar: res?.data?.avatar,
         address: res?.data?.address,
-      })
+      });
     }
-    setIsLoadingUpdate(false)
-  }
+    setIsLoadingUpdate(false);
+  };
   // khi bấm edit sản phẩm nó giúp cho việc hiện ra lại các thông tin cần edit
   useEffect(() => {
-    form.setFieldsValue(stateUserDetails)
-  }, [form, stateUserDetails])
+    form.setFieldsValue(stateUserDetails);
+  }, [form, stateUserDetails]);
 
   useEffect(() => {
     if (rowSelected && isOpenDrawer) {
-      setIsLoadingUpdate(true)
-      fetchGetDetailsUser(rowSelected)
+      setIsLoadingUpdate(true);
+      fetchGetDetailsUser(rowSelected);
     }
-  }, [rowSelected, isOpenDrawer])
+  }, [rowSelected, isOpenDrawer]);
 
   //
   const handleDetailsProduct = () => {
-    setIsOpenDrawer(true)
+    setIsOpenDrawer(true);
+  };
 
-  }
+  const {
+    data: dataUpdated,
+    isSuccess: isSuccessUpdated,
+    isError: isErrorUpdated,
+  } = mutationUpdate;
+  const {
+    data: dataDeleted,
+    isLoading: isLoadingDeleted,
+    isSuccess: isSuccessDeleted,
+    isError: isErrorDeleted,
+  } = mutationDeleted;
+  const {
+    data: dataDeletedMany,
+    isSuccess: isSuccessDeletedMany,
+    isError: isErrorDeletedMany,
+  } = mutationDeletedMany;
 
-  const { data: dataUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
-  const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
-  const { data: dataDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
-
-
-  const queryUser = useQuery({ queryKey: ['user'], queryFn: getAllUsers })
-  const { isLoading: isLoadingUsers, data: users } = queryUser
+  const queryUser = useQuery({ queryKey: ["user"], queryFn: getAllUsers });
+  const { isLoading: isLoadingUsers, data: users } = queryUser;
 
   const renderAction = () => {
     return (
       <div>
-        <DeleteOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
-        <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
+        <DeleteOutlined
+          style={{ color: "red", fontSize: "28px", cursor: "pointer" }}
+          onClick={() => setIsModalOpenDelete(true)}
+        />
+        <EditOutlined
+          style={{ color: "blue", fontSize: "28px", cursor: "pointer" }}
+          onClick={handleDetailsProduct}
+        />
       </div>
-    )
-  }
+    );
+  };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -135,7 +151,13 @@ const AdminUser = () => {
   };
 
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
       <div
         style={{
           padding: 8,
@@ -146,11 +168,13 @@ const AdminUser = () => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
-            display: 'block',
+            display: "block",
           }}
         />
         <Space>
@@ -189,7 +213,7 @@ const AdminUser = () => {
     filterIcon: (filtered) => (
       <SearchOutlined
         style={{
-          color: filtered ? '#1677ff' : undefined,
+          color: filtered ? "#1677ff" : undefined,
         }}
       />
     ),
@@ -218,95 +242,103 @@ const AdminUser = () => {
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
+      title: "Name",
+      dataIndex: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
-      ...getColumnSearchProps('name') //search name
+      ...getColumnSearchProps("name"), //search name
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
+      title: "Email",
+      dataIndex: "email",
       sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
+      title: "Address",
+      dataIndex: "address",
       sorter: (a, b) => a.address.localeCompare(b.address),
-      ...getColumnSearchProps('address'), //search name
+      ...getColumnSearchProps("address"), //search name
     },
     {
-      title: 'Admin',
-      dataIndex: 'isAdmin',
+      title: "Admin",
+      dataIndex: "isAdmin",
       filters: [
-        { text: 'True', value: true },
-        { text: 'False', value: false },
+        { text: "True", value: true },
+        { text: "False", value: false },
       ],
     },
     {
-      title: 'Phone',
-      dataIndex: 'phone',
+      title: "Phone",
+      dataIndex: "phone",
       sorter: (a, b) => a.phone - b.phone,
-      ...getColumnSearchProps('phone'), //search phone
+      ...getColumnSearchProps("phone"), //search phone
     },
     {
-      title: 'Action',
-      dataIndex: 'action',
+      title: "Action",
+      dataIndex: "action",
       render: renderAction,
     },
   ];
-  const dataTable = users?.data?.length && users?.data?.map((user) => {
-    return { ...user, key: user._id, isAdmin: user.isAdmin ? 'TRUE' : 'FALSE' };
-  })
-
+  const dataTable =
+    users?.data?.length &&
+    users?.data?.map((user) => {
+      return {
+        ...user,
+        key: user._id,
+        isAdmin: user.isAdmin ? "TRUE" : "FALSE",
+      };
+    });
 
   useEffect(() => {
-    if (isSuccessDeleted && dataDeleted?.status === 'OK') {
-      message.success()
-      handleCancelDelete()
+    if (isSuccessDeleted && dataDeleted?.status === "OK") {
+      message.success();
+      handleCancelDelete();
     } else if (isErrorDeleted) {
-      message.error()
+      message.error();
     }
-  }, [isSuccessDeleted, isErrorDeleted, dataDeleted])
+  }, [isSuccessDeleted, isErrorDeleted, dataDeleted]);
 
   useEffect(() => {
-    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
-      message.success()
+    if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
+      message.success();
     } else if (isErrorDeletedMany) {
-      message.error()
+      message.error();
     }
-  }, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany])
+  }, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany]);
 
   useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-      message.success()
-      handleCancelDrawer()
+    if (isSuccessUpdated && dataUpdated?.status === "OK") {
+      message.success();
+      handleCancelDrawer();
     } else if (isErrorUpdated) {
-      message.error()
+      message.error();
     }
-  }, [isSuccessUpdated, isErrorUpdated, dataUpdated])
+  }, [isSuccessUpdated, isErrorUpdated, dataUpdated]);
 
   const handleCancelDrawer = () => {
     setIsOpenDrawer(false);
     setStateUserDetails({
-      name: '',
-      email: '',
-      phone: '',
+      name: "",
+      email: "",
+      phone: "",
       isAdmin: false,
-    })
-    form.resetFields()
+    });
+    form.resetFields();
   };
 
   const handleCancelDelete = () => {
-    setIsModalOpenDelete(false)
-  }
+    setIsModalOpenDelete(false);
+  };
 
   const handleDeleteUser = () => {
-    mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
-      onSettled: () => {
-        queryUser.refetch()
+    mutationDeleted.mutate(
+      { id: rowSelected, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryUser.refetch();
+        },
       }
-    })
-  }
+    );
+  };
 
   // const confirmDelete = (onOk) => {
   //   Modal.confirm({
@@ -322,45 +354,82 @@ const AdminUser = () => {
   const handleOnchangeDetails = (e) => {
     setStateUserDetails({
       ...stateUserDetails,
-      [e.target.name]: e.target.value
-    })
-  }
-
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleOnChangeAvatarDetails = async ({ fileList }) => {
-    const file = fileList[0]
+    const file = fileList[0];
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
-    setStateUserDetails({
-      ...stateUserDetails,
-      avatar: file.preview
-    })
-  }
+
+    setIsLoadingUpdate(true); // Đặt trạng thái loading
+
+    if (!file.url && !file.preview) {
+      message.error("warn", "Vui lòng chọn tấm ảnh để upload");
+      setIsLoadingUpdate(false); // Nếu không có file thì kết thúc loading
+      return;
+    }
+
+    const storageRef = ref(storage, `/files/${file.name + Date.now()}`);
+    const uploadTask = uploadBytesResumable(storageRef, file.originFileObj);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (err) => {
+        console.log(err);
+        setIsLoadingUpdate(false); // Nếu lỗi, kết thúc loading
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          setStateUserDetails((stateUserDetails) => ({
+            ...stateUserDetails,
+            avatar: url, // Lưu URL vào state
+          })); // Cập nhật URL ảnh đã tải lên
+
+          setIsLoadingUpdate(false); // Hoàn thành upload và kết thúc loading
+        });
+      }
+    );
+  };
 
   const onUpdateUser = () => {
-    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateUserDetails }, {
-      onSettled: () => {
-        queryUser.refetch()
+    mutationUpdate.mutate(
+      { id: rowSelected, token: user?.access_token, ...stateUserDetails },
+      {
+        onSettled: () => {
+          queryUser.refetch();
+        },
       }
-    })
-  }
-
+    );
+  };
 
   return (
     <div>
       <WrapperHeader>Manage Users</WrapperHeader>
-      <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDeleteMany={handleDeleteManyUsers} columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
-          return {
-            onClick: (event) => {
-              setRowSelected(record._id)
-            }
-
-          };
-        }} />
+      <div style={{ marginTop: "20px" }}>
+        <TableComponent
+          handleDeleteMany={handleDeleteManyUsers}
+          columns={columns}
+          isLoading={isLoadingUsers}
+          data={dataTable}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                setRowSelected(record._id);
+              },
+            };
+          }}
+        />
       </div>
-      <DrawerComponent title='User Details' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
+      <DrawerComponent
+        title="User Details"
+        isOpen={isOpenDrawer}
+        onCancel={() => setIsOpenDrawer(false)}
+        footer={null}
+      >
         <Loading isLoading={isLoadingUpdate}>
           <Form
             name="basic"
@@ -373,49 +442,73 @@ const AdminUser = () => {
             <Form.Item
               label="Name"
               name="name"
-              rules={[{ required: true, message: 'Please input your name!' }]}
+              rules={[{ required: true, message: "Please input your name!" }]}
             >
-              <InputComponent value={stateUserDetails.name} onChange={handleOnchangeDetails} name="name" />
+              <InputComponent
+                value={stateUserDetails.name}
+                onChange={handleOnchangeDetails}
+                name="name"
+              />
             </Form.Item>
 
             <Form.Item
               label="Email"
               name="email"
-              rules={[{ required: true, message: 'Please input your email!' }]}
+              rules={[{ required: true, message: "Please input your email!" }]}
             >
-              <InputComponent value={stateUserDetails.email} onChange={handleOnchangeDetails} name="email" />
+              <InputComponent
+                value={stateUserDetails.email}
+                onChange={handleOnchangeDetails}
+                name="email"
+              />
             </Form.Item>
             <Form.Item
               label="Phone"
               name="phone"
-              rules={[{ required: true, message: 'Please input your phone!' }]}
+              rules={[{ required: true, message: "Please input your phone!" }]}
             >
-              <InputComponent value={stateUserDetails.phone} onChange={handleOnchangeDetails} name="phone" />
+              <InputComponent
+                value={stateUserDetails.phone}
+                onChange={handleOnchangeDetails}
+                name="phone"
+              />
             </Form.Item>
             <Form.Item
               label="Address"
               name="address"
-              rules={[{ required: true, message: 'Please input your address!' }]}
+              rules={[
+                { required: true, message: "Please input your address!" },
+              ]}
             >
-              <InputComponent value={stateUserDetails.address} onChange={handleOnchangeDetails} name="address" />
+              <InputComponent
+                value={stateUserDetails.address}
+                onChange={handleOnchangeDetails}
+                name="address"
+              />
             </Form.Item>
             <Form.Item
               label="Avatar"
               name="avatar"
-              rules={[{ required: true, message: 'Please input your avatar!' }]}
+              rules={[{ required: true, message: "Please input your avatar!" }]}
             >
-              <WrapperUploadFile onChange={handleOnChangeAvatarDetails} maxCount={1}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+              <WrapperUploadFile
+                onChange={handleOnChangeAvatarDetails}
+                maxCount={1}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <Button>Select File</Button>
                   {stateUserDetails?.avatar && (
-                    <img src={stateUserDetails?.avatar} style={{
-                      height: '60px',
-                      width: '60px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      marginLeft: '30px',
-
-                    }} alt="avatar" />
+                    <img
+                      src={stateUserDetails?.avatar}
+                      style={{
+                        height: "60px",
+                        width: "60px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        marginLeft: "30px",
+                      }}
+                      alt="avatar"
+                    />
                   )}
                 </div>
               </WrapperUploadFile>
@@ -428,13 +521,19 @@ const AdminUser = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-      <ModalComponent forceRender title="Delete user" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser}>
+      <ModalComponent
+        forceRender
+        title="Delete user"
+        open={isModalOpenDelete}
+        onCancel={handleCancelDelete}
+        onOk={handleDeleteUser}
+      >
         <Loading isLoading={isLoadingDeleted}>
           <div>Are you sure you want to delete this account?</div>
         </Loading>
       </ModalComponent>
     </div>
-  )
-}
+  );
+};
 
-export default AdminUser
+export default AdminUser;

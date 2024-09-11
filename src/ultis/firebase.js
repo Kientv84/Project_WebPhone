@@ -1,21 +1,14 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyCMbOMyDQ-iXIfIiijVuyNrPo35CjeQhOM",
-    authDomain: "webphone-a6249.firebaseapp.com",
-    projectId: "webphone-a6249",
-    storageBucket: "webphone-a6249.appspot.com",
-    messagingSenderId: "411928616840",
-    appId: "1:411928616840:web:a7a09ad1601951fb05a43d",
-    measurementId: "G-07QX7D2L18"
+  apiKey: "AIzaSyCfwiJ0MwT_TeTprwYFA2UELohd7bPjCUQ",
+  authDomain: "phonestore-9f5a8.firebaseapp.com",
+  projectId: "phonestore-9f5a8",
+  storageBucket: "phonestore-9f5a8.appspot.com",
+  messagingSenderId: "426833281747",
+  appId: "1:426833281747:web:77bc1f6608b63f38f44a26",
 };
 
 // Initialize Firebase
