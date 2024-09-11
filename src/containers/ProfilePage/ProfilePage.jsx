@@ -52,34 +52,6 @@ const ProfilePage = () => {
     }
   }, [isSuccess, isError]);
 
-  function handleUpload(file) {
-    if (!file) {
-      message.error("Please choose an image to upload");
-      return;
-    }
-
-    const storageRef = ref(storage, `/files/${file.name + Date.now()}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {},
-      (err) => {
-        console.error(err);
-        message.error("Error uploading image");
-      },
-      async () => {
-        try {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setAvatar(downloadURL);
-        } catch (error) {
-          console.error(error);
-          message.error("Error getting download URL");
-        }
-      }
-    );
-  }
-
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
     dispatch(updateUser({ ...res?.data, access_token: token }));
