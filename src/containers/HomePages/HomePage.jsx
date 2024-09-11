@@ -1,139 +1,151 @@
 import React, { useEffect } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import {
-    WrapperButtonMore,
-    WrapperContentPopup,
-    WrapperHeader,
-    WrapperHeaderAccount,
-    WrapperProducts,
-    WrapperTextHeader,
-    WrapperTextHeaderSmall,
-    WrapperTextHeaderSmall1,
-    WrapperTypeProduct
-} from "./style"
-import slider1 from "../../assets/images/slider1.webp"
-import slider2 from "../../assets/images/slider2.webp"
-import slider3 from "../../assets/images/slider3.webp"
+  WrapperButtonMore,
+  WrapperContentPopup,
+  WrapperHeader,
+  WrapperHeaderAccount,
+  WrapperProducts,
+  WrapperTextHeader,
+  WrapperTextHeaderSmall,
+  WrapperTextHeaderSmall1,
+  WrapperTypeProduct,
+} from "./style";
+import slider1 from "../../assets/images/slider1.webp";
+import slider2 from "../../assets/images/slider2.webp";
+import slider3 from "../../assets/images/slider3.webp";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { useQuery } from "react-query";
-import * as ProductService from '../../services/ProductService'
+import * as ProductService from "../../services/ProductService";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useNavigate } from "react-router-dom";
-import { setOrderItems } from '../../redux/slice/orderSlide';
-import * as UserService from '../../services/UserService'
-import { resetUser } from '../../redux/slice/userslide';
-import { resetOrder1 } from '../../redux/slice/orderSlide';
+import { setOrderItems } from "../../redux/slice/orderSlide";
+import * as UserService from "../../services/UserService";
+import { resetUser } from "../../redux/slice/userslide";
+import { resetOrder1 } from "../../redux/slice/orderSlide";
 import {
-    UserOutlined,
-    CaretDownOutlined,
-    ShoppingCartOutlined
-} from '@ant-design/icons';
+  UserOutlined,
+  CaretDownOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import { Badge, Col, Popover } from "antd";
 import ButtonInputSearch from "../../components/ButtonInputSearch/ButtonInputSearch";
+import "./HomePage.css";
 
 const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
-    const searchProduct = useSelector((state) => state?.product?.search)
-    const searchDebounce = useDebounce(searchProduct, 1000)
-    const [loading, setLoading] = useState(false)
-    const [limit, setLimit] = useState(12)
-    const [typeProducts, setTypeProducts] = useState([])
+  const searchProduct = useSelector((state) => state?.product?.search);
+  const searchDebounce = useDebounce(searchProduct, 1000);
+  const [loading, setLoading] = useState(false);
+  const [limit, setLimit] = useState(12);
+  const [typeProducts, setTypeProducts] = useState([]);
 
-    const fetchProductAll = async (context) => {
-        const limit = context?.queryKey && context?.queryKey[1]
-        const search = context?.queryKey && context?.queryKey[2]
-        const res = await ProductService.getAllProduct(search, limit)
-        return res
+  const fetchProductAll = async (context) => {
+    const limit = context?.queryKey && context?.queryKey[1];
+    const search = context?.queryKey && context?.queryKey[2];
+    const res = await ProductService.getAllProduct(search, limit);
+    return res;
+  };
+
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductService.getAllTypeProduct();
+    if (res?.status === "OK") setTypeProducts(res?.data);
+  };
+
+  const {
+    isLoading,
+    data: products,
+    isPreviousData,
+  } = useQuery(["products", limit, searchDebounce], fetchProductAll, {
+    retry: 3,
+    retryDelay: 1000,
+    keepPreviousData: true,
+  });
+  useEffect(() => {
+    fetchAllTypeProduct();
+  }, []);
+
+  // header
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [userName, setUserName] = useState("");
+  const [userAvatar, setUserAvatar] = useState("");
+  const [search, setSearch] = useState("");
+  const [isOpenPopup, setIsOpenPopup] = useState(false);
+  const order = useSelector((state) => state.order);
+
+  const handleNavigateLogin = () => {
+    navigate("/sign-in");
+  };
+
+  const handleLogout = async () => {
+    setLoading(true);
+    await UserService.logoutUser();
+    dispatch(resetUser());
+    dispatch(resetOrder1());
+    setLoading(false);
+    navigate("/");
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    setUserName(user?.name);
+    setUserAvatar(user?.avatar);
+    setLoading(false);
+  }, [user?.name, user?.avatar]);
+
+  const content = (
+    <div>
+      <WrapperContentPopup onClick={() => handleClickNavigate("profile")}>
+        My Information
+      </WrapperContentPopup>
+      {user?.isAdmin && (
+        <WrapperContentPopup onClick={() => handleClickNavigate("admin")}>
+          Management
+        </WrapperContentPopup>
+      )}
+      <WrapperContentPopup onClick={() => handleClickNavigate("my-order")}>
+        My Order
+      </WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate()}>
+        Log Out
+      </WrapperContentPopup>
+    </div>
+  );
+
+  const handleClickNavigate = (type) => {
+    if (type === "profile") {
+      navigate("/profile-user");
+    } else if (type === "admin") {
+      navigate("/system/admin");
+    } else if (type === "my-order") {
+      navigate("/my-order", {
+        state: {
+          id: user?.id,
+          token: user?.access_token,
+        },
+      });
+    } else {
+      handleLogout();
     }
+    setIsOpenPopup(false);
+  };
 
-    const fetchAllTypeProduct = async () => {
-        const res = await ProductService.getAllTypeProduct()
-        if (res?.status === 'OK')
-            setTypeProducts(res?.data)
+  const handleCartClick = () => {
+    if (!user?.id) {
+      navigate("/sign-in");
+    } else {
+      navigate("/order");
     }
-
-    const { isLoading, data: products, isPreviousData } = useQuery(['products', limit, searchDebounce], fetchProductAll, { retry: 3, retryDelay: 1000, keepPreviousData: true })
-    useEffect(() => {
-        fetchAllTypeProduct()
-    }, [])
-
-
-    // header
-    const navigate = useNavigate()
-    const user = useSelector((state) => state.user)
-    const dispatch = useDispatch()
-    const [userName, setUserName] = useState('')
-    const [userAvatar, setUserAvatar] = useState('')
-    const [search, setSearch] = useState('')
-    const [isOpenPopup, setIsOpenPopup] = useState(false)
-    const order = useSelector((state) => state.order)
-
-    const handleNavigateLogin = () => {
-        navigate('/sign-in')
-
-
-    }
-
-    const handleLogout = async () => {
-        setLoading(true)
-        await UserService.logoutUser()
-        dispatch(resetUser())
-        dispatch(resetOrder1());
-        setLoading(false);
-        navigate('/');
-    }
-
-    useEffect(() => {
-        setLoading(true)
-        setUserName(user?.name)
-        setUserAvatar(user?.avatar)
-        setLoading(false)
-    }, [user?.name, user?.avatar])
-
-    const content = (
-        <div>
-            <WrapperContentPopup onClick={() => handleClickNavigate('profile')}>My Information</WrapperContentPopup>
-            {user?.isAdmin && (
-                <WrapperContentPopup onClick={() => handleClickNavigate('admin')}>Management</WrapperContentPopup>
-            )}
-            <WrapperContentPopup onClick={() => handleClickNavigate('my-order')}>My Order</WrapperContentPopup>
-            <WrapperContentPopup onClick={() => handleClickNavigate()}>Log Out</WrapperContentPopup>
-        </div>
-    );
-
-    const handleClickNavigate = (type) => {
-        if (type === 'profile') {
-            navigate('/profile-user')
-        } else if (type === 'admin') {
-            navigate('/system/admin')
-        } else if (type === 'my-order') {
-            navigate('/my-order', {
-                state: {
-                    id: user?.id,
-                    token: user?.access_token
-                }
-            })
-        } else {
-            handleLogout()
-        }
-        setIsOpenPopup(false)
-    }
-
-    const handleCartClick = () => {
-        if (!user?.id) {
-            navigate('/sign-in');
-        } else {
-            navigate('/order');
-        }
-    };
-
+  };
 
     return (
         <div>
-            <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
+            <div className="header" style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
                 <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
                     <Col span={5}>
                         <WrapperTextHeader to='/'> WEBPHONE </WrapperTextHeader>
