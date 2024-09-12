@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
+import BranchProduct from "../../components/BranchProduct/BranchProduct";
 import {
     WrapperButtonMore,
     WrapperContentPopup,
@@ -9,7 +10,8 @@ import {
     WrapperTextHeader,
     WrapperTextHeaderSmall,
     WrapperTextHeaderSmall1,
-    WrapperTypeProduct
+    WrapperTypeProduct,
+    WrapperBranchProduct
 } from "./style"
 import slider1 from "../../assets/images/slider1.webp"
 import slider2 from "../../assets/images/slider2.webp"
@@ -41,6 +43,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     const [loading, setLoading] = useState(false)
     const [limit, setLimit] = useState(12)
     const [typeProducts, setTypeProducts] = useState([])
+    const [branchProducts, setBranchProducts] = useState([])
 
     const fetchProductAll = async (context) => {
         const limit = context?.queryKey && context?.queryKey[1]
@@ -55,9 +58,16 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             setTypeProducts(res?.data)
     }
 
+    const fetchAllBranchProduct = async () => {
+        const res = await ProductService.getAllBranchProduct()
+        if (res?.status === 'OK')
+            setBranchProducts(res?.data)
+    }
+
     const { isLoading, data: products, isPreviousData } = useQuery(['products', limit, searchDebounce], fetchProductAll, { retry: 3, retryDelay: 1000, keepPreviousData: true })
     useEffect(() => {
         fetchAllTypeProduct()
+        fetchAllBranchProduct()
     }, [])
 
 
@@ -186,9 +196,25 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                         )}
                     </Col>
                 </WrapperHeader>
+
             </div>
             <Loading isLoading={isLoading || loading}>
-                <div className="type-product" style={{ width: '1270px', margin: '0 auto' }}>
+            <div className='body' style={{ width: '100%', backgroundColor: '#efefef' }}>
+                 <div  style={{ display: 'flex', width: '1270px', margin: '20px auto', gap: '20px' }}>
+                    <div className="branch-product" style={{ flex: '2' }}>
+                        <WrapperBranchProduct>
+                            {branchProducts.map((item) => {
+                                return (
+                                    <BranchProduct name={item} key={item} />
+                                )
+                            })}
+                        </WrapperBranchProduct>
+                    </div>
+                    <div className="slider" style={{ flex: '1', maxWidth: '100%' }}>
+                        <SliderComponent arrImages={[slider1, slider2, slider3]} />
+                    </div>
+            </div>
+                 <div className="type-product" style={{ width: '1270px', margin: '10px auto'}}>
                     <WrapperTypeProduct>
                         {typeProducts.map((item) => {
                             return (
@@ -197,9 +223,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                         })}
                     </WrapperTypeProduct>
                 </div>
-                <div className='body' style={{ width: '100%', backgroundColor: '#efefef' }}>
                     <div id="container" style={{ height: 'auto', width: '1270px', margin: '0 auto' }}>
-                        <SliderComponent arrImages={[slider1, slider2, slider3]} />
                         <WrapperProducts>
                             {products?.data?.filter((product) => {
                                 const searchLower = search.toLowerCase();

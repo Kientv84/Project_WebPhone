@@ -54,6 +54,24 @@ export const renderOptions = (arr) => {
     return results
 }
 
+export const renderOptionsBranch = (arr) => {
+    let results = []
+    if (arr) {
+        results = arr?.map((opt) => {
+            return {
+                value: opt,
+                label: opt
+            }
+        })
+    }
+    results.push({
+        label: 'Thêm branch',
+        value: 'add_branch'
+    })
+    return results
+}
+
+
 export const initFacebookSDK = () => {
     if (window.FB) {
         window.FB.XFBML.parse();

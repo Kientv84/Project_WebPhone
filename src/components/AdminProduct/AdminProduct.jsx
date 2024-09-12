@@ -4,7 +4,7 @@ import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant
 import { WrapperHeader, WrapperUploadFile } from './style'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'
-import { getBase64, renderOptions } from '../../utils'
+import { getBase64, renderOptions, renderOptionsBranch } from '../../utils'
 import * as ProductService from '../../services/ProductService'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../LoadingComponent/Loading'
@@ -35,6 +35,7 @@ const AdminProduct = () => {
     image1: '',
     image2: '',
     type: '',
+    branch: '',
     countInStock: '',
     newType: '',
     discount: '',
@@ -56,6 +57,7 @@ const AdminProduct = () => {
         image1,
         image2,
         type,
+        branch,
         countInStock,
         discount,
       } = data
@@ -64,10 +66,12 @@ const AdminProduct = () => {
         price,
         description,
         promotion,
-        rating, image,
+        rating, 
+        image,
         image1,
         image2,
         type,
+        branch,
         countInStock,
         discount,
       })
@@ -127,6 +131,7 @@ const AdminProduct = () => {
         image1: res?.data?.image1,
         image2: res?.data?.image2,
         type: res?.data?.type,
+        branch: res?.data?.branch,
         countInStock: res?.data?.countInStock,
         discount: res?.data?.discount,
       })
@@ -169,13 +174,28 @@ const AdminProduct = () => {
       ...stateProduct,
       type: value
     })
+    console.log('value', value)
   }
+
+  const handleChangeSelectBranch = (valueBranch) => {
+    setStateProduct({
+      ...stateProduct,
+      branch: valueBranch
+    })
+    console.log('value', valueBranch)
+  }  
 
 
   const fetchAllTypeProduct = async () => {
     const res = await ProductService.getAllTypeProduct()
     return res
   }
+
+  const fetchAllBranchProduct = async () => {
+    const res = await ProductService.getAllBranchProduct()
+    return res
+  }
+
 
 
   const { data, isLoading, isSuccess, isError } = mutation
@@ -186,6 +206,8 @@ const AdminProduct = () => {
 
   const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
   const typeProduct = useQuery({ queryKey: ['type-product'], queryFn: fetchAllTypeProduct })
+  const branchProduct = useQuery({ queryKey: ['branch-product'], queryFn: fetchAllBranchProduct })
+
   const { isLoading: isLoadingProducts, data: products } = queryProduct
   const renderAction = () => {
     return (
@@ -318,6 +340,11 @@ const AdminProduct = () => {
         ...getColumnSearchProps('type'), // search type
       },
       {
+        title: 'Branch',
+        dataIndex: 'branch',
+        ...getColumnSearchProps('branch'), // search branch
+      },
+      {
         title: 'Action',
         dataIndex: 'action',
         render: renderAction,
@@ -380,6 +407,7 @@ const AdminProduct = () => {
       image1: '',
       image2: '',
       type: '',
+      branch: '',
       countInStock: '',
     })
     form.resetFields()
@@ -409,6 +437,7 @@ const AdminProduct = () => {
       image1: '',
       image2: '',
       type: '',
+      branch: '',
       countInStock: '',
       discount: '',
     })
@@ -426,6 +455,7 @@ const AdminProduct = () => {
       image1: stateProduct.image1,
       image2: stateProduct.image2,
       type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
+      branch: stateProduct.branch,
       countInStock: stateProduct.countInStock,
       discount: stateProduct.discount,
     }
@@ -580,6 +610,25 @@ const AdminProduct = () => {
                 <InputComponent value={stateProduct.newType} onChange={handleOnchange} name="newType" />
               </Form.Item>
             )}
+
+            <Form.Item
+              label="Branch"
+              name="branch"
+              rules={[{ required: true, message: 'Please input your branch!' }]}
+            >
+              <Select
+                name="branch"
+                // defaultValue="lucy"
+                // style={{ width: 120 }}
+                valueBranch={stateProduct.branch}
+                onChange={handleChangeSelectBranch}
+                options={branchProduct?.data?.data.map((opt) => ({
+                label: opt,
+                value: opt,
+              }))}
+            />
+            </Form.Item>
+
             <Form.Item
               label="Count inStock"
               name="countInStock"
@@ -717,6 +766,13 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProductDetails['type']} onChange={handleOnchangeDetails} name="type" />
             </Form.Item>
+             <Form.Item
+              label="Branch"
+              name="branch"
+              rules={[{ required: true, message: 'Please input your branch!' }]}
+            >
+              <InputComponent value={stateProductDetails['branch']} onChange={handleOnchangeDetails} name="branch" />    
+            </Form.Item> 
             <Form.Item
               label="Count inStock"
               name="countInStock"
