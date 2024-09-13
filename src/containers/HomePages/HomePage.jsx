@@ -200,30 +200,30 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </div>
             <Loading isLoading={isLoading || loading}>
             <div className='body' style={{ width: '100%', backgroundColor: '#efefef' }}>
-                 <div  style={{ display: 'flex', width: '1270px', margin: '20px auto', gap: '20px' }}>
-                    <div className="branch-product" style={{ flex: '2' }}>
+                 <div className="type-product" style={{ display: 'flex', width: '1270px', margin: '20px auto', gap: '20px' }}>
+                    <div style={{ flex: '2' }}>
+                        <WrapperTypeProduct>
+                            {typeProducts.map((item) => {
+                                return (
+                                    <TypeProduct name={item} key={item} />
+                                )
+                            })}
+                        </WrapperTypeProduct>
+                    </div>
+                    <div className="slider" style={{ flex: '1', maxWidth: '100%' }}>
+                        <SliderComponent arrImages={[slider1, slider2, slider3]} />
+                    </div>
+                 </div>
+                    <div className="branch-product" style={{ width: '1270px', margin: '10px auto'}}  >                    
                         <WrapperBranchProduct>
                             {branchProducts.map((item) => {
                                 return (
                                     <BranchProduct name={item} key={item} />
                                 )
                             })}
-                        </WrapperBranchProduct>
-                    </div>
-                    <div className="slider" style={{ flex: '1', maxWidth: '100%' }}>
-                        <SliderComponent arrImages={[slider1, slider2, slider3]} />
-                    </div>
-            </div>
-                 <div className="type-product" style={{ width: '1270px', margin: '10px auto'}}>
-                    <WrapperTypeProduct>
-                        {typeProducts.map((item) => {
-                            return (
-                                <TypeProduct name={item} key={item} />
-                            )
-                        })}
-                    </WrapperTypeProduct>
-                </div>
-                    <div id="container" style={{ height: 'auto', width: '1270px', margin: '0 auto' }}>
+                        </WrapperBranchProduct>                
+                     </div>
+                <div id="container" style={{ height: 'auto', width: '1270px', margin: '0 auto' }}>
                         <WrapperProducts>
                             {products?.data?.filter((product) => {
                                 const searchLower = search.toLowerCase();

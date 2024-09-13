@@ -3,14 +3,14 @@ import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { Row } from "antd"
 import { Link } from "react-router-dom";
 
-export const WrapperTypeProduct = styled.div`
+export const WrapperBranchProduct = styled.div`
     display: flex;
     align-items: center;
     gap: 24px;
     justify-content: flex-start;
     height: 44px;
 `
-export const WrapperBranchProduct = styled.div`
+export const WrapperTypeProduct = styled.div`
 display: flex;
   flex-direction: column;
   width: 250px; /* Chiều rộng box */

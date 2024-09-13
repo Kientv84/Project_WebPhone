@@ -4,7 +4,7 @@ import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant
 import { WrapperHeader, WrapperUploadFile } from './style'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'
-import { getBase64, renderOptions, renderOptionsBranch } from '../../utils'
+import { getBase64, renderOptionsType, renderOptionsBranch } from '../../utils'
 import * as ProductService from '../../services/ProductService'
 import { useMutationHook } from '../../hooks/useMutationHook'
 import Loading from '../LoadingComponent/Loading'
@@ -38,6 +38,7 @@ const AdminProduct = () => {
     branch: '',
     countInStock: '',
     newType: '',
+    newBranch: '',
     discount: '',
   })
   const [stateProduct, setStateProduct] = useState(initial());
@@ -455,7 +456,7 @@ const AdminProduct = () => {
       image1: stateProduct.image1,
       image2: stateProduct.image2,
       type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
-      branch: stateProduct.branch,
+      branch: stateProduct.branch === 'add_branch' ? stateProduct.newBranch : stateProduct.branch,
       countInStock: stateProduct.countInStock,
       discount: stateProduct.discount,
     }
@@ -594,11 +595,11 @@ const AdminProduct = () => {
             >
               <Select
                 name="type"
-                // defaultValue="lucy"
-                // style={{ width: 120 }}
+                // ="lucy"
+                // style={{ defaultValuewidth: 120 }}
                 value={stateProduct.type}
                 onChange={handleChangeSelect}
-                options={renderOptions(typeProduct?.data?.data)}
+                options={renderOptionsType(typeProduct?.data?.data)}
               />
             </Form.Item>
             {stateProduct.type === 'add_type' && (
@@ -622,12 +623,19 @@ const AdminProduct = () => {
                 // style={{ width: 120 }}
                 valueBranch={stateProduct.branch}
                 onChange={handleChangeSelectBranch}
-                options={branchProduct?.data?.data.map((opt) => ({
-                label: opt,
-                value: opt,
-              }))}
+                options={renderOptionsBranch(branchProduct?.data?.data)}
             />
             </Form.Item>
+             {stateProduct.branch === 'add_branch' && (
+              <Form.Item
+                label='New branch'
+                name="newBranch"
+                rules={[{ required: true, message: 'Please input your branch!' }]}
+              >
+                <InputComponent value={stateProduct.newBranch} onChange={handleOnchange} name="newBranch" />
+              </Form.Item>
+            )}
+
 
             <Form.Item
               label="Count inStock"
@@ -636,6 +644,7 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.countInStock} onChange={handleOnchange} name="countInStock" />
             </Form.Item>
+
             <Form.Item
               label="Price"
               name="price"
@@ -643,6 +652,7 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.price} onChange={handleOnchange} name="price" />
             </Form.Item>
+
             <Form.Item
               label="Description"
               name="description"
@@ -650,6 +660,7 @@ const AdminProduct = () => {
             >
               <Input.TextArea value={stateProduct.description} onChange={handleOnchange} name="description" />
             </Form.Item>
+
             <Form.Item
               label="Promotion"
               name="promotion"
@@ -657,6 +668,7 @@ const AdminProduct = () => {
             >
               <Input.TextArea value={stateProduct.promotion} onChange={handleOnchange} name="promotion" />
             </Form.Item>
+
             <Form.Item
               label="Rating"
               name="rating"
@@ -664,6 +676,7 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.rating} onChange={handleOnchange} name="rating" />
             </Form.Item>
+
             <Form.Item
               label="Discount"
               name="discount"
@@ -671,6 +684,7 @@ const AdminProduct = () => {
             >
               <InputComponent value={stateProduct.discount} onChange={handleOnchange} name="discount" />
             </Form.Item>
+
             <Form.Item
               label="Image"
               name="image"
@@ -691,6 +705,7 @@ const AdminProduct = () => {
                 </div>
               </WrapperUploadFile>
             </Form.Item>
+
             <Form.Item
               label="Image Product"
               name="image1"
@@ -711,6 +726,7 @@ const AdminProduct = () => {
                 </div>
               </WrapperUploadFile>
             </Form.Item>
+            
             <Form.Item
               label="Image Product"
               name="image2"

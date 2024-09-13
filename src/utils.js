@@ -37,7 +37,7 @@ export const convertPrice = (price) => {
 }
 
 
-export const renderOptions = (arr) => {
+export const renderOptionsType = (arr) => {
     let results = []
     if (arr) {
         results = arr?.map((opt) => {
