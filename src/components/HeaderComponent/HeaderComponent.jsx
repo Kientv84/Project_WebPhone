@@ -102,7 +102,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   };
 
   return (
-    <div className='header' style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center', }}>
+    <div style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
       <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
         <Col span={5}>
           <WrapperTextHeader to='/'> WEBPHONE </WrapperTextHeader>
