@@ -2,19 +2,20 @@ import React, { useEffect } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import BranchProduct from "../../components/BranchProduct/BranchProduct";
 import {
-    WrapperButtonMore,
-    WrapperContentPopup,
-    WrapperHeader,
-    WrapperHeaderAccount,
-    WrapperProducts,
-    WrapperTextHeader,
-    WrapperTextHeaderSmall,
-    WrapperTextHeaderSmall1,
-    WrapperTypeProduct
-} from "./style"
-import slider1 from "../../assets/images/slider1.webp"
-import slider2 from "../../assets/images/slider2.webp"
-import slider3 from "../../assets/images/slider3.webp"
+  WrapperButtonMore,
+  WrapperContentPopup,
+  WrapperHeader,
+  WrapperHeaderAccount,
+  WrapperProducts,
+  WrapperTextHeader,
+  WrapperTextHeaderSmall,
+  WrapperTextHeaderSmall1,
+  WrapperTypeProduct,
+  WrapperBranchProduct,
+} from "./style";
+import slider1 from "../../assets/images/slider1.webp";
+import slider2 from "../../assets/images/slider2.webp";
+import slider3 from "../../assets/images/slider3.webp";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { useQuery } from "react-query";
@@ -24,7 +25,7 @@ import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useNavigate } from "react-router-dom";
-// import { setOrderItems } from "../../redux/slice/orderSlide";
+import { setOrderItems } from "../../redux/slice/orderSlide";
 import * as UserService from "../../services/UserService";
 import { resetUser } from "../../redux/slice/userslide";
 import { resetOrder1 } from "../../redux/slice/orderSlide";
@@ -35,14 +36,14 @@ import {
 } from "@ant-design/icons";
 import { Badge, Col, Popover } from "antd";
 import ButtonInputSearch from "../../components/ButtonInputSearch/ButtonInputSearch";
-import "./HomePage.css";
 
 const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
-    const searchProduct = useSelector((state) => state?.product?.search)
-    const searchDebounce = useDebounce(searchProduct, 1000)
-    const [loading, setLoading] = useState(false)
-    const [limit, setLimit] = useState(12)
-    const [typeProducts, setTypeProducts] = useState([])
+  const searchProduct = useSelector((state) => state?.product?.search);
+  const searchDebounce = useDebounce(searchProduct, 1000);
+  const [loading, setLoading] = useState(false);
+  const [limit, setLimit] = useState(12);
+  const [typeProducts, setTypeProducts] = useState([]);
+  const [branchProducts, setBranchProducts] = useState([]);
 
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1];
@@ -51,17 +52,29 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     return res;
   };
 
-    const fetchAllTypeProduct = async () => {
-        const res = await ProductService.getAllTypeProduct()
-        if (res?.status === 'OK')
-            setTypeProducts(res?.data)
-    }
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductService.getAllTypeProduct();
+    if (res?.status === "OK") setTypeProducts(res?.data);
+  };
 
-    const { isLoading, data: products, isPreviousData } = useQuery(['products', limit, searchDebounce], fetchProductAll, { retry: 3, retryDelay: 1000, keepPreviousData: true })
-    useEffect(() => {
-        fetchAllTypeProduct()
-    }, [])
+  const fetchAllBranchProduct = async () => {
+    const res = await ProductService.getAllBranchProduct();
+    if (res?.status === "OK") setBranchProducts(res?.data);
+  };
 
+  const {
+    isLoading,
+    data: products,
+    isPreviousData,
+  } = useQuery(["products", limit, searchDebounce], fetchProductAll, {
+    retry: 3,
+    retryDelay: 1000,
+    keepPreviousData: true,
+  });
+  useEffect(() => {
+    fetchAllTypeProduct();
+    fetchAllBranchProduct();
+  }, []);
 
   // header
   const navigate = useNavigate();
@@ -138,131 +151,196 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     }
   };
 
-    return (
-        <div>
-            <div className="header" style={{ width: '100%', background: '#42C8B7', display: 'flex', justifyContent: 'center' }}>
-                <WrapperHeader style={{ justifyContent: isHiddenSearch && isHiddenSearch ? 'space-between' : 'unset' }}>
-                    <Col span={5}>
-                        <WrapperTextHeader to='/'> WEBPHONE </WrapperTextHeader>
-                    </Col>
-                    {!isHiddenSearch && (
-                        <Col span={13}>
-                            <ButtonInputSearch
-                                size="large"
-                                placeholder="What do you need to find?"
-                                textbutton="Search"
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                        </Col>
-                    )}
-                    <Col span={6} style={{ display: "flex", gap: '54px', alignItems: 'center' }}>
-                        <Loading isLoading={loading}>
-                            <WrapperHeaderAccount>
-                                {userAvatar ? (
-                                    <img src={userAvatar} alt="avatar" style={{
-                                        height: '40px',
-                                        width: '40px',
-                                        borderRadius: '50%',
-                                        objectFit: 'cover'
-                                    }} />
-                                ) : (
-                                    <UserOutlined style={{ fontSize: '30px' }} />
-                                )}
-                                {user?.access_token ? (
-                                    <Popover content={content} trigger="click" open={isOpenPopup} >
-                                        <div style={{ cursor: 'pointer' }} onClick={() => setIsOpenPopup((prev) => !prev)}>{userName?.length ? userName : user?.email}</div>
-                                    </Popover>
-                                ) : (
-                                    <div onClick={handleNavigateLogin} style={{ cursor: 'pointer' }}>
-                                        <WrapperTextHeaderSmall>Sign-In/ Sign-Up</WrapperTextHeaderSmall>
-                                        <div>
-                                            <WrapperTextHeaderSmall>Account</WrapperTextHeaderSmall>
-                                            <CaretDownOutlined />
-                                        </div>
-                                    </div>
-                                )}
-                            </WrapperHeaderAccount>
-                        </Loading>
-                        {!isHiddenCart && (
-                            <div onClick={handleCartClick} style={{ cursor: 'pointer' }}>
-                                <Badge count={order?.orderItems?.length} size='small'>
-                                    <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
-                                </Badge>
-                                <WrapperTextHeaderSmall1>Cart</WrapperTextHeaderSmall1>
-                            </div>
-                        )}
-                    </Col>
-                </WrapperHeader>
-
-            </div>
-            <Loading isLoading={isLoading || loading}>
-            <div className='body' style={{ width: '100%', backgroundColor: '#efefef' }}>
-                 <div className="type-product" style={{ display: 'flex', width: '1270px', margin: '20px auto', gap: '20px' }}>
-                    <div style={{ flex: '2' }}>
-                        <WrapperTypeProduct>
-                            {typeProducts.map((item) => {
-                                return (
-                                    <TypeProduct name={item} key={item} />
-                                )
-                            })}
-                        </WrapperTypeProduct>
+  return (
+    <div>
+      <div
+        style={{
+          width: "100%",
+          background: "#42C8B7",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <WrapperHeader
+          style={{
+            justifyContent:
+              isHiddenSearch && isHiddenSearch ? "space-between" : "unset",
+          }}
+        >
+          <Col span={5}>
+            <WrapperTextHeader to="/"> WEBPHONE </WrapperTextHeader>
+          </Col>
+          {!isHiddenSearch && (
+            <Col span={13}>
+              <ButtonInputSearch
+                size="large"
+                placeholder="What do you need to find?"
+                textbutton="Search"
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </Col>
+          )}
+          <Col
+            span={6}
+            style={{ display: "flex", gap: "54px", alignItems: "center" }}
+          >
+            <Loading isLoading={loading}>
+              <WrapperHeaderAccount>
+                {userAvatar ? (
+                  <img
+                    src={userAvatar}
+                    alt="avatar"
+                    style={{
+                      height: "40px",
+                      width: "40px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  <UserOutlined style={{ fontSize: "30px" }} />
+                )}
+                {user?.access_token ? (
+                  <Popover content={content} trigger="click" open={isOpenPopup}>
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setIsOpenPopup((prev) => !prev)}
+                    >
+                      {userName?.length ? userName : user?.email}
                     </div>
-                    <div className="slider" style={{ flex: '1', maxWidth: '100%' }}>
-                        <SliderComponent arrImages={[slider1, slider2, slider3]} />
+                  </Popover>
+                ) : (
+                  <div
+                    onClick={handleNavigateLogin}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <WrapperTextHeaderSmall>
+                      Sign-In/ Sign-Up
+                    </WrapperTextHeaderSmall>
+                    <div>
+                      <WrapperTextHeaderSmall>Account</WrapperTextHeaderSmall>
+                      <CaretDownOutlined />
                     </div>
-                 </div>
-                    <div className="branch-product" style={{ width: '1270px', margin: '10px auto'}}  >                    
-                        <WrapperBranchProduct>
-                            {branchProducts.map((item) => {
-                                return (
-                                    <BranchProduct name={item} key={item} />
-                                )
-                            })}
-                        </WrapperBranchProduct>                
-                     </div>
-                <div id="container" style={{ height: 'auto', width: '1270px', margin: '0 auto' }}>
-                        <WrapperProducts>
-                            {products?.data?.filter((product) => {
-                                const searchLower = search.toLowerCase();
-                                const productNameLower = product.name.toLowerCase();
-                                return productNameLower.includes(searchLower);
-                            }).map((product) => {
-                                return (
-                                    <CardComponent
-                                        key={product._id}
-                                        countInStock={product.countInStock}
-                                        // description={product.description}
-                                        image={product.image}
-                                        name={product.name}
-                                        price={product.price}
-                                        rating={product.rating}
-                                        type={product.type}
-                                        sold={product.selled}
-                                        discount={product.discount}
-                                        id={product._id}
-                                    />
-                                )
-                            })}
-                        </WrapperProducts>
-                        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                            <WrapperButtonMore
-                                textbutton={isPreviousData ? 'Loading..' : "Load more"} type="outline" styleButton={{
-                                    border: '1px solid rgb(10, 104, 255)',
-                                    color: `${products?.totalProduct === products?.data?.length ? '#ccc' : 'rgb(10, 104, 255)'}`,
-                                    width: '240px',
-                                    height: '38px',
-                                    borderRadius: '4px',
-                                }}
-                                disabled={products?.totalProduct === products?.data?.length || products?.totalPage === 1}
-                                styletextbutton={{ fontWeight: 500, color: products?.totalProduct === products?.data?.length && '#fff' }}
-                                onClick={() => setLimit((prev) => prev + 6)}
-                            />
-                        </div>
-                    </div>
-                </div>
+                  </div>
+                )}
+              </WrapperHeaderAccount>
             </Loading>
+            {!isHiddenCart && (
+              <div onClick={handleCartClick} style={{ cursor: "pointer" }}>
+                <Badge count={order?.orderItems?.length} size="small">
+                  <ShoppingCartOutlined
+                    style={{ fontSize: "30px", color: "#fff" }}
+                  />
+                </Badge>
+                <WrapperTextHeaderSmall1>Cart</WrapperTextHeaderSmall1>
+              </div>
+            )}
+          </Col>
+        </WrapperHeader>
+      </div>
+      <Loading isLoading={isLoading || loading}>
+        <div
+          className="body"
+          style={{ width: "100%", backgroundColor: "#efefef" }}
+        >
+          <div
+            className="type-product"
+            style={{
+              display: "flex",
+              width: "1270px",
+              margin: "20px auto",
+              gap: "20px",
+            }}
+          >
+            <div style={{ flex: "2" }}>
+              <WrapperTypeProduct>
+                {typeProducts.map((item) => {
+                  return <TypeProduct name={item} key={item} />;
+                })}
+              </WrapperTypeProduct>
+            </div>
+            <div className="slider" style={{ flex: "1", maxWidth: "100%" }}>
+              <SliderComponent arrImages={[slider1, slider2, slider3]} />
+            </div>
+          </div>
+          <div
+            className="branch-product"
+            style={{ width: "1270px", margin: "10px auto" }}
+          >
+            <WrapperBranchProduct>
+              {branchProducts.map((item) => {
+                return <BranchProduct name={item} key={item} />;
+              })}
+            </WrapperBranchProduct>
+          </div>
+          <div
+            id="container"
+            style={{ height: "auto", width: "1270px", margin: "0 auto" }}
+          >
+            <WrapperProducts>
+              {products?.data
+                ?.filter((product) => {
+                  const searchLower = search.toLowerCase();
+                  const productNameLower = product.name.toLowerCase();
+                  return productNameLower.includes(searchLower);
+                })
+                .map((product) => {
+                  return (
+                    <CardComponent
+                      key={product._id}
+                      countInStock={product.countInStock}
+                      // description={product.description}
+                      image={product.image}
+                      name={product.name}
+                      price={product.price}
+                      rating={product.rating}
+                      type={product.type}
+                      sold={product.selled}
+                      discount={product.discount}
+                      id={product._id}
+                    />
+                  );
+                })}
+            </WrapperProducts>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "10px",
+              }}
+            >
+              <WrapperButtonMore
+                textbutton={isPreviousData ? "Loading.." : "Load more"}
+                type="outline"
+                styleButton={{
+                  border: "1px solid rgb(10, 104, 255)",
+                  color: `${
+                    products?.totalProduct === products?.data?.length
+                      ? "#ccc"
+                      : "rgb(10, 104, 255)"
+                  }`,
+                  width: "240px",
+                  height: "38px",
+                  borderRadius: "4px",
+                }}
+                disabled={
+                  products?.totalProduct === products?.data?.length ||
+                  products?.totalPage === 1
+                }
+                styletextbutton={{
+                  fontWeight: 500,
+                  color:
+                    products?.totalProduct === products?.data?.length && "#fff",
+                }}
+                onClick={() => setLimit((prev) => prev + 6)}
+              />
+            </div>
+          </div>
         </div>
-    )
-}
+      </Loading>
+    </div>
+  );
+};
 
 export default HomePage;

@@ -3,13 +3,22 @@ import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { Row } from "antd";
 import { Link } from "react-router-dom";
 
+export const WrapperBranchProduct = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-content: flex-start;
+  height: 44px;
+`;
 export const WrapperTypeProduct = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    justify-content: flex-start;
-    height: 44px;
-`
+  display: flex;
+  flex-direction: column;
+  width: 250px; /* Chiều rộng box */
+  border-radius: 10px; /* Bo tròn các góc */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  background-color: white; /* Màu nền trắng */
+  padding: 10px;
+`;
 
 export const WrapperButtonMore = styled(ButtonComponent)`
   &:hover {
@@ -20,8 +29,6 @@ export const WrapperButtonMore = styled(ButtonComponent)`
     }
   }
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointers")};
-  margin-top: 10px;
-  margin-bottom: 10px;
 `;
 
 export const WrapperProducts = styled.div`
