@@ -4,13 +4,12 @@ import { Row } from "antd";
 import { Link } from "react-router-dom";
 
 export const WrapperTypeProduct = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  justify-content: flex-start;
-  height: 44px;
-  margin-top: 60px;
-`;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    justify-content: flex-start;
+    height: 44px;
+`
 
 export const WrapperButtonMore = styled(ButtonComponent)`
   &:hover {

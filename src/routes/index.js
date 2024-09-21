@@ -15,6 +15,7 @@ import ProfilePage from "../containers/ProfilePage/ProfilePage";
 import SignInPage from "../containers/SignInPage/SignInPage";
 import SignUpPage from "../containers/SignUpPage/SignUpPage";
 import TypeProductPage from "../containers/TypeProductPage/TypeProductPage";
+import BranchProductPage from "../containers/BranchProductPage/BranchProductPage";
 
 export const routes = [
   {
@@ -53,6 +54,12 @@ export const routes = [
     page: ProductsPage,
     isShowHeader: true,
   },
+  {
+    path: '/product/branch/:branch',
+    page: BranchProductPage,
+    isShowHeader: true
+
+   },
   {
     path: "/product/:type",
     page: TypeProductPage,
