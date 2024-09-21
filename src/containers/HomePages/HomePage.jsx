@@ -23,7 +23,7 @@ import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useNavigate } from "react-router-dom";
-import { setOrderItems } from "../../redux/slice/orderSlide";
+// import { setOrderItems } from "../../redux/slice/orderSlide";
 import * as UserService from "../../services/UserService";
 import { resetUser } from "../../redux/slice/userslide";
 import { resetOrder1 } from "../../redux/slice/orderSlide";

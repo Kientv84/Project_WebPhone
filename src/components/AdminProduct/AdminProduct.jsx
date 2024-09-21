@@ -18,7 +18,6 @@ import { useQuery } from "react-query";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import { useSelector } from "react-redux";
 import ModalComponent from "../ModalComponent/ModalComponent";
-import FooterComponent from "../FooterComponent/FooterComponent";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../ultis/firebase";
 
