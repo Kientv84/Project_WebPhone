@@ -1,205 +1,244 @@
-import { Button, Form, Select, Space, message } from 'antd'
-import React, { useEffect, useState, useMemo } from 'react'
-import { WrapperHeader } from './style'
-import TableComponent from '../TableComponent/TableComponent'
-import InputComponent from '../InputComponent/InputComponent'
-import { convertPrice } from '../../utils'
-import * as OrderService from '../../services/OrderService'
-import { useQuery } from 'react-query'
-import { DeleteOutlined, EditOutlined, MoneyCollectTwoTone, SearchOutlined } from '@ant-design/icons'
-import { useSelector } from 'react-redux'
-import { orderConstant } from '../../constant'
-import DrawerComponent from '../DrawerComponent/DrawerComponent'
-import PieChartComponent from './PieChart'
-import ModalComponent from '../ModalComponent/ModalComponent'
-import { useMutationHook } from '../../hooks/useMutationHook'
-import Loading from '../LoadingComponent/Loading'
+import { Button, Form, Select, Space, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { WrapperHeader } from "./style";
+import TableComponent from "../TableComponent/TableComponent";
+import InputComponent from "../InputComponent/InputComponent";
+import { convertPrice } from "../../utils";
+import * as OrderService from "../../services/OrderService";
+import { useQuery } from "react-query";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  MoneyCollectTwoTone,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import { orderConstant } from "../../constant";
+import DrawerComponent from "../DrawerComponent/DrawerComponent";
+import PieChartComponent from "./PieChart";
+import ModalComponent from "../ModalComponent/ModalComponent";
+import { useMutationHook } from "../../hooks/useMutationHook";
+import Loading from "../LoadingComponent/Loading";
 
 const OrderAdmin = () => {
-  const user = useSelector((state) => state?.user)
-  const [rowSelected, setRowSelected] = useState('');
+  const user = useSelector((state) => state?.user);
+  const [rowSelected, setRowSelected] = useState("");
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isOpenDrawerPayment, setIsOpenDrawerPayment] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
-  const [stateOrderDelivery, setStateOrderDelivery] = useState({ isDelivered: true });
+  const [stateOrderDelivery, setStateOrderDelivery] = useState({
+    isDelivered: true,
+  });
   const [stateOrderPayment, setStateOrderPayment] = useState({ idPaid: true });
 
-
   const getAllOrder = async () => {
-    const res = await OrderService.getAllOrder(user?.access_token)
-    return res
-  }
+    const res = await OrderService.getAllOrder(user?.access_token);
+    return res;
+  };
 
-  const mutationUpdate = useMutationHook(
-    (data) => {
-      const { id, token, ...rests } = data
-      const res = OrderService.updateDeliveryState(
-        id, token,
-        { ...rests } // này là data nên phải là object
-      )
-      return res
-    }
-  )
+  const mutationUpdate = useMutationHook((data) => {
+    const { id, token, ...rests } = data;
+    const res = OrderService.updateDeliveryState(
+      id,
+      token,
+      { ...rests } // này là data nên phải là object
+    );
+    return res;
+  });
 
-  const mutationUpdatePayment = useMutationHook(
-    (data) => {
-      const { id, token, ...rests } = data
-      const res = OrderService.updatePaymentState(
-        id, token,
-        { ...rests } // này là data nên phải là object
-      )
-      return res
-    }
-  )
+  const mutationUpdatePayment = useMutationHook((data) => {
+    const { id, token, ...rests } = data;
+    const res = OrderService.updatePaymentState(
+      id,
+      token,
+      { ...rests } // này là data nên phải là object
+    );
+    return res;
+  });
 
+  const mutationDeleted = useMutationHook((data) => {
+    const { id, token } = data;
+    const res = OrderService.deleteOrder(id, token);
+    return res;
+  });
 
-  const mutationDeleted = useMutationHook(
-    (data) => {
-      const { id, token } = data
-      const res = OrderService.deleteOrder(
-        id, token
-      )
-      return res
-    }
-  )
+  const mutationDeletedMany = useMutationHook((data) => {
+    const { token, ...ids } = data;
+    const res = OrderService.deleteManyOrder(ids, token);
+    return res;
+  });
 
-  const mutationDeletedMany = useMutationHook(
-    (data) => {
-      const { token, ...ids } = data
-      const res = OrderService.deleteManyOrder(
-        ids, token
-      )
-      return res
-    }
-  )
+  const {
+    data: dataUpdated,
+    isLoading: isLoadingUpdated,
+    isSuccess: isSuccessUpdated,
+    isError: isErrorUpdated,
+  } = mutationUpdate;
+  const {
+    data: dataUpdatedPayment,
+    isLoading: isLoadingUpdatedPayment,
+    isSuccess: isSuccessUpdatedPayment,
+    isError: isErrorUpdatedPayment,
+  } = mutationUpdatePayment;
+  const {
+    data: dataDeleted,
+    isLoading: isLoadingDeleted,
+    isSuccess: isSuccessDeleted,
+    isError: isErrorDeleted,
+  } = mutationDeleted;
+  const {
+    data: dataDeletedMany,
+    isLoading: isLoadingDeletedMany,
+    isSuccess: isSuccessDeletedMany,
+    isError: isErrorDeletedMany,
+  } = mutationDeletedMany;
 
-
-  const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
-  const { data: dataUpdatedPayment, isLoading: isLoadingUpdatedPayment, isSuccess: isSuccessUpdatedPayment, isError: isErrorUpdatedPayment } = mutationUpdatePayment
-  const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
-  const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
-
-  const queryOrder = useQuery({ queryKey: ['orders'], queryFn: getAllOrder })
-  const { isLoading: isLoadingOrders, data: orders } = queryOrder
+  const queryOrder = useQuery({ queryKey: ["orders"], queryFn: getAllOrder });
+  const { isLoading: isLoadingOrders, data: orders } = queryOrder;
 
   // console.log(queryOrder)
   const renderAction = () => {
     return (
       <div>
-        <DeleteOutlined style={{ color: 'red', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
-        <EditOutlined style={{ color: 'blue', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsOpenDrawer(true)} />
+        <DeleteOutlined
+          style={{ color: "red", fontSize: "28px", cursor: "pointer" }}
+          onClick={() => setIsModalOpenDelete(true)}
+        />
+        <EditOutlined
+          style={{ color: "blue", fontSize: "28px", cursor: "pointer" }}
+          onClick={() => setIsOpenDrawer(true)}
+        />
       </div>
-    )
-  }
+    );
+  };
 
   const renderActionPay = () => {
     return (
       <div>
-        <MoneyCollectTwoTone style={{ color: 'green', fontSize: '28px', cursor: 'pointer' }} onClick={() => setIsOpenDrawerPayment(true)} />
+        <MoneyCollectTwoTone
+          style={{ color: "green", fontSize: "28px", cursor: "pointer" }}
+          onClick={() => setIsOpenDrawerPayment(true)}
+        />
       </div>
-    )
-  }
+    );
+  };
 
   const handleDeleteOrder = () => {
-    mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
-      onSettled: () => {
-        queryOrder.refetch()
+    mutationDeleted.mutate(
+      { id: rowSelected, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryOrder.refetch();
+        },
       }
-    })
-  }
+    );
+  };
 
   const handleDeleteManyOrders = (ids) => {
     // console.log('accc', user?.access_token)
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
-      onSettled: () => {
-        queryOrder.refetch()
+    mutationDeletedMany.mutate(
+      { ids: ids, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryOrder.refetch();
+        },
       }
-    })
-  }
+    );
+  };
 
   // show ra tình trạng đơn hàng
   const fetchGetDetailsOrder = async (rowSelected) => {
-    const res = await OrderService.getDetailsOrder(rowSelected, user?.access_token)
+    const res = await OrderService.getDetailsOrder(
+      rowSelected,
+      user?.access_token
+    );
     // console.log('StateOrderDelivery', stateOrderDelivery)
     // if (res?.data) {
     //   // setStateOrderDelivery({
     //   //   isDelivered: res?.data?.isDelivered
     //   // })
     // }
-    setIsLoadingUpdate(false)
-  }
+    setIsLoadingUpdate(false);
+  };
 
   //Show tinh trang thanh toan
   const fetchGetDetailsOrderPayment = async (rowSelected) => {
-    const res = await OrderService.getDetailsOrder(rowSelected, user?.access_token)
+    const res = await OrderService.getDetailsOrder(
+      rowSelected,
+      user?.access_token
+    );
     // console.log('StateOrderDelivery', stateOrderDelivery)
     // if (res?.data) {
     //   // setStateOrderDelivery({
     //   //   isDelivered: res?.data?.isDelivered
     //   // })
     // }
-    setIsLoadingUpdate(false)
-  }
+    setIsLoadingUpdate(false);
+  };
 
   //Cập nhật giao hàng
   useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-      message.success('Update Delivery Success')
+    if (isSuccessUpdated && dataUpdated?.status === "OK") {
+      message.success("Update Delivery Success");
       setIsOpenDrawer(false);
     } else if (isErrorUpdated) {
-      message.error('Update Fail')
+      message.error("Update Fail");
     }
-  }, [isSuccessUpdated, isErrorUpdated])
+  }, [isSuccessUpdated, isErrorUpdated]);
 
   //Cập nhật payment
   useEffect(() => {
-    if (isSuccessUpdatedPayment && dataUpdatedPayment?.status === 'OK') {
-      message.success('Update Payment Success')
+    if (isSuccessUpdatedPayment && dataUpdatedPayment?.status === "OK") {
+      message.success("Update Payment Success");
       setIsOpenDrawerPayment(false);
     } else if (isErrorUpdatedPayment) {
-      message.error('Update Fail')
+      message.error("Update Fail");
     }
-  }, [isSuccessUpdatedPayment, isErrorUpdatedPayment])
+  }, [isSuccessUpdatedPayment, isErrorUpdatedPayment]);
 
-  //Xoá nhiều 
+  //Xoá nhiều
   useEffect(() => {
-    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
-      message.success("Delete orders Success")
+    if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
+      message.success("Delete orders Success");
     } else if (isErrorDeletedMany) {
-      message.error()
+      message.error();
     }
-  }, [isSuccessDeletedMany])
+  }, [isSuccessDeletedMany]);
 
-  //Xoá 1 
+  //Xoá 1
   useEffect(() => {
-    if (isSuccessDeleted && dataDeleted?.status === 'OK') {
-      message.success("Delete order Success")
-      setIsModalOpenDelete(false)
+    if (isSuccessDeleted && dataDeleted?.status === "OK") {
+      message.success("Delete order Success");
+      setIsModalOpenDelete(false);
     } else if (isErrorDeleted) {
-      message.error()
+      message.error();
     }
-  }, [isSuccessDeleted])
+  }, [isSuccessDeleted]);
 
   useEffect(() => {
     // console.log('rowSelected', rowSelected)
     if (rowSelected && isOpenDrawer) {
-      setIsLoadingUpdate(true)
-      fetchGetDetailsOrder(rowSelected)
+      setIsLoadingUpdate(true);
+      fetchGetDetailsOrder(rowSelected);
     }
-  }, [rowSelected, isOpenDrawer])
+  }, [rowSelected, isOpenDrawer]);
 
   useEffect(() => {
     // console.log('rowSelected', rowSelected)
     if (rowSelected && isOpenDrawerPayment) {
-      setIsLoadingUpdate(true)
-      fetchGetDetailsOrderPayment(rowSelected)
+      setIsLoadingUpdate(true);
+      fetchGetDetailsOrderPayment(rowSelected);
     }
-  }, [rowSelected, isOpenDrawerPayment])
-
+  }, [rowSelected, isOpenDrawerPayment]);
 
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
       <div
         style={{
           padding: 8,
@@ -210,11 +249,13 @@ const OrderAdmin = () => {
           // ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           // onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
-            display: 'block',
+            display: "block",
           }}
         />
         <Space>
@@ -244,7 +285,7 @@ const OrderAdmin = () => {
     filterIcon: (filtered) => (
       <SearchOutlined
         style={{
-          color: filtered ? '#1890ff' : undefined,
+          color: filtered ? "#1890ff" : undefined,
         }}
       />
     ),
@@ -273,110 +314,136 @@ const OrderAdmin = () => {
 
   const columns = [
     {
-      title: 'User name',
-      dataIndex: 'userName',
+      title: "User name",
+      dataIndex: "userName",
       sorter: (a, b) => a.userName.length - b.userName.length,
-      ...getColumnSearchProps('userName')
+      ...getColumnSearchProps("userName"),
     },
     {
-      title: 'Phone',
-      dataIndex: 'phone',
+      title: "Phone",
+      dataIndex: "phone",
       sorter: (a, b) => a.phone.length - b.phone.length,
-      ...getColumnSearchProps('phone')
+      ...getColumnSearchProps("phone"),
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
+      title: "Address",
+      dataIndex: "address",
       sorter: (a, b) => a.address.length - b.address.length,
-      ...getColumnSearchProps('address')
+      ...getColumnSearchProps("address"),
     },
     {
-      title: 'Payment method',
-      dataIndex: 'paymentMethod',
+      title: "Payment method",
+      dataIndex: "paymentMethod",
       sorter: (a, b) => a.paymentMethod.length - b.paymentMethod.length,
-      ...getColumnSearchProps('paymentMethod')
+      ...getColumnSearchProps("paymentMethod"),
     },
     {
-      title: 'Total price',
-      dataIndex: 'totalPrice',
+      title: "Total price",
+      dataIndex: "totalPrice",
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
-      ...getColumnSearchProps('totalPrice')
+      ...getColumnSearchProps("totalPrice"),
     },
     {
-      title: 'Paid',
-      dataIndex: 'isPaid',
+      title: "Paid",
+      dataIndex: "isPaid",
       sorter: (a, b) => a.isPaid.length - b.isPaid.length,
-      ...getColumnSearchProps('isPaid')
+      ...getColumnSearchProps("isPaid"),
     },
     {
-      title: 'Update Payment',
-      dataIndex: 'isPaid',
+      title: "Update Payment",
+      dataIndex: "isPaid",
       render: renderActionPay,
       sorter: (a, b) => a.isPaid.length - b.isPaid.length,
-      ...getColumnSearchProps('isPaid')
+      ...getColumnSearchProps("isPaid"),
     },
     {
-      title: 'Shipped',
-      dataIndex: 'isDelivered',
+      title: "Shipped",
+      dataIndex: "isDelivered",
       sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
-      ...getColumnSearchProps('isDelivered')
+      ...getColumnSearchProps("isDelivered"),
     },
     {
-      title: 'Update Delivered',
-      dataIndex: 'isDelivered',
+      title: "Update Delivered",
+      dataIndex: "isDelivered",
       render: renderAction,
       sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
-      ...getColumnSearchProps('isDelivered')
+      ...getColumnSearchProps("isDelivered"),
     },
   ];
 
-  const dataTable = orders?.data?.length && orders?.data?.map((order) => {
-    return {
-      ...order, key: order._id,
-      userName: order?.shippingAddress?.fullName,
-      phone: order?.shippingAddress?.phone,
-      address: order?.shippingAddress?.address,
-      paymentMethod: orderConstant.payment[order?.paymentMethod],
-      isPaid: order?.isPaid ? 'TRUE' : 'FALSE',
-      isDelivered: order?.isDelivered ? 'Delivered' : 'Not Shipped',
-      totalPrice: convertPrice(order?.totalPrice)
-    }
-  })
+  const dataTable =
+    orders?.data?.length &&
+    orders?.data?.map((order) => {
+      return {
+        ...order,
+        key: order._id,
+        userName: order?.shippingAddress?.fullName,
+        phone: order?.shippingAddress?.phone,
+        address: order?.shippingAddress?.address,
+        paymentMethod: orderConstant.payment[order?.paymentMethod],
+        isPaid: order?.isPaid ? "TRUE" : "FALSE",
+        isDelivered: order?.isDelivered ? "Delivered" : "Not Shipped",
+        totalPrice: convertPrice(order?.totalPrice),
+      };
+    });
 
   const onUpdateDelivery = () => {
-    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateOrderDelivery }, {
-      onSettled: () => {
-        queryOrder.refetch()
+    mutationUpdate.mutate(
+      { id: rowSelected, token: user?.access_token, ...stateOrderDelivery },
+      {
+        onSettled: () => {
+          queryOrder.refetch();
+        },
       }
-    })
+    );
   };
 
   const onUpdatePayment = () => {
-    mutationUpdatePayment.mutate({ id: rowSelected, token: user?.access_token, ...stateOrderPayment }, {
-      onSettled: () => {
-        queryOrder.refetch()
+    mutationUpdatePayment.mutate(
+      { id: rowSelected, token: user?.access_token, ...stateOrderPayment },
+      {
+        onSettled: () => {
+          queryOrder.refetch();
+        },
       }
-    })
+    );
   };
-
 
   return (
     <div>
       <WrapperHeader>Manage Orders</WrapperHeader>
-      <div style={{ height: 200, width: 200, display: 'flex', flexDirection: 'row' }}>
+      <div
+        style={{
+          height: 200,
+          width: 200,
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
         <PieChartComponent data={orders?.data} />
       </div>
-      <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDeleteMany={handleDeleteManyOrders} columns={columns} isLoading={isLoadingOrders} data={dataTable} onRow={(record, rowIndex) => {
-          return {
-            onClick: event => {
-              setRowSelected(record._id)
-            }
-          };
-        }} />
+      <div style={{ marginTop: "20px" }}>
+        <TableComponent
+          handleDeleteMany={handleDeleteManyOrders}
+          columns={columns}
+          isLoading={isLoadingOrders}
+          data={dataTable}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                setRowSelected(record._id);
+              },
+            };
+          }}
+        />
       </div>
 
-      <DrawerComponent title='Update Delivery' isOpen={isOpenDrawer} onCancel={() => setIsOpenDrawer(false)} footer={null}>
+      <DrawerComponent
+        title="Update Delivery"
+        isOpen={isOpenDrawer}
+        onCancel={() => setIsOpenDrawer(false)}
+        footer={null}
+      >
         {/* ... */}
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
           <Form
@@ -389,10 +456,19 @@ const OrderAdmin = () => {
             <Form.Item
               label="Delivery State:"
               name="isDelivered"
-              rules={[{ required: true, message: 'Please select the delivery state!' }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please select the delivery state!",
+                },
+              ]}
             >
-              <Select defaultValue={stateOrderDelivery.isDelivered}
-                onChange={(value) => setStateOrderDelivery({ isDelivered: value })}>
+              <Select
+                defaultValue={stateOrderDelivery.isDelivered}
+                onChange={(value) =>
+                  setStateOrderDelivery({ isDelivered: value })
+                }
+              >
                 <Select.Option value={true}>True</Select.Option>
                 <Select.Option value={false}>False</Select.Option>
               </Select>
@@ -407,7 +483,12 @@ const OrderAdmin = () => {
         </Loading>
       </DrawerComponent>
 
-      <DrawerComponent title='Update Payment' isOpen={isOpenDrawerPayment} onCancel={() => setIsOpenDrawerPayment(false)} footer={null}>
+      <DrawerComponent
+        title="Update Payment"
+        isOpen={isOpenDrawerPayment}
+        onCancel={() => setIsOpenDrawerPayment(false)}
+        footer={null}
+      >
         <Loading isLoading={isLoadingUpdatedPayment}>
           <Form
             name="updatePaymentStateForm"
@@ -419,10 +500,14 @@ const OrderAdmin = () => {
             <Form.Item
               label="Payment State:"
               name="isPaid"
-              rules={[{ required: true, message: 'Please select the payment state!' }]}
+              rules={[
+                { required: true, message: "Please select the payment state!" },
+              ]}
             >
-              <Select defaultValue={stateOrderPayment.isPaid}
-                onChange={(value) => setStateOrderPayment({ isPaid: value })}>
+              <Select
+                defaultValue={stateOrderPayment.isPaid}
+                onChange={(value) => setStateOrderPayment({ isPaid: value })}
+              >
                 <Select.Option value={true}>True</Select.Option>
                 <Select.Option value={false}>False</Select.Option>
               </Select>
@@ -437,14 +522,18 @@ const OrderAdmin = () => {
         </Loading>
       </DrawerComponent>
 
-      <ModalComponent title="Delete order" open={isModalOpenDelete} onCancel={() => setIsModalOpenDelete(false)} onOk={handleDeleteOrder}>
+      <ModalComponent
+        title="Delete order"
+        open={isModalOpenDelete}
+        onCancel={() => setIsModalOpenDelete(false)}
+        onOk={handleDeleteOrder}
+      >
         <Loading isLoading={isLoadingDeleted}>
           <div>Are you sure you want to delete this order?</div>
         </Loading>
       </ModalComponent>
-
     </div>
-  )
-}
+  );
+};
 
-export default OrderAdmin
+export default OrderAdmin;

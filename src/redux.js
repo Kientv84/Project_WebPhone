@@ -1,12 +1,12 @@
 import rootReducer from "./store/reducer/rootReducer";
-import { createStore, applyMiddleware} from "redux";
+import { createStore, applyMiddleware } from "redux";
+import persistStore from "redux-persist/es/persistStore";
 import thunk from "redux-thunk";
 
 const reduxConfig = () => {
+  const store = createStore(rootReducer, applyMiddleware(thunk));
+  const persistor = persistStore(store);
+  return { store, persistor };
+};
 
-    const store = createStore(rootReducer, applyMiddleware(thunk))
-    
-    return store
-}
-
-export default reduxConfig
+export default reduxConfig;

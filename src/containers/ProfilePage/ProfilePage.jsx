@@ -14,12 +14,11 @@ import { useMutationHook } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from "../../components/Message/Message";
 import { updateUser } from "../../redux/slice/userslide";
-import { Button, Typography } from "antd";
+import { Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "../../utils";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../ultis/firebase";
-import { Box, TextField } from "@mui/material";
 
 const ProfilePage = () => {
   const user = useSelector((state) => state.user);

@@ -1,19 +1,28 @@
-import { Button, Form, Space, Select, Input } from 'antd'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
-import { WrapperHeader, WrapperUploadFile } from './style'
-import TableComponent from '../TableComponent/TableComponent'
-import InputComponent from '../InputComponent/InputComponent'
+
+import { Button, Form, Space, Select, Input } from "antd";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { WrapperHeader, WrapperUploadFile } from "./style";
+import TableComponent from "../TableComponent/TableComponent";
+import InputComponent from "../InputComponent/InputComponent";
+import * as ProductService from "../../services/ProductService";
+import { useMutationHook } from "../../hooks/useMutationHook";
+import Loading from "../LoadingComponent/Loading";
+import * as message from "../../components/Message/Message";
+import { useQuery } from "react-query";
+import DrawerComponent from "../DrawerComponent/DrawerComponent";
+import { useSelector } from "react-redux";
+import ModalComponent from "../ModalComponent/ModalComponent";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../ultis/firebase";
 import { getBase64, renderOptionsType, renderOptionsBranch } from '../../utils'
-import * as ProductService from '../../services/ProductService'
-import { useMutationHook } from '../../hooks/useMutationHook'
-import Loading from '../LoadingComponent/Loading'
-import * as message from '../../components/Message/Message'
-import { useQuery } from 'react-query'
-import DrawerComponent from '../DrawerComponent/DrawerComponent'
-import { useSelector } from 'react-redux'
-import ModalComponent from '../ModalComponent/ModalComponent'
 import FooterComponent from '../FooterComponent/FooterComponent'
+
 
 const AdminProduct = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
