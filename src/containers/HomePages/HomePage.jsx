@@ -36,6 +36,7 @@ import {
 } from "@ant-design/icons";
 import { Badge, Col, Popover } from "antd";
 import ButtonInputSearch from "../../components/ButtonInputSearch/ButtonInputSearch";
+import "./HomePage.css";
 
 const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -95,6 +96,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     await UserService.logoutUser();
     dispatch(resetUser());
     dispatch(resetOrder1());
+    localStorage.removeItem("access_token");
     setLoading(false);
     navigate("/");
   };
@@ -154,6 +156,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   return (
     <div>
       <div
+        className="header"
         style={{
           width: "100%",
           background: "#42C8B7",
@@ -248,18 +251,21 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             style={{
               display: "flex",
               width: "1270px",
-              margin: "20px auto",
+              margin: "60px auto 0",
               gap: "20px",
             }}
           >
-            <div style={{ flex: "2" }}>
+            <div style={{ flex: "2", marginTop: "20px" }}>
               <WrapperTypeProduct>
                 {typeProducts.map((item) => {
                   return <TypeProduct name={item} key={item} />;
                 })}
               </WrapperTypeProduct>
             </div>
-            <div className="slider" style={{ flex: "1", maxWidth: "100%" }}>
+            <div
+              className="slider"
+              style={{ flex: "1", maxWidth: "100%", marginTop: "20px" }}
+            >
               <SliderComponent arrImages={[slider1, slider2, slider3]} />
             </div>
           </div>
@@ -323,6 +329,8 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                   width: "240px",
                   height: "38px",
                   borderRadius: "4px",
+                  marginTop: "20px",
+                  marginBottom: "20px",
                 }}
                 disabled={
                   products?.totalProduct === products?.data?.length ||

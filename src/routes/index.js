@@ -55,11 +55,11 @@ export const routes = [
     isShowHeader: true,
   },
   {
-    path: '/product/branch/:branch',
+    path: "/product/branch/:branch",
     page: BranchProductPage,
-    isShowHeader: true
-
-   },
+    isShowHeader: true,
+    isShowFooter: true,
+  },
   {
     path: "/product/:type",
     page: TypeProductPage,

@@ -121,6 +121,9 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         background: "#42C8B7",
         display: "flex",
         justifyContent: "center",
+        position: "fixed",
+        top: 0,
+        zIndex: 1,
       }}
     >
       <WrapperHeader

@@ -124,10 +124,9 @@ const MyOrderPage = () => {
       <WrapperContainer>
         <div
           style={{
-            // height: "100%",
+            height: "100%",
             width: "1270px",
-            margin: "60px auto 0",
-            height: "100vh",
+            margin: "70px auto 0",
           }}
         >
           <h3 style={{ marginTop: "5px" }}>My Order</h3>

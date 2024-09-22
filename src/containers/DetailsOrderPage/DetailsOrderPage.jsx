@@ -66,7 +66,7 @@ const DetailsOrderPage = () => {
             padding: "0.1px 0px",
           }}
         >
-          <h4>Order Details</h4>
+          <h3>Order Details</h3>
           <WrapperHeaderUser>
             <WrapperInfoUser>
               <WrapperLabel>Recipient's address</WrapperLabel>
