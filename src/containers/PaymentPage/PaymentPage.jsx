@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { convertPrice } from "../../utils";
 import { useMemo } from "react";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import ModalQRcode from "../../components/ModalQRcode/ModalQRcode";
 import InputComponent from "../../components/InputComponent/InputComponent";
 import { removeAllOrderProduct } from "../../redux/slice/orderSlide";
 import { useMutationHook } from "../../hooks/useMutationHook";
@@ -32,13 +33,18 @@ import * as PaymentService from "../../services/PaymentService";
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
+  const [content, setContent] = useState("");
+
 
   const [delivery, setDelivery] = useState("fast");
   const [payment, setPayment] = useState("later_money");
+  const [paymentbyQRCode, setPaymentbyQRCode] = useState("qr_code")
+  
   const navigate = useNavigate();
   const [sdkReady, setSdkReady] = useState(false);
 
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
+  const [isOpenModalQRcode, setIsOpenModalQRcode] = useState(false);
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
     phone: "",
@@ -102,6 +108,7 @@ const PaymentPage = () => {
     );
   }, [priceMemo, priceDiscountMemo, deliveryPriceMemo]);
 
+
   const handleAddOrder = () => {
     if (
       user?.access_token &&
@@ -130,7 +137,16 @@ const PaymentPage = () => {
       });
     }
   };
-  // console.log('order', order, user)
+ 
+
+const handleQrCodePayment = () => {
+    setIsOpenModalQRcode(true);
+
+    setTimeout(() => {
+    checkPaid(totalPriceMemo, content)
+  }, 900); // 5 giây sau sẽ kiểm tra thanh toán
+
+  };
 
   const mutationUpdate = useMutationHook((data) => {
     const { id, token, ...rests } = data;
@@ -226,6 +242,7 @@ const PaymentPage = () => {
 
   const handlePayment = (e) => {
     setPayment(e.target.value);
+    setPaymentbyQRCode(e.target.value);
   };
 
   const onSuccessPaypal = (details, data) => {
@@ -248,6 +265,13 @@ const PaymentPage = () => {
     // console.log('details, data', details, data)
   };
 
+
+  const handleCancel = () => {
+    setIsOpenModalQRcode(false)
+  };
+
+ 
+
   const addPaypalScript = async () => {
     const { data } = await PaymentService.getConfig();
     const script = document.createElement("script");
@@ -267,6 +291,51 @@ const PaymentPage = () => {
       setSdkReady(true);
     }
   }, []);
+
+
+  useEffect(() => {
+    if (user?.name) {
+      setContent(user.name.toUpperCase()); // Lấy tên và chuyển đổi thành viết hoa
+
+      // console.log('content', content)
+
+    }
+  }, [user?.name]);
+
+
+
+ async function checkPaid(price, content) { 
+  try {
+     // Fetch dữ liệu từ API
+    const response = await fetch(
+      "https://script.googleusercontent.com/macros/echo?user_content_key=GzaSr6BLMsZ8dEyL-6rmEQ4u_IVz3lCEO1I1UHpHj56poMfIWMsuxsUyWX6OOKhoqq_n80Gn70HvaQ_S8Q-JK4aOmPwq9O_um5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnCBtOQEpoDUhiJ3YAVc1LAB9j-dsruBME-G9SQJ5Df78oi_yuazhZkHxLK3_5bylXW16rxtpxFnBTK7nUoFoUgx63LCerNWtydz9Jw9Md8uu&lib=MdqQX6qMt95UUQMlrxHQ1WGURENw8Mm9a"
+    );
+
+    const data = await response.json();
+    const lastPaid = data.data[data.data.length -1]
+
+    const lastPrice = lastPaid["Giá trị"];  // Thay đổi giá trị này cho phù hợp với yêu cầu của bạn
+    const lastContent =  lastPaid["Mô tả"];  // Nội dung mô tả bạn cần kiểm tra
+
+    if ( lastPrice >= price && lastContent.includes(content)) {
+      //thong bao
+      message.success("Thanh toán thành công!");
+      setIsOpenModalQRcode(false); // Đóng modal QR Code nếu thanh toán thành công
+    } else {
+       message.error("Thanh toán không thành công. Vui lòng thử lại.");
+    }
+
+  console.log("lastPrice", lastPrice)
+  console.log("content", content)
+  } catch (error) {
+  console.log("Error fetching data:", error);
+    message.error("Có lỗi xảy ra trong quá trình kiểm tra thanh toán.");
+  }
+}
+console.log("totalPriceMemo",totalPriceMemo)
+
+
+
 
   return (
     <div
@@ -308,6 +377,7 @@ const PaymentPage = () => {
                   <WrapperRadio onChange={handlePayment} value={payment}>
                     <Radio value="later_money"> Cash on Delivery (COD)</Radio>
                     <Radio value="paypal"> Pay with PayPal</Radio>
+                    <Radio value="qr_code"> Pay with QR code</Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo3>
@@ -414,6 +484,24 @@ const PaymentPage = () => {
                     }}
                   />
                 </div>
+              ) : payment === "qr_code" ? (
+                <ButtonComponent
+                  onClick={() => handleQrCodePayment() } // Hàm xử lý cho thanh toán qua QR Code
+                  size={40}
+                  styleButton={{
+                    background: "rgb(0, 123, 255)", // Màu nền cho QR Code Payment (tuỳ chỉnh)
+                    height: "48px",
+                    width: "320px",
+                    border: "none",
+                    borderRadius: "4px",
+                  }}
+                  textbutton={"Pay with QR Code"}
+                  styletextbutton={{
+                    color: "#fff",
+                    fontSize: "15px",
+                    fontWeight: "700",
+                  }}
+                ></ButtonComponent>
               ) : (
                 <ButtonComponent
                   onClick={() => handleAddOrder()}
@@ -436,12 +524,25 @@ const PaymentPage = () => {
             </WrapperRight>
           </div>
         </div>
+        <ModalQRcode
+          title="Mời bạn thanh toán bằng QR code"
+          open={isOpenModalQRcode}
+          amount={totalPriceMemo} // Số tiền là 100,000 VND
+          user={user?.name} // Truyền thông tin ngân hàng
+          onCancel={handleCancel}
+          onOk={handleCancel}
+        >
+          <Loading isLoading={isLoading}>
+
+          </Loading>
+        </ModalQRcode>
+        
         <ModalComponent
           title="Update shipping address"
           open={isOpenModalUpdateInfo}
           onCancel={handleCancelUpdate}
           onOk={handleUpdateInfoUser}
-        >
+        > 
           <Loading isLoading={isLoading}>
             <Form
               name="basic"
