@@ -33,12 +33,13 @@ import * as message from "../../components/Message/Message";
 import { resetOrder } from "../../redux/slice/orderSlide.js";
 import LikeButtonComponent from "../LikeButtonComponent/LikeButtonComponent.jsx";
 import CommentComponent from "../CommentComponent/CommentComponent.jsx";
-import "./style.css";
+import "./ProductDetailsComponent.css";
 import ModalComponent from "../ModalComponent/ModalComponent.jsx";
 import { useMutationHook } from "../../hooks/useMutationHook.js";
 import * as UserService from "../../services/UserService";
 import { updateAddress } from "../../redux/slice/userslide";
 import InputComponent from "../InputComponent/InputComponent.jsx";
+import addToCart from "../../assets/images/art-to-carts.png";
 
 const ProductDetailsComponent = ({ idProduct }) => {
   const [numProduct, setNumProduct] = useState(1);
@@ -122,14 +123,10 @@ const ProductDetailsComponent = ({ idProduct }) => {
       const orderRedux = order?.orderItems?.find(
         (item) => item.product === productDetails._id
       );
-      // console.log('productDetails', productDetails)
-      // console.log('orderRedux', orderRedux)
-      // console.log('orderReduxAmount', orderRedux?.amount)
       if (
         orderRedux?.amount + numProduct <= productDetails.countInStock ||
         (!orderRedux && productDetails.countInStock > 0)
       ) {
-        // console.log('productDetails', productDetails)
         dispatch(
           addOrderProduct({
             orderItem: {
@@ -145,6 +142,39 @@ const ProductDetailsComponent = ({ idProduct }) => {
         );
         localStorage.setItem("cartItems", JSON.stringify(order?.orderItems));
 
+        // Use setTimeout to check localStorage after a short delay
+      } else {
+        setErrorLimitOrder(true);
+      }
+    }
+  };
+
+  const handleBuyOrderProduct = () => {
+    if (!user?.id) {
+      navigate("/sign-in", { state: location?.pathname });
+    } else {
+      const orderRedux = order?.orderItems?.find(
+        (item) => item.product === productDetails._id
+      );
+      if (
+        orderRedux?.amount + numProduct <= productDetails.countInStock ||
+        (!orderRedux && productDetails.countInStock > 0)
+      ) {
+        dispatch(
+          addOrderProduct({
+            orderItem: {
+              name: productDetails?.name,
+              amount: numProduct,
+              image: productDetails?.image,
+              price: productDetails?.price,
+              product: productDetails?._id,
+              discount: productDetails?.discount,
+              countInStock: productDetails?.countInStock,
+            },
+          })
+        );
+        localStorage.setItem("cartItems", JSON.stringify(order?.orderItems));
+        navigate("/order");
         // Use setTimeout to check localStorage after a short delay
       } else {
         setErrorLimitOrder(true);
@@ -418,40 +448,49 @@ const ProductDetailsComponent = ({ idProduct }) => {
               </WrapperQualityProduct>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div>
-                <ButtonComponent
-                  size={40}
-                  styleButton={{
-                    background: "rgba(13, 129, 115, 0.82)",
-                    height: "48px",
-                    width: "220px",
-                    border: "none",
-                    borderRadius: "4px",
-                    pointerEvents: ErrorLimitOrder ? "none" : "auto",
-                    opacity: ErrorLimitOrder ? 0.5 : 1,
-                  }}
-                  onClick={handleAddOrderProduct}
-                  textbutton={"Add Product to Cart"}
-                  styletextbutton={{
-                    color: "#fff",
-                    fontSize: "15px",
-                    fontWeight: "700",
-                  }}
-                ></ButtonComponent>
-                {ErrorLimitOrder && (
-                  <span
-                    style={{
-                      color: "red",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    Sold Out
-                  </span>
-                )}
-              </div>
+            <div className="container-buttons">
+              <ButtonComponent
+                size={40}
+                styleButton={{
+                  background: "rgba(13, 129, 115, 0.82)",
+                  height: "60px",
+                  width: "220px",
+                  border: "none",
+                  borderRadius: "4px",
+                  pointerEvents: ErrorLimitOrder ? "none" : "auto",
+                  opacity: ErrorLimitOrder ? 0.5 : 1,
+                }}
+                onClick={handleBuyOrderProduct}
+                textbutton={"Purchase now"}
+                styletextbutton={{
+                  color: "#fff",
+                  fontSize: "15px",
+                  fontWeight: "700",
+                }}
+              />
+              <button
+                className="btn-add-to-cart"
+                onClick={handleAddOrderProduct}
+                style={{
+                  pointerEvents: ErrorLimitOrder ? "none" : "auto",
+                  opacity: ErrorLimitOrder ? 0.5 : 1,
+                }}
+              >
+                <img src={addToCart} alt="cart-icon" />
+                <span>Add to Cart</span>
+              </button>
             </div>
+            {ErrorLimitOrder && (
+              <span
+                style={{
+                  color: "red",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                Sold Out
+              </span>
+            )}
           </Col>
 
           <CommentComponent

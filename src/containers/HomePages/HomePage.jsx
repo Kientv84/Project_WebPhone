@@ -37,6 +37,7 @@ import {
 import { Badge, Col, Popover } from "antd";
 import ButtonInputSearch from "../../components/ButtonInputSearch/ButtonInputSearch";
 import "./HomePage.css";
+import { convertPrice } from "../../utils";
 
 const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -86,6 +87,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [search, setSearch] = useState("");
   const [isOpenPopup, setIsOpenPopup] = useState(false);
   const order = useSelector((state) => state.order);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleNavigateLogin = () => {
     navigate("/sign-in");
@@ -153,6 +155,26 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     }
   };
 
+  const handleOnChangeInput = (event) => {
+    setSearch(event.target.value);
+  };
+
+  // Hiển thị dropdown khi input được focus
+  const handleFocus = () => {
+    setShowDropdown(true);
+  };
+  const handleBlur = () => {
+    setTimeout(() => setShowDropdown(false), 200); // Thêm delay để người dùng có thể chọn item
+  };
+
+  const onSearch = (searchTerm) => {
+    setSearch(searchTerm);
+  };
+
+  const handleDetailProduct = (id) => {
+    navigate(`/product-details/${id}`);
+  };
+
   return (
     <div>
       <div
@@ -174,13 +196,64 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             <WrapperTextHeader to="/"> WEBPHONE </WrapperTextHeader>
           </Col>
           {!isHiddenSearch && (
-            <Col span={13}>
+            <Col span={13} style={{ position: "relative" }}>
               <ButtonInputSearch
                 size="large"
                 placeholder="What do you need to find?"
                 textbutton="Search"
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={handleOnChangeInput}
               />
+              <div className="dropdown">
+                {products?.data?.filter((product) => {
+                  const searchTerm = search.toLowerCase();
+                  const fullName = product.name.toLowerCase();
+                  return (
+                    searchTerm &&
+                    fullName.includes(searchTerm) &&
+                    fullName !== searchTerm
+                  );
+                }).length > 0 && <p className="title-box">Product suggests</p>}
+
+                {products?.data
+                  ?.filter((product) => {
+                    const searchTerm = search.toLowerCase();
+                    const fullName = product.name.toLowerCase();
+                    return (
+                      searchTerm &&
+                      fullName.includes(searchTerm) &&
+                      fullName !== searchTerm
+                    );
+                  })
+                  .slice(0, 10)
+                  .map((product) => (
+                    <div
+                      onClick={() => onSearch(product.name)}
+                      className="dropdown-row"
+                      key={product._id}
+                    >
+                      <img
+                        src={product.image} // Đường dẫn tới ảnh sản phẩm
+                        alt={product.name}
+                      />
+                      <div>
+                        <span onClick={() => handleDetailProduct(product._id)}>
+                          {product.name}
+                        </span>
+
+                        <span
+                          style={{
+                            display: "block",
+                            color: "#db003b",
+                            fontSize: "12px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {convertPrice(product.price)}VND
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </Col>
           )}
           <Col
@@ -284,29 +357,22 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             style={{ height: "auto", width: "1270px", margin: "0 auto" }}
           >
             <WrapperProducts>
-              {products?.data
-                ?.filter((product) => {
-                  const searchLower = search.toLowerCase();
-                  const productNameLower = product.name.toLowerCase();
-                  return productNameLower.includes(searchLower);
-                })
-                .map((product) => {
-                  return (
-                    <CardComponent
-                      key={product._id}
-                      countInStock={product.countInStock}
-                      // description={product.description}
-                      image={product.image}
-                      name={product.name}
-                      price={product.price}
-                      rating={product.rating}
-                      type={product.type}
-                      sold={product.selled}
-                      discount={product.discount}
-                      id={product._id}
-                    />
-                  );
-                })}
+              {products?.data?.map((product) => {
+                return (
+                  <CardComponent
+                    key={product._id}
+                    countInStock={product.countInStock}
+                    image={product.image}
+                    name={product.name}
+                    price={product.price}
+                    rating={product.rating}
+                    type={product.type}
+                    sold={product.selled}
+                    discount={product.discount}
+                    id={product._id}
+                  />
+                );
+              })}
             </WrapperProducts>
             <div
               style={{

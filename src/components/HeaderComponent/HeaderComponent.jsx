@@ -23,6 +23,10 @@ import { searchProduct } from "../../redux/slice/productSlide";
 // import Fuse from 'fuse.js';
 import { setOrderItems } from "../../redux/slice/orderSlide";
 import { resetOrder1 } from "../../redux/slice/orderSlide";
+import { convertPrice } from "../../utils";
+import * as ProductService from "../../services/ProductService";
+import { useQuery } from "react-query";
+import { useDebounce } from "../../hooks/useDebounce";
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate();
@@ -34,6 +38,9 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [isOpenPopup, setIsOpenPopup] = useState(false);
   const order = useSelector((state) => state.order);
   const [loading, setLoading] = useState(false);
+  const [typeProducts, setTypeProducts] = useState([]);
+  const [limit, setLimit] = useState(12);
+  const searchDebounce = useDebounce(searchProduct, 1000);
 
   const handleNavigateLogin = () => {
     navigate("/sign-in");
@@ -99,10 +106,8 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     setIsOpenPopup(false);
   };
 
-  const onSearch = (e) => {
-    const value = e.target.value.trim();
-    setSearch(value);
-    dispatch(searchProduct(value));
+  const onSearch = (searchTerm) => {
+    setSearch(searchTerm);
   };
 
   const handleCartClick = () => {
@@ -112,6 +117,36 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       navigate("/order");
     }
   };
+
+  const handleOnChangeInput = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const handleDetailProduct = (id) => {
+    navigate(`/product-details/${id}`);
+  };
+
+  const fetchProductAll = async (context) => {
+    const limit = context?.queryKey && context?.queryKey[1];
+    const search = context?.queryKey && context?.queryKey[2];
+    const res = await ProductService.getAllProduct(search, limit);
+    return res;
+  };
+
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductService.getAllTypeProduct();
+    if (res?.status === "OK") setTypeProducts(res?.data);
+  };
+
+  const {
+    isLoading,
+    data: products,
+    isPreviousData,
+  } = useQuery(["products", limit, searchDebounce], fetchProductAll, {
+    retry: 3,
+    retryDelay: 1000,
+    keepPreviousData: true,
+  });
 
   return (
     <div
@@ -123,7 +158,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         justifyContent: "center",
         position: "fixed",
         top: 0,
-        zIndex: 1,
+        zIndex: 100,
       }}
     >
       <WrapperHeader
@@ -136,13 +171,64 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           <WrapperTextHeader to="/"> WEBPHONE </WrapperTextHeader>
         </Col>
         {!isHiddenSearch && (
-          <Col span={13}>
+          <Col span={13} style={{ position: "relative" }}>
             <ButtonInputSearch
               size="large"
               placeholder="What do you need to find?"
               textbutton="Search"
-              onChange={onSearch}
+              onChange={handleOnChangeInput}
             />
+            <div className="dropdown">
+              {products?.data?.filter((product) => {
+                const searchTerm = search.toLowerCase();
+                const fullName = product.name.toLowerCase();
+                return (
+                  searchTerm &&
+                  fullName.includes(searchTerm) &&
+                  fullName !== searchTerm
+                );
+              }).length > 0 && <p className="title-box">Product suggests</p>}
+
+              {products?.data
+                ?.filter((product) => {
+                  const searchTerm = search.toLowerCase();
+                  const fullName = product.name.toLowerCase();
+                  return (
+                    searchTerm &&
+                    fullName.includes(searchTerm) &&
+                    fullName !== searchTerm
+                  );
+                })
+                .slice(0, 10)
+                .map((product) => (
+                  <div
+                    onClick={() => onSearch(product.name)}
+                    className="dropdown-row"
+                    key={product._id}
+                  >
+                    <img
+                      src={product.image} // Đường dẫn tới ảnh sản phẩm
+                      alt={product.name}
+                    />
+                    <div>
+                      <span onClick={() => handleDetailProduct(product._id)}>
+                        {product.name}
+                      </span>
+
+                      <span
+                        style={{
+                          display: "block",
+                          color: "#db003b",
+                          fontSize: "12px",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {convertPrice(product.price)}VND
+                      </span>
+                    </div>
+                  </div>
+                ))}
+            </div>
           </Col>
         )}
         <Col

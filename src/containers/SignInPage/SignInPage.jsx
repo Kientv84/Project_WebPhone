@@ -19,7 +19,6 @@ import { useDispatch } from "react-redux";
 import { updateUser } from "../../redux/slice/userslide";
 import styles from "./styles.module.css";
 import googleIcon from "../../assets/images/image45.93ceca6.png";
-import facebookIcon from "../../assets/images/facebook.png";
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
