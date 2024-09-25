@@ -206,22 +206,22 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               <div className="dropdown">
                 {products?.data?.filter((product) => {
                   const searchTerm = search.toLowerCase();
-                  const fullName = product.name.toLowerCase();
+                  const productNameLower = product.name.toLowerCase();
                   return (
                     searchTerm &&
-                    fullName.includes(searchTerm) &&
-                    fullName !== searchTerm
+                    productNameLower.includes(searchTerm) &&
+                    productNameLower !== searchTerm
                   );
                 }).length > 0 && <p className="title-box">Product suggests</p>}
 
                 {products?.data
                   ?.filter((product) => {
                     const searchTerm = search.toLowerCase();
-                    const fullName = product.name.toLowerCase();
+                    const productNameLower = product.name.toLowerCase();
                     return (
                       searchTerm &&
-                      fullName.includes(searchTerm) &&
-                      fullName !== searchTerm
+                      productNameLower.includes(searchTerm) &&
+                      productNameLower !== searchTerm
                     );
                   })
                   .slice(0, 10)

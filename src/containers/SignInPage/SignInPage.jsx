@@ -70,8 +70,6 @@ const SignInPage = () => {
       email,
       password,
     });
-
-    console.log("sign-in", email, password);
   };
 
   const handleNavigateSignUp = () => {

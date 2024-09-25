@@ -13,8 +13,6 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import authReducer from "../store/reducer/authReducer.js";
-import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2";
 
 const persistConfig = {
   key: "root",
@@ -22,22 +20,11 @@ const persistConfig = {
   storage,
   blacklist: ["product", "user"],
 };
-const commonConfig = {
-  storage,
-  stateReconciler: autoMergeLevel2,
-};
-
-const authConfig = {
-  ...commonConfig,
-  key: "auth",
-  whitelist: ["isLoggedIn", "token"],
-};
 
 const rootReducer = combineReducers({
   product: productReducer,
   user: userReducer,
   order: orderReducer,
-  auth: persistReducer(authConfig, authReducer),
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
