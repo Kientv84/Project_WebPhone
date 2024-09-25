@@ -18,6 +18,7 @@ export const WrapperContainer = styled.div`
   background-color: #f5f5fa;
   /* height: auto; */
   padding-top: 0.1px;
+  min-height: 100vh;
 `;
 
 export const WrapperLeft = styled.div`
