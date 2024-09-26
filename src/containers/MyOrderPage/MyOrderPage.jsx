@@ -33,8 +33,6 @@ const MyOrderPage = () => {
     }
   );
   const { isLoading, data } = queryOrder;
-  // console.log('data1', data)
-  // console.log('isloading', isLoading)
 
   const handleDetailsOrder = (id) => {
     navigate(`/details-order/${id}`, {
@@ -56,10 +54,9 @@ const MyOrderPage = () => {
       {
         onSuccess: () => {
           message.success("Delete order Success");
-          if (!order._id) {
-            queryOrder.refetch();
-            window.location.reload();
-          }
+
+          // Sau khi xóa thành công, refetch lại danh sách đơn hàng
+          queryOrder.refetch();
         },
         onError: () => {
           message.error("Delete order Failed");
@@ -74,7 +71,6 @@ const MyOrderPage = () => {
     isError: isErrorCancel,
     data: dataCancel,
   } = mutation;
-  // console.log('mutation', mutation)
 
   useEffect(() => {
     if (isSuccessCancel && dataCancel?.status === "OK") {
@@ -124,10 +120,9 @@ const MyOrderPage = () => {
       <WrapperContainer>
         <div
           style={{
-            // height: "100%",
+            height: "100%",
             width: "1270px",
-            margin: "60px auto 0",
-            height: "100vh",
+            margin: "70px auto 0",
           }}
         >
           <h3 style={{ marginTop: "5px" }}>My Order</h3>

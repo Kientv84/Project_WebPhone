@@ -70,8 +70,6 @@ const SignInPage = () => {
       email,
       password,
     });
-
-    console.log("sign-in", email, password);
   };
 
   const handleNavigateSignUp = () => {
@@ -82,8 +80,8 @@ const SignInPage = () => {
     navigate("/forgot-password");
   };
 
-  const googleAuth = () => {
-    window.open(`http://localhost:3001/api/auth/google`, "_self");
+  const handleSignInAuth = (type) => {
+    window.open(`http://localhost:3001/api/auth/${type}`, "_self");
   };
 
   return (
@@ -161,11 +159,23 @@ const SignInPage = () => {
               }}
             ></ButtonComponent>
             <p className={styles.text}>or</p>
+            <div className={styles.container_btn}>
+              <button
+                className={styles.google_btn}
+                onClick={() => handleSignInAuth("google")}
+              >
+                <img src={googleIcon} alt="google icon" />
+                <span>Google</span>
+              </button>
 
-            <button className={styles.google_btn} onClick={googleAuth}>
-              <img src={googleIcon} alt="google icon" />
-              <span>Sign in with Google</span>
-            </button>
+              <button
+                className={styles.facebook_btn}
+                onClick={() => handleSignInAuth("facebook")}
+              >
+                {/* <img src={facebookIcon} alt="facebook icon" /> */}
+                <span style={{ color: "white" }}>Facebook</span>
+              </button>
+            </div>
           </Loading>
           <p
             style={{ marginBottom: "-10px", marginTop: "-8px" }}

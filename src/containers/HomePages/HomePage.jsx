@@ -36,6 +36,8 @@ import {
 } from "@ant-design/icons";
 import { Badge, Col, Popover } from "antd";
 import ButtonInputSearch from "../../components/ButtonInputSearch/ButtonInputSearch";
+import "./HomePage.css";
+import { convertPrice } from "../../utils";
 
 const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -85,6 +87,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [search, setSearch] = useState("");
   const [isOpenPopup, setIsOpenPopup] = useState(false);
   const order = useSelector((state) => state.order);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleNavigateLogin = () => {
     navigate("/sign-in");
@@ -95,6 +98,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     await UserService.logoutUser();
     dispatch(resetUser());
     dispatch(resetOrder1());
+    localStorage.removeItem("access_token");
     setLoading(false);
     navigate("/");
   };
@@ -151,9 +155,30 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     }
   };
 
+  const handleOnChangeInput = (event) => {
+    setSearch(event.target.value);
+  };
+
+  // Hiển thị dropdown khi input được focus
+  const handleFocus = () => {
+    setShowDropdown(true);
+  };
+  const handleBlur = () => {
+    setTimeout(() => setShowDropdown(false), 200); // Thêm delay để người dùng có thể chọn item
+  };
+
+  const onSearch = (searchTerm) => {
+    setSearch(searchTerm);
+  };
+
+  const handleDetailProduct = (id) => {
+    navigate(`/product-details/${id}`);
+  };
+
   return (
     <div>
       <div
+        className="header"
         style={{
           width: "100%",
           background: "#42C8B7",
@@ -171,13 +196,64 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             <WrapperTextHeader to="/"> WEBPHONE </WrapperTextHeader>
           </Col>
           {!isHiddenSearch && (
-            <Col span={13}>
+            <Col span={13} style={{ position: "relative" }}>
               <ButtonInputSearch
                 size="large"
                 placeholder="What do you need to find?"
                 textbutton="Search"
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={handleOnChangeInput}
               />
+              <div className="dropdown">
+                {products?.data?.filter((product) => {
+                  const searchTerm = search.toLowerCase();
+                  const productNameLower = product.name.toLowerCase();
+                  return (
+                    searchTerm &&
+                    productNameLower.includes(searchTerm) &&
+                    productNameLower !== searchTerm
+                  );
+                }).length > 0 && <p className="title-box">Product suggests</p>}
+
+                {products?.data
+                  ?.filter((product) => {
+                    const searchTerm = search.toLowerCase();
+                    const productNameLower = product.name.toLowerCase();
+                    return (
+                      searchTerm &&
+                      productNameLower.includes(searchTerm) &&
+                      productNameLower !== searchTerm
+                    );
+                  })
+                  .slice(0, 10)
+                  .map((product) => (
+                    <div
+                      onClick={() => onSearch(product.name)}
+                      className="dropdown-row"
+                      key={product._id}
+                    >
+                      <img
+                        src={product.image} // Đường dẫn tới ảnh sản phẩm
+                        alt={product.name}
+                      />
+                      <div>
+                        <span onClick={() => handleDetailProduct(product._id)}>
+                          {product.name}
+                        </span>
+
+                        <span
+                          style={{
+                            display: "block",
+                            color: "#db003b",
+                            fontSize: "12px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {convertPrice(product.price)}VND
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </Col>
           )}
           <Col
@@ -248,18 +324,21 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             style={{
               display: "flex",
               width: "1270px",
-              margin: "20px auto",
+              margin: "60px auto 0",
               gap: "20px",
             }}
           >
-            <div style={{ flex: "2" }}>
+            <div style={{ flex: "2", marginTop: "20px" }}>
               <WrapperTypeProduct>
                 {typeProducts.map((item) => {
                   return <TypeProduct name={item} key={item} />;
                 })}
               </WrapperTypeProduct>
             </div>
-            <div className="slider" style={{ flex: "1", maxWidth: "100%" }}>
+            <div
+              className="slider"
+              style={{ flex: "1", maxWidth: "100%", marginTop: "20px" }}
+            >
               <SliderComponent arrImages={[slider1, slider2, slider3]} />
             </div>
           </div>
@@ -278,29 +357,22 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             style={{ height: "auto", width: "1270px", margin: "0 auto" }}
           >
             <WrapperProducts>
-              {products?.data
-                ?.filter((product) => {
-                  const searchLower = search.toLowerCase();
-                  const productNameLower = product.name.toLowerCase();
-                  return productNameLower.includes(searchLower);
-                })
-                .map((product) => {
-                  return (
-                    <CardComponent
-                      key={product._id}
-                      countInStock={product.countInStock}
-                      // description={product.description}
-                      image={product.image}
-                      name={product.name}
-                      price={product.price}
-                      rating={product.rating}
-                      type={product.type}
-                      sold={product.selled}
-                      discount={product.discount}
-                      id={product._id}
-                    />
-                  );
-                })}
+              {products?.data?.map((product) => {
+                return (
+                  <CardComponent
+                    key={product._id}
+                    countInStock={product.countInStock}
+                    image={product.image}
+                    name={product.name}
+                    price={product.price}
+                    rating={product.rating}
+                    type={product.type}
+                    sold={product.selled}
+                    discount={product.discount}
+                    id={product._id}
+                  />
+                );
+              })}
             </WrapperProducts>
             <div
               style={{
@@ -323,6 +395,8 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                   width: "240px",
                   height: "38px",
                   borderRadius: "4px",
+                  marginTop: "20px",
+                  marginBottom: "20px",
                 }}
                 disabled={
                   products?.totalProduct === products?.data?.length ||
