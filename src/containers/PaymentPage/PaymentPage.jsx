@@ -142,15 +142,6 @@ const PaymentPage = () => {
   };
  
 
-// const handleQrCodePayment = () => {
-//     setTimeout(() => {
-//       setInterval(() => {
-//          checkPaid(totalPriceMemo, content)
-//       }, 2000);
-//   }, 10000); // 10 giây sau sẽ kiểm tra thanh toán
-//     setIsOpenModalQRcode(true);
-//   };
-
 const handleQrCodePayment = () => {
   setIsOpenModalQRcode(true); // Mở modal QR code
 
@@ -164,9 +155,9 @@ const handleQrCodePayment = () => {
         if (paymentSuccess) {
           clearInterval(interval); // Dừng interval nếu thanh toán thành công
           message.success("Thanh toán thành công!");
-          // setIsSuccessPaied(true);
+
           setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
-               //Gọi hàm lưu đơn hàng
+
           mutationAddOrder.mutate({
           token: user?.access_token,
           orderItems: order?.orderItemsSelected,
@@ -180,7 +171,7 @@ const handleQrCodePayment = () => {
           totalPrice: totalPriceMemo,
           user: user?.id,
           email: user?.email,
-          isPaid: true,  // Đánh dấu là đã thanh toán
+          isPaid: true,  
          });
         }
       } catch (error) {
@@ -273,20 +264,7 @@ const handleQrCodePayment = () => {
       [e.target.name]: e.target.value,
     });
   };
-  // const itemsDelivery = [
-  //   {
-  //     title: '20.000 VND',
-  //     description: 'Dưới 200.000 VND',
-  //   },
-  //   {
-  //     title: '10.000 VND',
-  //     description: 'Từ 200.000 VND đến dưới 500.000 VND',
-  //   },
-  //   {
-  //     title: 'Free ship',
-  //     description: 'Trên 500.000 VND',
-  //   },
-  // ]
+
 
   const handleDelivery = (e) => {
     setDelivery(e.target.value);
@@ -316,11 +294,6 @@ const handleQrCodePayment = () => {
     });
     // console.log('details, data', details, data)
   };
-
-
-  // const handleCancel = () => {
-  //   setIsOpenModalQRcode(false)
-  // };
 
   const handleCancel = () => {
     if (paymentInterval) {
@@ -352,114 +325,55 @@ const handleQrCodePayment = () => {
 
   useEffect(() => {
   if (order?.orderItemsSelected?.length > 0) {
-    // Get product names
-      const productNames = order?.orderItemsSelected?.map(item => item.name)
+      let  productNames = order?.orderItemsSelected?.map(item => item.name)
       .join('')
       .replace(/\s+/g, ''); // Xóa tất cả khoảng trắng
+    
+      // Hàm loại bỏ dấu
+      const removeDiacritics = (str) => {
+        return  str
+        .normalize('NFD') // Phân tách các ký tự có dấu
+        .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
+        .replace(/đ/g, 'd') 
+        .replace(/Đ/g, 'D')
+        .replace(/[$\\@\\\#%\^\&\*\(\)\[\]\+\_\{\}\`\~\=\|\[/]/g, ''); // Xóa các ký tự đặc biệt
+      }
+      productNames = removeDiacritics(productNames);
 
-      setContent(productNames)
+      if (productNames.length > 35) {
+        productNames = productNames.substring(0, 35);
+      }
+
+      setContent(productNames);
   }
 }, [order?.orderItemsSelected]);
 
  console.log('content',content);
-  // useEffect(() => {
-  //   if (user?.name) {
-  //     setContent(user.name.toUpperCase()); // Lấy tên và chuyển đổi thành viết hoa
 
-  //     console.log('content', content)
-
-  //   }
-  // }, [user?.name]);
-
-
+ console.log('order',order);
+ 
  async function checkPaid(price, content) {
   try {
     // Fetch dữ liệu từ API
     const response = await fetch(
-      "https://script.googleusercontent.com/macros/echo?user_content_key=GzaSr6BLMsZ8dEyL-6rmEQ4u_IVz3lCEO1I1UHpHj56poMfIWMsuxsUyWX6OOKhoqq_n80Gn70HvaQ_S8Q-JK4aOmPwq9O_um5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnCBtOQEpoDUhiJ3YAVc1LAB9j-dsruBME-G9SQJ5Df78oi_yuazhZkHxLK3_5bylXW16rxtpxFnBTK7nUoFoUgx63LCerNWtydz9Jw9Md8uu&lib=MdqQX6qMt95UUQMlrxHQ1WGURENw8Mm9a"
+      "https://script.google.com/macros/s/AKfycbz9KsEavJS7aClWoTM_3Yte-kNxfsXa8N6O96je2TQ7bDoeJmcSGqLm-_sFdQvYzkusdA/exec"
     );
 
     const data = await response.json();
     const lastPaid = data.data[data.data.length -1];
-    const lastPrice = lastPaid["Giá trị"];  // Giá trị thanh toán
-    const lastContent = lastPaid["Mô tả"];  // Mô tả giao dịch
-  console.log('checkMota',content.includes(lastContent))
-    // Kiểm tra nếu giá trị và mô tả khớp với yêu cầu
-    if (lastPrice >= price && lastContent.includes(content)) {
-      return true; // Thanh toán thành công
+    const lastPrice = lastPaid["Giá trị"];  
+    const lastContent = lastPaid["Mô tả"]
+
+    if (lastPrice == price && lastContent.includes(content))  {
+      return true; 
     } else {
-      return false; // Thanh toán chưa thành công
+      return false; 
     }
   } catch (error) {
     console.error("Lỗi khi kiểm tra thanh toán:", error);
-    return false; // Xử lý lỗi, trả về thất bại
+    return false;
   }
 }
-
-
-
-//   async function checkPaid(price, content) { 
-
-//   if(isSuccessPaied) {
-
-//   }
-
-//   try {
-//      // Fetch dữ liệu từ API
-//     const response = await fetch(
-//       "https://script.googleusercontent.com/macros/echo?user_content_key=GzaSr6BLMsZ8dEyL-6rmEQ4u_IVz3lCEO1I1UHpHj56poMfIWMsuxsUyWX6OOKhoqq_n80Gn70HvaQ_S8Q-JK4aOmPwq9O_um5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnCBtOQEpoDUhiJ3YAVc1LAB9j-dsruBME-G9SQJ5Df78oi_yuazhZkHxLK3_5bylXW16rxtpxFnBTK7nUoFoUgx63LCerNWtydz9Jw9Md8uu&lib=MdqQX6qMt95UUQMlrxHQ1WGURENw8Mm9a"
-//     );
-
-//     const data = await response.json();
-//     const lastPaid = data.data[data.data.length -1]
-
-//     const lastPrice = lastPaid["Giá trị"];  // Thay đổi giá trị này cho phù hợp với yêu cầu của bạn
-//     const lastContent =  lastPaid["Mô tả"];  // Nội dung mô tả bạn cần kiểm tra
-
-//     if ( lastPrice >= price && lastContent.includes(content)) {
-//       //thong bao
-//       message.success("Thanh toán thành công!");
-//       setIsOpenModalQRcode(false); // Đóng modal QR Code nếu thanh toán thành công
-
-
-//         // Gọi hàm lưu đơn hàng
-//       mutationAddOrder.mutate({
-//       token: user?.access_token,
-//       orderItems: order?.orderItemsSelected,
-//       fullName: user?.name,
-//       address: user?.address,
-//       phone: user?.phone,
-//       city: user?.city,
-//       paymentMethod: "qr_code",
-//       itemsPrice: priceMemo,
-//       shippingPrice: deliveryPriceMemo,
-//       totalPrice: totalPriceMemo,
-//       user: user?.id,
-//       email: user?.email,
-//       isPaid: true,  // Đánh dấu là đã thanh toán
-//   });
-//     } else {
-//       console.log("Thanh toán không thành công. Vui lòng thử lại.")
-//       //  message.error("Thanh toán không thành công. Vui lòng thử lại.");
-//     }
-
-//   // console.log("lastPrice", lastPrice)
-//   // console.log("content", content)
-//   } catch (error) {
-//   console.log("Error fetching data:", error);
-//     message.error("Có lỗi xảy ra trong quá trình kiểm tra thanh toán.");
-//   }
-// }
-// // console.log("totalPriceMemo",totalPriceMemo)
-
-
-const items = order?.orderItemsSelected
-  ?.map(item => item.name)
-  .join('')
-  .replace(/\s+/g, ''); // Xóa tất cả khoảng trắng
-
-
-  console.log('items', items)
 
   return (
     <div
@@ -652,7 +566,7 @@ const items = order?.orderItemsSelected
           title="Mời bạn thanh toán bằng QR code"
           open={isOpenModalQRcode}
           amount={totalPriceMemo} // Số tiền là 100,000 VND
-          productName={items}
+          productName={content}
           onCancel={handleCancel}
           onOk={handleCancel}
         >
