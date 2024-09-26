@@ -34,7 +34,7 @@ const PaymentPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
   const [content, setContent] = useState("");
-
+  const [paymentInterval, setPaymentInterval] = useState(null); // Thêm trạng thái để lưu ID của interval
 
   const [delivery, setDelivery] = useState("fast");
   const [payment, setPayment] = useState("later_money");
@@ -45,6 +45,8 @@ const PaymentPage = () => {
 
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
   const [isOpenModalQRcode, setIsOpenModalQRcode] = useState(false);
+  // const [isSuccessPaied, setIsSuccessPaied] =  useState(false);
+
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
     phone: "",
@@ -109,6 +111,7 @@ const PaymentPage = () => {
   }, [priceMemo, priceDiscountMemo, deliveryPriceMemo]);
 
 
+
   const handleAddOrder = () => {
     if (
       user?.access_token &&
@@ -139,14 +142,62 @@ const PaymentPage = () => {
   };
  
 
+// const handleQrCodePayment = () => {
+//     setTimeout(() => {
+//       setInterval(() => {
+//          checkPaid(totalPriceMemo, content)
+//       }, 2000);
+//   }, 10000); // 10 giây sau sẽ kiểm tra thanh toán
+//     setIsOpenModalQRcode(true);
+//   };
+
 const handleQrCodePayment = () => {
-    setIsOpenModalQRcode(true);
+  setIsOpenModalQRcode(true); // Mở modal QR code
 
-    setTimeout(() => {
-    checkPaid(totalPriceMemo, content)
-  }, 900); // 5 giây sau sẽ kiểm tra thanh toán
+  let timeLeft = 900; // 15 phút = 900 giây
+  const interval = setInterval(async () => {
+    if (timeLeft > 0) {
+      try {
+        // Gọi hàm checkPaid để kiểm tra thanh toán
+        const paymentSuccess = await checkPaid(totalPriceMemo, content);
 
-  };
+        if (paymentSuccess) {
+          clearInterval(interval); // Dừng interval nếu thanh toán thành công
+          message.success("Thanh toán thành công!");
+          // setIsSuccessPaied(true);
+          setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
+               //Gọi hàm lưu đơn hàng
+          mutationAddOrder.mutate({
+          token: user?.access_token,
+          orderItems: order?.orderItemsSelected,
+          fullName: user?.name,
+          address: user?.address,
+          phone: user?.phone,
+          city: user?.city,
+          paymentMethod: "qr_code",
+          itemsPrice: priceMemo,
+          shippingPrice: deliveryPriceMemo,
+          totalPrice: totalPriceMemo,
+          user: user?.id,
+          email: user?.email,
+          isPaid: true,  // Đánh dấu là đã thanh toán
+         });
+        }
+      } catch (error) {
+        console.error("Lỗi khi kiểm tra thanh toán:", error);
+      }
+
+      timeLeft -= 2; // Cập nhật thời gian còn lại (2 giây mỗi lần)
+    } else {
+      clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
+      message.error("Thời gian thanh toán đã hết. Vui lòng thử lại.");
+      setIsOpenModalQRcode(false); // Đóng modal nếu hết thời gian
+    }
+  }, 4000); // Kiểm tra mỗi 2 giây
+
+   setPaymentInterval(interval); // Lưu ID interval
+};
+
 
   const mutationUpdate = useMutationHook((data) => {
     const { id, token, ...rests } = data;
@@ -215,6 +266,7 @@ const handleQrCodePayment = () => {
     }
   };
 
+
   const handleOnchangeDetails = (e) => {
     setStateUserDetails({
       ...stateUserDetails,
@@ -266,11 +318,16 @@ const handleQrCodePayment = () => {
   };
 
 
-  const handleCancel = () => {
-    setIsOpenModalQRcode(false)
-  };
+  // const handleCancel = () => {
+  //   setIsOpenModalQRcode(false)
+  // };
 
- 
+  const handleCancel = () => {
+    if (paymentInterval) {
+      clearInterval(paymentInterval); // Hủy interval nếu nó tồn tại
+    }
+    setIsOpenModalQRcode(false);
+  };
 
   const addPaypalScript = async () => {
     const { data } = await PaymentService.getConfig();
@@ -294,48 +351,115 @@ const handleQrCodePayment = () => {
 
 
   useEffect(() => {
-    if (user?.name) {
-      setContent(user.name.toUpperCase()); // Lấy tên và chuyển đổi thành viết hoa
+  if (order?.orderItemsSelected?.length > 0) {
+    // Get product names
+      const productNames = order?.orderItemsSelected?.map(item => item.name)
+      .join('')
+      .replace(/\s+/g, ''); // Xóa tất cả khoảng trắng
 
-      // console.log('content', content)
+      setContent(productNames)
+  }
+}, [order?.orderItemsSelected]);
 
-    }
-  }, [user?.name]);
+ console.log('content',content);
+  // useEffect(() => {
+  //   if (user?.name) {
+  //     setContent(user.name.toUpperCase()); // Lấy tên và chuyển đổi thành viết hoa
+
+  //     console.log('content', content)
+
+  //   }
+  // }, [user?.name]);
 
 
-
- async function checkPaid(price, content) { 
+ async function checkPaid(price, content) {
   try {
-     // Fetch dữ liệu từ API
+    // Fetch dữ liệu từ API
     const response = await fetch(
       "https://script.googleusercontent.com/macros/echo?user_content_key=GzaSr6BLMsZ8dEyL-6rmEQ4u_IVz3lCEO1I1UHpHj56poMfIWMsuxsUyWX6OOKhoqq_n80Gn70HvaQ_S8Q-JK4aOmPwq9O_um5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnCBtOQEpoDUhiJ3YAVc1LAB9j-dsruBME-G9SQJ5Df78oi_yuazhZkHxLK3_5bylXW16rxtpxFnBTK7nUoFoUgx63LCerNWtydz9Jw9Md8uu&lib=MdqQX6qMt95UUQMlrxHQ1WGURENw8Mm9a"
     );
 
     const data = await response.json();
-    const lastPaid = data.data[data.data.length -1]
-
-    const lastPrice = lastPaid["Giá trị"];  // Thay đổi giá trị này cho phù hợp với yêu cầu của bạn
-    const lastContent =  lastPaid["Mô tả"];  // Nội dung mô tả bạn cần kiểm tra
-
-    if ( lastPrice >= price && lastContent.includes(content)) {
-      //thong bao
-      message.success("Thanh toán thành công!");
-      setIsOpenModalQRcode(false); // Đóng modal QR Code nếu thanh toán thành công
+    const lastPaid = data.data[data.data.length -1];
+    const lastPrice = lastPaid["Giá trị"];  // Giá trị thanh toán
+    const lastContent = lastPaid["Mô tả"];  // Mô tả giao dịch
+  console.log('checkMota',content.includes(lastContent))
+    // Kiểm tra nếu giá trị và mô tả khớp với yêu cầu
+    if (lastPrice >= price && lastContent.includes(content)) {
+      return true; // Thanh toán thành công
     } else {
-       message.error("Thanh toán không thành công. Vui lòng thử lại.");
+      return false; // Thanh toán chưa thành công
     }
-
-  console.log("lastPrice", lastPrice)
-  console.log("content", content)
   } catch (error) {
-  console.log("Error fetching data:", error);
-    message.error("Có lỗi xảy ra trong quá trình kiểm tra thanh toán.");
+    console.error("Lỗi khi kiểm tra thanh toán:", error);
+    return false; // Xử lý lỗi, trả về thất bại
   }
 }
-console.log("totalPriceMemo",totalPriceMemo)
 
 
 
+//   async function checkPaid(price, content) { 
+
+//   if(isSuccessPaied) {
+
+//   }
+
+//   try {
+//      // Fetch dữ liệu từ API
+//     const response = await fetch(
+//       "https://script.googleusercontent.com/macros/echo?user_content_key=GzaSr6BLMsZ8dEyL-6rmEQ4u_IVz3lCEO1I1UHpHj56poMfIWMsuxsUyWX6OOKhoqq_n80Gn70HvaQ_S8Q-JK4aOmPwq9O_um5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnCBtOQEpoDUhiJ3YAVc1LAB9j-dsruBME-G9SQJ5Df78oi_yuazhZkHxLK3_5bylXW16rxtpxFnBTK7nUoFoUgx63LCerNWtydz9Jw9Md8uu&lib=MdqQX6qMt95UUQMlrxHQ1WGURENw8Mm9a"
+//     );
+
+//     const data = await response.json();
+//     const lastPaid = data.data[data.data.length -1]
+
+//     const lastPrice = lastPaid["Giá trị"];  // Thay đổi giá trị này cho phù hợp với yêu cầu của bạn
+//     const lastContent =  lastPaid["Mô tả"];  // Nội dung mô tả bạn cần kiểm tra
+
+//     if ( lastPrice >= price && lastContent.includes(content)) {
+//       //thong bao
+//       message.success("Thanh toán thành công!");
+//       setIsOpenModalQRcode(false); // Đóng modal QR Code nếu thanh toán thành công
+
+
+//         // Gọi hàm lưu đơn hàng
+//       mutationAddOrder.mutate({
+//       token: user?.access_token,
+//       orderItems: order?.orderItemsSelected,
+//       fullName: user?.name,
+//       address: user?.address,
+//       phone: user?.phone,
+//       city: user?.city,
+//       paymentMethod: "qr_code",
+//       itemsPrice: priceMemo,
+//       shippingPrice: deliveryPriceMemo,
+//       totalPrice: totalPriceMemo,
+//       user: user?.id,
+//       email: user?.email,
+//       isPaid: true,  // Đánh dấu là đã thanh toán
+//   });
+//     } else {
+//       console.log("Thanh toán không thành công. Vui lòng thử lại.")
+//       //  message.error("Thanh toán không thành công. Vui lòng thử lại.");
+//     }
+
+//   // console.log("lastPrice", lastPrice)
+//   // console.log("content", content)
+//   } catch (error) {
+//   console.log("Error fetching data:", error);
+//     message.error("Có lỗi xảy ra trong quá trình kiểm tra thanh toán.");
+//   }
+// }
+// // console.log("totalPriceMemo",totalPriceMemo)
+
+
+const items = order?.orderItemsSelected
+  ?.map(item => item.name)
+  .join('')
+  .replace(/\s+/g, ''); // Xóa tất cả khoảng trắng
+
+
+  console.log('items', items)
 
   return (
     <div
@@ -528,7 +652,7 @@ console.log("totalPriceMemo",totalPriceMemo)
           title="Mời bạn thanh toán bằng QR code"
           open={isOpenModalQRcode}
           amount={totalPriceMemo} // Số tiền là 100,000 VND
-          user={user?.name} // Truyền thông tin ngân hàng
+          productName={items}
           onCancel={handleCancel}
           onOk={handleCancel}
         >
