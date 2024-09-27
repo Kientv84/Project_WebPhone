@@ -145,7 +145,7 @@ const PaymentPage = () => {
 const handleQrCodePayment = () => {
   setIsOpenModalQRcode(true); // Mở modal QR code
 
-  let timeLeft = 900; // 15 phút = 900 giây
+  let timeLeft = 300; // 15 phút = 900 giây
   const interval = setInterval(async () => {
     if (timeLeft > 0) {
       try {
@@ -178,13 +178,13 @@ const handleQrCodePayment = () => {
         console.error("Lỗi khi kiểm tra thanh toán:", error);
       }
 
-      timeLeft -= 2; // Cập nhật thời gian còn lại (2 giây mỗi lần)
+      timeLeft -= 3; // Cập nhật thời gian còn lại (2 giây mỗi lần)
     } else {
       clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
       message.error("Thời gian thanh toán đã hết. Vui lòng thử lại.");
       setIsOpenModalQRcode(false); // Đóng modal nếu hết thời gian
     }
-  }, 4000); // Kiểm tra mỗi 2 giây
+  }, 5000); // Kiểm tra mỗi 2 giây
 
    setPaymentInterval(interval); // Lưu ID interval
 };
@@ -348,9 +348,9 @@ const handleQrCodePayment = () => {
   }
 }, [order?.orderItemsSelected]);
 
- console.log('content',content);
+//  console.log('content',content);
 
- console.log('order',order);
+//  console.log('order',order);
  
  async function checkPaid(price, content) {
   try {
@@ -364,7 +364,11 @@ const handleQrCodePayment = () => {
     const lastPrice = lastPaid["Giá trị"];  
     const lastContent = lastPaid["Mô tả"]
 
-    if (lastPrice == price && lastContent.includes(content))  {
+    // console.log('lastPrice',lastPrice >= price);
+
+    // console.log('lastContent',lastContent.includes(content));
+
+    if (lastPrice >= price && lastContent.includes(content))  {
       return true; 
     } else {
       return false; 
