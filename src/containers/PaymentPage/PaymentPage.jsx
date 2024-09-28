@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { convertPrice } from "../../utils";
 import { useMemo } from "react";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import ModalQRcode from "../../components/ModalQRcode/ModalQRcode";
 import InputComponent from "../../components/InputComponent/InputComponent";
 import { removeAllOrderProduct } from "../../redux/slice/orderSlide";
 import { useMutationHook } from "../../hooks/useMutationHook";
@@ -32,13 +33,20 @@ import * as PaymentService from "../../services/PaymentService";
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
+  const [content, setContent] = useState("");
+  const [paymentInterval, setPaymentInterval] = useState(null); // Thêm trạng thái để lưu ID của interval
 
   const [delivery, setDelivery] = useState("fast");
   const [payment, setPayment] = useState("later_money");
+  const [paymentbyQRCode, setPaymentbyQRCode] = useState("qr_code")
+  
   const navigate = useNavigate();
   const [sdkReady, setSdkReady] = useState(false);
 
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
+  const [isOpenModalQRcode, setIsOpenModalQRcode] = useState(false);
+  // const [isSuccessPaied, setIsSuccessPaied] =  useState(false);
+
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
     phone: "",
@@ -102,6 +110,8 @@ const PaymentPage = () => {
     );
   }, [priceMemo, priceDiscountMemo, deliveryPriceMemo]);
 
+
+
   const handleAddOrder = () => {
     if (
       user?.access_token &&
@@ -130,7 +140,55 @@ const PaymentPage = () => {
       });
     }
   };
-  // console.log('order', order, user)
+ 
+
+const handleQrCodePayment = () => {
+  setIsOpenModalQRcode(true); // Mở modal QR code
+
+  let timeLeft = 300; // 15 phút = 900 giây
+  const interval = setInterval(async () => {
+    if (timeLeft > 0) {
+      try {
+        // Gọi hàm checkPaid để kiểm tra thanh toán
+        const paymentSuccess = await checkPaid(totalPriceMemo, content);
+
+        if (paymentSuccess) {
+          clearInterval(interval); // Dừng interval nếu thanh toán thành công
+          message.success("Thanh toán thành công!");
+
+          setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
+
+          mutationAddOrder.mutate({
+          token: user?.access_token,
+          orderItems: order?.orderItemsSelected,
+          fullName: user?.name,
+          address: user?.address,
+          phone: user?.phone,
+          city: user?.city,
+          paymentMethod: "qr_code",
+          itemsPrice: priceMemo,
+          shippingPrice: deliveryPriceMemo,
+          totalPrice: totalPriceMemo,
+          user: user?.id,
+          email: user?.email,
+          isPaid: true,  
+         });
+        }
+      } catch (error) {
+        console.error("Lỗi khi kiểm tra thanh toán:", error);
+      }
+
+      timeLeft -= 3; // Cập nhật thời gian còn lại (2 giây mỗi lần)
+    } else {
+      clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
+      message.error("Thời gian thanh toán đã hết. Vui lòng thử lại.");
+      setIsOpenModalQRcode(false); // Đóng modal nếu hết thời gian
+    }
+  }, 5000); // Kiểm tra mỗi 2 giây
+
+   setPaymentInterval(interval); // Lưu ID interval
+};
+
 
   const mutationUpdate = useMutationHook((data) => {
     const { id, token, ...rests } = data;
@@ -199,26 +257,14 @@ const PaymentPage = () => {
     }
   };
 
+
   const handleOnchangeDetails = (e) => {
     setStateUserDetails({
       ...stateUserDetails,
       [e.target.name]: e.target.value,
     });
   };
-  // const itemsDelivery = [
-  //   {
-  //     title: '20.000 VND',
-  //     description: 'Dưới 200.000 VND',
-  //   },
-  //   {
-  //     title: '10.000 VND',
-  //     description: 'Từ 200.000 VND đến dưới 500.000 VND',
-  //   },
-  //   {
-  //     title: 'Free ship',
-  //     description: 'Trên 500.000 VND',
-  //   },
-  // ]
+
 
   const handleDelivery = (e) => {
     setDelivery(e.target.value);
@@ -226,6 +272,7 @@ const PaymentPage = () => {
 
   const handlePayment = (e) => {
     setPayment(e.target.value);
+    setPaymentbyQRCode(e.target.value);
   };
 
   const onSuccessPaypal = (details, data) => {
@@ -248,6 +295,13 @@ const PaymentPage = () => {
     // console.log('details, data', details, data)
   };
 
+  const handleCancel = () => {
+    if (paymentInterval) {
+      clearInterval(paymentInterval); // Hủy interval nếu nó tồn tại
+    }
+    setIsOpenModalQRcode(false);
+  };
+
   const addPaypalScript = async () => {
     const { data } = await PaymentService.getConfig();
     const script = document.createElement("script");
@@ -267,6 +321,63 @@ const PaymentPage = () => {
       setSdkReady(true);
     }
   }, []);
+
+
+  useEffect(() => {
+  if (order?.orderItemsSelected?.length > 0) {
+      let  productNames = order?.orderItemsSelected?.map(item => item.name)
+      .join('')
+      .replace(/\s+/g, ''); // Xóa tất cả khoảng trắng
+    
+      // Hàm loại bỏ dấu
+      const removeDiacritics = (str) => {
+        return  str
+        .normalize('NFD') // Phân tách các ký tự có dấu
+        .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
+        .replace(/đ/g, 'd') 
+        .replace(/Đ/g, 'D')
+        .replace(/[$\\@\\\#%\^\&\*\(\)\[\]\+\_\{\}\`\~\=\|\[/]/g, ''); // Xóa các ký tự đặc biệt
+      }
+      productNames = removeDiacritics(productNames);
+
+      if (productNames.length > 35) {
+        productNames = productNames.substring(0, 35);
+      }
+
+      setContent(productNames);
+  }
+}, [order?.orderItemsSelected]);
+
+//  console.log('content',content);
+
+//  console.log('order',order);
+ 
+ async function checkPaid(price, content) {
+  try {
+    // Fetch dữ liệu từ API
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbz9KsEavJS7aClWoTM_3Yte-kNxfsXa8N6O96je2TQ7bDoeJmcSGqLm-_sFdQvYzkusdA/exec"
+    );
+
+    const data = await response.json();
+    const lastPaid = data.data[data.data.length -1];
+    const lastPrice = lastPaid["Giá trị"];  
+    const lastContent = lastPaid["Mô tả"]
+
+    // console.log('lastPrice',lastPrice >= price);
+
+    // console.log('lastContent',lastContent.includes(content));
+
+    if (lastPrice >= price && lastContent.includes(content))  {
+      return true; 
+    } else {
+      return false; 
+    }
+  } catch (error) {
+    console.error("Lỗi khi kiểm tra thanh toán:", error);
+    return false;
+  }
+}
 
   return (
     <div
@@ -308,6 +419,7 @@ const PaymentPage = () => {
                   <WrapperRadio onChange={handlePayment} value={payment}>
                     <Radio value="later_money"> Cash on Delivery (COD)</Radio>
                     <Radio value="paypal"> Pay with PayPal</Radio>
+                    <Radio value="qr_code"> Pay with QR code</Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo3>
@@ -414,6 +526,24 @@ const PaymentPage = () => {
                     }}
                   />
                 </div>
+              ) : payment === "qr_code" ? (
+                <ButtonComponent
+                  onClick={() => handleQrCodePayment() } // Hàm xử lý cho thanh toán qua QR Code
+                  size={40}
+                  styleButton={{
+                    background: "rgb(0, 123, 255)", // Màu nền cho QR Code Payment (tuỳ chỉnh)
+                    height: "48px",
+                    width: "320px",
+                    border: "none",
+                    borderRadius: "4px",
+                  }}
+                  textbutton={"Pay with QR Code"}
+                  styletextbutton={{
+                    color: "#fff",
+                    fontSize: "15px",
+                    fontWeight: "700",
+                  }}
+                ></ButtonComponent>
               ) : (
                 <ButtonComponent
                   onClick={() => handleAddOrder()}
@@ -436,12 +566,25 @@ const PaymentPage = () => {
             </WrapperRight>
           </div>
         </div>
+        <ModalQRcode
+          title="Mời bạn thanh toán bằng QR code"
+          open={isOpenModalQRcode}
+          amount={totalPriceMemo} // Số tiền là 100,000 VND
+          productName={content}
+          onCancel={handleCancel}
+          onOk={handleCancel}
+        >
+          <Loading isLoading={isLoading}>
+
+          </Loading>
+        </ModalQRcode>
+        
         <ModalComponent
           title="Update shipping address"
           open={isOpenModalUpdateInfo}
           onCancel={handleCancelUpdate}
           onOk={handleUpdateInfoUser}
-        >
+        > 
           <Loading isLoading={isLoading}>
             <Form
               name="basic"
