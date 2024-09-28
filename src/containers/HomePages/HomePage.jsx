@@ -337,7 +337,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </div>
             <div
               className="slider"
-              style={{ flex: "1", maxWidth: "100%", marginTop: "20px" }}
+              style={{ flex: "1", maxWidth: "80%", marginTop: "20px" }}
             >
               <SliderComponent arrImages={[slider1, slider2, slider3]} />
             </div>
