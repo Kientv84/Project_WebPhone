@@ -27,7 +27,7 @@ const FooterComponent = () => {
             Hotline Tư vấn : (+84 - 028) 37222764
           </Typography>
           <Typography fontSize={12}> Fax: (+84 - 028) 38964922</Typography>
-          <Typography fontSize={12}> E-mail: ptchc@hcmute.edu.vn</Typography>
+          <Typography fontSize={12}> E-mail: khdcnnt2023@gmail.com</Typography>
         </Box>
       </Box>
     </>
