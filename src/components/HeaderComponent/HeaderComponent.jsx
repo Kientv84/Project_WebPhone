@@ -134,11 +134,11 @@ const HeaderComponent = ({
 
   const handleOnChangeInput = (event) => {
     setSearch(event.target.value);
+    setSearch("");
   };
 
   const handleDetailProduct = (id) => {
     navigate(`/product-details/${id}`);
-    setSearch("");
   };
 
   const fetchProductAll = async (context) => {
@@ -351,7 +351,7 @@ const HeaderComponent = ({
                   .slice(0, 10)
                   .map((product) => (
                     <div
-                      // onClick={() => onSearch(product.name)}
+                      onClick={() => onSearch(product.name)}
                       className="dropdown-row"
                       key={product._id}
                     >

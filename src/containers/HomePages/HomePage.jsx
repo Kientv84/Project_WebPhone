@@ -3,13 +3,7 @@ import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import BranchProduct from "../../components/BranchProduct/BranchProduct";
 import {
   WrapperButtonMore,
-  WrapperContentPopup,
-  WrapperHeader,
-  WrapperHeaderAccount,
   WrapperProducts,
-  WrapperTextHeader,
-  WrapperTextHeaderSmall,
-  WrapperTextHeaderSmall1,
   WrapperTypeProduct,
   WrapperBranchProduct,
 } from "./style";
@@ -20,24 +14,10 @@ import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { useQuery } from "react-query";
 import * as ProductService from "../../services/ProductService";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
-import { useNavigate } from "react-router-dom";
-import { setOrderItems } from "../../redux/slice/orderSlide";
-import * as UserService from "../../services/UserService";
-import { resetUser } from "../../redux/slice/userslide";
-import { resetOrder1 } from "../../redux/slice/orderSlide";
-import {
-  UserOutlined,
-  CaretDownOutlined,
-  ShoppingCartOutlined,
-} from "@ant-design/icons";
-import { Badge, Col, Popover } from "antd";
-import ButtonInputSearch from "../../components/ButtonInputSearch/ButtonInputSearch";
-import "./HomePage.css";
-import { convertPrice } from "../../utils";
 
 const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const searchProduct = useSelector((state) => state?.product?.search);
