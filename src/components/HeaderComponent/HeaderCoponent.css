@@ -42,3 +42,56 @@
   margin-top: 0;
   margin: 0 0 1px;
 }
+
+.btn-menu {
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  height: 42px;
+  padding: 3px 5px;
+  position: relative;
+  -webkit-text-decoration: none !important;
+  text-decoration: none !important;
+  margin-left: 10px;
+  color: #fff;
+  background: hsla(0, 0%, 100%, 0.2);
+}
+
+.btn-menu .about__box-content {
+  align-items: center;
+  display: flex;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.new-wrapper-type-products {
+  margin-left: 0;
+  display: none;
+  position: absolute;
+  top: 100%; /* Đặt phía dưới header */
+  left: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.1);
+}
+
+.new-wrapper-type-products.show {
+  z-index: 999;
+  display: flex;
+}

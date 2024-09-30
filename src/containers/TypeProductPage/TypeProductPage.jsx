@@ -77,6 +77,7 @@ const TypeProductPage = () => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
+                gap: "10px",
               }}
             >
               <WrapperProducts>

@@ -78,249 +78,44 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     fetchAllBranchProduct();
   }, []);
 
-  // header
-  const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const [userName, setUserName] = useState("");
-  const [userAvatar, setUserAvatar] = useState("");
-  const [search, setSearch] = useState("");
-  const [isOpenPopup, setIsOpenPopup] = useState(false);
-  const order = useSelector((state) => state.order);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const getImageIconByType = (type) => {
+    const imageIcons = {
+      "Phone, Tablet":
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-3.svg",
+      Laptop:
+        "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon-cps-380.svg",
 
-  const handleNavigateLogin = () => {
-    navigate("/sign-in");
+      Television:
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
+      Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
+      Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+    };
+
+    // Trả về icon hoặc chuỗi rỗng nếu không có icon
+    return imageIcons[type] || "";
   };
 
-  const handleLogout = async () => {
-    setLoading(true);
-    await UserService.logoutUser();
-    dispatch(resetUser());
-    dispatch(resetOrder1());
-    localStorage.removeItem("access_token");
-    setLoading(false);
-    navigate("/");
-  };
+  const desiredOrder = [
+    "Phone, Tablet",
+    "Laptop",
+    "Sound",
+    "Screen",
+    "Television",
+  ]; // Thứ tự mong muốn
 
-  useEffect(() => {
-    setLoading(true);
-    setUserName(user?.name);
-    setUserAvatar(user?.avatar);
-    setLoading(false);
-  }, [user?.name, user?.avatar]);
-
-  const content = (
-    <div>
-      <WrapperContentPopup onClick={() => handleClickNavigate("profile")}>
-        My Information
-      </WrapperContentPopup>
-      {user?.isAdmin && (
-        <WrapperContentPopup onClick={() => handleClickNavigate("admin")}>
-          Management
-        </WrapperContentPopup>
-      )}
-      <WrapperContentPopup onClick={() => handleClickNavigate("my-order")}>
-        My Order
-      </WrapperContentPopup>
-      <WrapperContentPopup onClick={() => handleClickNavigate()}>
-        Log Out
-      </WrapperContentPopup>
-    </div>
-  );
-
-  const handleClickNavigate = (type) => {
-    if (type === "profile") {
-      navigate("/profile-user");
-    } else if (type === "admin") {
-      navigate("/system/admin");
-    } else if (type === "my-order") {
-      navigate("/my-order", {
-        state: {
-          id: user?.id,
-          token: user?.access_token,
-        },
-      });
-    } else {
-      handleLogout();
-    }
-    setIsOpenPopup(false);
-  };
-
-  const handleCartClick = () => {
-    if (!user?.id) {
-      navigate("/sign-in");
-    } else {
-      navigate("/order");
-    }
-  };
-
-  const handleOnChangeInput = (event) => {
-    setSearch(event.target.value);
-  };
-
-  // Hiển thị dropdown khi input được focus
-  const handleFocus = () => {
-    setShowDropdown(true);
-  };
-  const handleBlur = () => {
-    setTimeout(() => setShowDropdown(false), 200); // Thêm delay để người dùng có thể chọn item
-  };
-
-  const onSearch = (searchTerm) => {
-    setSearch(searchTerm);
-  };
-
-  const handleDetailProduct = (id) => {
-    navigate(`/product-details/${id}`);
-  };
+  // Sắp xếp typeProducts theo desiredOrder
+  const sortedTypeProducts = typeProducts.sort((a, b) => {
+    return desiredOrder.indexOf(a) - desiredOrder.indexOf(b);
+  });
 
   return (
     <div>
-      <div
-        className="header"
-        style={{
-          width: "100%",
-          background: "#42C8B7",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <WrapperHeader
-          style={{
-            justifyContent:
-              isHiddenSearch && isHiddenSearch ? "space-between" : "unset",
-          }}
-        >
-          <Col span={5}>
-            <WrapperTextHeader to="/"> WEBPHONE </WrapperTextHeader>
-          </Col>
-          {!isHiddenSearch && (
-            <Col span={13} style={{ position: "relative" }}>
-              <ButtonInputSearch
-                size="large"
-                placeholder="What do you need to find?"
-                textbutton="Search"
-                onChange={handleOnChangeInput}
-              />
-              <div className="dropdown">
-                {products?.data?.filter((product) => {
-                  const searchTerm = search.toLowerCase();
-                  const productNameLower = product.name.toLowerCase();
-                  return (
-                    searchTerm &&
-                    productNameLower.includes(searchTerm) &&
-                    productNameLower !== searchTerm
-                  );
-                }).length > 0 && <p className="title-box">Product suggests</p>}
-
-                {products?.data
-                  ?.filter((product) => {
-                    const searchTerm = search.toLowerCase();
-                    const productNameLower = product.name.toLowerCase();
-                    return (
-                      searchTerm &&
-                      productNameLower.includes(searchTerm) &&
-                      productNameLower !== searchTerm
-                    );
-                  })
-                  .slice(0, 10)
-                  .map((product) => (
-                    <div
-                      onClick={() => onSearch(product.name)}
-                      className="dropdown-row"
-                      key={product._id}
-                    >
-                      <img
-                        src={product.image} // Đường dẫn tới ảnh sản phẩm
-                        alt={product.name}
-                      />
-                      <div>
-                        <span onClick={() => handleDetailProduct(product._id)}>
-                          {product.name}
-                        </span>
-
-                        <span
-                          style={{
-                            display: "block",
-                            color: "#db003b",
-                            fontSize: "12px",
-                            fontWeight: "600",
-                          }}
-                        >
-                          {convertPrice(product.price)}VND
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </Col>
-          )}
-          <Col
-            span={6}
-            style={{ display: "flex", gap: "54px", alignItems: "center" }}
-          >
-            <Loading isLoading={loading}>
-              <WrapperHeaderAccount>
-                {userAvatar ? (
-                  <img
-                    src={userAvatar}
-                    alt="avatar"
-                    style={{
-                      height: "40px",
-                      width: "40px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : (
-                  <UserOutlined style={{ fontSize: "30px" }} />
-                )}
-                {user?.access_token ? (
-                  <Popover content={content} trigger="click" open={isOpenPopup}>
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setIsOpenPopup((prev) => !prev)}
-                    >
-                      {userName?.length ? userName : user?.email}
-                    </div>
-                  </Popover>
-                ) : (
-                  <div
-                    onClick={handleNavigateLogin}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <WrapperTextHeaderSmall>
-                      Sign-In/ Sign-Up
-                    </WrapperTextHeaderSmall>
-                    <div>
-                      <WrapperTextHeaderSmall>Account</WrapperTextHeaderSmall>
-                      <CaretDownOutlined />
-                    </div>
-                  </div>
-                )}
-              </WrapperHeaderAccount>
-            </Loading>
-            {!isHiddenCart && (
-              <div onClick={handleCartClick} style={{ cursor: "pointer" }}>
-                <Badge count={order?.orderItems?.length} size="small">
-                  <ShoppingCartOutlined
-                    style={{ fontSize: "30px", color: "#fff" }}
-                  />
-                </Badge>
-                <WrapperTextHeaderSmall1>Cart</WrapperTextHeaderSmall1>
-              </div>
-            )}
-          </Col>
-        </WrapperHeader>
-      </div>
       <Loading isLoading={isLoading || loading}>
         <div
           className="body"
-          style={{ width: "100%", backgroundColor: "#efefef" }}
+          style={{ width: "100vw", backgroundColor: "#efefef" }}
         >
           <div
-            className="type-product"
             style={{
               display: "flex",
               width: "1270px",
@@ -328,13 +123,23 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               gap: "20px",
             }}
           >
-            <div style={{ flex: "2", marginTop: "20px" }}>
-              <WrapperTypeProduct>
-                {typeProducts.map((item) => {
-                  return <TypeProduct name={item} key={item} />;
-                })}
-              </WrapperTypeProduct>
+            <div className="type-product">
+              <div style={{ flex: "2", marginTop: "20px" }}>
+                <WrapperTypeProduct>
+                  {sortedTypeProducts.map((item) => {
+                    const imageIcon = getImageIconByType(item);
+                    return (
+                      <TypeProduct
+                        name={item}
+                        key={item}
+                        imageIcon={imageIcon}
+                      />
+                    );
+                  })}
+                </WrapperTypeProduct>
+              </div>
             </div>
+
             <div
               className="slider"
               style={{ flex: "1", maxWidth: "80%", marginTop: "20px" }}
@@ -342,6 +147,7 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               <SliderComponent arrImages={[slider1, slider2, slider3]} />
             </div>
           </div>
+
           <div
             className="branch-product"
             style={{ width: "1270px", margin: "10px auto" }}

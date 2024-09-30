@@ -11,13 +11,14 @@ export const WrapperBranchProduct = styled.div`
   height: 44px;
 `;
 export const WrapperTypeProduct = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 250px; /* Chiều rộng box */
-  border-radius: 10px; /* Bo tròn các góc */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
-  background-color: white; /* Màu nền trắng */
-  padding: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  left: 0;
+  /* min-height: 375px; */
+  overflow: hidden;
+  padding: 0;
+  top: 0;
+  width: 190px;
 `;
 
 export const WrapperButtonMore = styled(ButtonComponent)`

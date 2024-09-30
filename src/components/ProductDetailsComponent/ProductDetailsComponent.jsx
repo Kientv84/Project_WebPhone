@@ -257,10 +257,16 @@ const ProductDetailsComponent = ({ idProduct }) => {
               alt="image product"
               preview={false}
               style={{
-                width: "100%",
-                height: "auto",
-                maxHeight: "400px",
+                width: "400px",
+                height: "400px",
+                // maxHeight: "400px",
                 marginLeft: "50px",
+                marginTop: "30px",
+                objectFit: "cover",
+                display: "flex",
+                justifyContent: "center",
+                textAlign: "center",
+                overflow: "hidden",
               }}
             />
             <Row
@@ -282,6 +288,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   alt="image small"
                   preview={false}
                   onClick={() => handleThumbnailClick(productDetails?.image)}
+                  style={{ height: "64px", width: "64px" }}
                 />
               </WrapperStyleColImage>
               <WrapperStyleColImage
@@ -296,6 +303,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   alt="image small"
                   preview={false}
                   onClick={() => handleThumbnailClick(productDetails?.image1)}
+                  style={{ height: "64px", width: "64px" }}
                 />
               </WrapperStyleColImage>
               <WrapperStyleColImage
@@ -307,6 +315,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   alt="image small"
                   preview={false}
                   onClick={() => handleThumbnailClick(productDetails?.image2)}
+                  style={{ height: "64px", width: "64px" }}
                 />
               </WrapperStyleColImage>
             </Row>
