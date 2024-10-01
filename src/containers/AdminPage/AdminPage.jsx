@@ -37,7 +37,7 @@ const AdminPage = () => {
   };
   return (
     <>
-      <HeaderComponent isHiddenSearch isHiddenCart />
+      <HeaderComponent isHiddenSearch isHiddenCart isHiddenCategory />
       <div style={{ display: "flex", marginTop: "60px" }}>
         <Menu
           mode="inline"

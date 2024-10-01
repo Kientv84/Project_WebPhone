@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import * as OrderService from "../../services/OrderService";
 import { convertPrice } from "../../utils";
 import {
@@ -19,8 +19,9 @@ import { message } from "antd";
 const MyOrderPage = () => {
   const location = useLocation();
   const { state } = location;
-  // console.log('state', state)
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const fetchMyOrder = async () => {
     const res = await OrderService.getOrderByUserId(state?.id, state?.token);
     return res.data;
@@ -55,8 +56,10 @@ const MyOrderPage = () => {
         onSuccess: () => {
           message.success("Delete order Success");
 
-          // Sau khi xóa thành công, refetch lại danh sách đơn hàng
-          queryOrder.refetch();
+          // Cập nhật lại danh sách đơn hàng mà không cần refetch
+          queryClient.setQueryData(["orders"], (oldData) => {
+            return oldData?.filter((item) => item._id !== order._id);
+          });
         },
         onError: () => {
           message.error("Delete order Failed");
@@ -64,6 +67,23 @@ const MyOrderPage = () => {
       }
     );
   };
+
+  // const handleCancelOrder = (order) => {
+  //   mutation.mutate(
+  //     { id: order._id, token: state?.token, orderItems: order?.orderItems },
+  //     {
+  //       onSuccess: () => {
+  //         message.success("Delete order Success");
+
+  //         // Sau khi xóa thành công, refetch lại danh sách đơn hàng
+  //         queryOrder.refetch();
+  //       },
+  //       onError: () => {
+  //         message.error("Delete order Failed");
+  //       },
+  //     }
+  //   );
+  // };
 
   const {
     isLoading: isLoadingCancel,

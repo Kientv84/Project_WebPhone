@@ -1,14 +1,16 @@
 import styled from "styled-components";
 
 export const WrapperType = styled.div`
-    display: flex;
+  display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  border-bottom: 1px solid #eaeaea; /* Đường viền giữa các items */
   cursor: pointer;
-  font-weight: bold; /* In đậm */
-  font-size: 14px;   /* Kích thước chữ */
+  font-weight: 500; /* In đậm */
+  font-size: 14px; /* Kích thước chữ */
+  line-height: 1.5;
+  min-height: 31.3px;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  padding: 0 10px;
 
   &:hover {
     color: #fff;
@@ -18,4 +20,4 @@ export const WrapperType = styled.div`
   &:last-child {
     border-bottom: none; /* Không có đường viền cho item cuối */
   }
-`
+`;

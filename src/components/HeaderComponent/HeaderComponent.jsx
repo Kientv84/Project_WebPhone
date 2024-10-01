@@ -7,6 +7,7 @@ import {
   WrapperTextHeaderSmall,
   WrapperContentPopup,
   WrapperTextHeaderSmall1,
+  WrapperTypeProduct,
 } from "./style";
 import {
   UserOutlined,
@@ -14,7 +15,7 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import ButtonInputSearch from "..//ButtonInputSearch/ButtonInputSearch";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as UserService from "../../services/UserService";
 import { resetUser } from "../../redux/slice/userslide";
@@ -27,8 +28,14 @@ import { convertPrice } from "../../utils";
 import * as ProductService from "../../services/ProductService";
 import { useQuery } from "react-query";
 import { useDebounce } from "../../hooks/useDebounce";
+import TypeProduct from "../TypeProduct/TypeProduct";
+import "./HeaderCoponent.css";
 
-const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
+const HeaderComponent = ({
+  isHiddenSearch = false,
+  isHiddenCart = false,
+  isHiddenCategory = false,
+}) => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -41,8 +48,11 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [typeProducts, setTypeProducts] = useState([]);
   const [limit, setLimit] = useState(12);
   const searchDebounce = useDebounce(searchProduct, 1000);
+  const [showTypeProduct, setShowTypeProduct] = useState(false);
+  const location = useLocation();
 
   const handleNavigateLogin = () => {
+    setShowTypeProduct(false);
     navigate("/sign-in");
 
     const storedCartItems = localStorage.getItem("cartItems");
@@ -58,8 +68,10 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     dispatch(resetUser());
     dispatch(resetOrder1());
     localStorage.removeItem("cartItems");
+    localStorage.removeItem("access_token");
     setLoading(false);
     navigate("/");
+    setShowTypeProduct(false);
   };
 
   useEffect(() => {
@@ -89,6 +101,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   );
 
   const handleClickNavigate = (type) => {
+    setShowTypeProduct(false);
     if (type === "profile") {
       navigate("/profile-user");
     } else if (type === "admin") {
@@ -111,6 +124,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   };
 
   const handleCartClick = () => {
+    setShowTypeProduct(false);
     if (!user?.id) {
       navigate("/sign-in");
     } else {
@@ -120,6 +134,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
 
   const handleOnChangeInput = (event) => {
     setSearch(event.target.value);
+    setSearch("");
   };
 
   const handleDetailProduct = (id) => {
@@ -148,49 +163,172 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     keepPreviousData: true,
   });
 
+  const toggleTypeProduct = () => {
+    setShowTypeProduct(!showTypeProduct);
+  };
+
+  const getImageIconByType = (type) => {
+    const imageIcons = {
+      "Phone, Tablet":
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-3.svg",
+      Laptop:
+        "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon-cps-380.svg",
+
+      Television:
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
+      Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
+      Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+    };
+
+    // Trả về icon hoặc chuỗi rỗng nếu không có icon
+    return imageIcons[type] || "";
+  };
+
+  const desiredOrder = [
+    "Phone, Tablet",
+    "Laptop",
+    "Sound",
+    "Screen",
+    "Television",
+  ]; // Thứ tự mong muốn
+
+  // Sắp xếp typeProducts theo desiredOrder
+  const sortedTypeProducts = typeProducts.sort((a, b) => {
+    return desiredOrder.indexOf(a) - desiredOrder.indexOf(b);
+  });
+
+  useEffect(() => {
+    fetchAllTypeProduct();
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/product")) {
+      setShowTypeProduct(false); // Đóng new-wrapper-type-products khi đến trang sản phẩm
+    }
+  }, [location.pathname]);
+
+  const handleTypeProductClick = (item) => {
+    navigate(`/product/${item}`);
+    setShowTypeProduct(false);
+  };
+
   return (
-    <div
-      className="header"
-      style={{
-        width: "100%",
-        background: "#42C8B7",
-        display: "flex",
-        justifyContent: "center",
-        position: "fixed",
-        top: 0,
-        zIndex: 100,
-      }}
-    >
-      <WrapperHeader
+    <div>
+      <div
+        className={`overlay ${showTypeProduct ? "visible" : ""}`}
+        onClick={toggleTypeProduct}
+      ></div>
+      <div
+        className="header"
         style={{
-          justifyContent:
-            isHiddenSearch && isHiddenSearch ? "space-between" : "unset",
+          width: "100%",
+          background: "#42C8B7",
+          display: "flex",
+          justifyContent: "center",
+          position: "fixed",
+          top: 0,
+          zIndex: 100,
         }}
       >
-        <Col span={5}>
-          <WrapperTextHeader to="/"> WEBPHONE </WrapperTextHeader>
-        </Col>
-        {!isHiddenSearch && (
-          <Col span={13} style={{ position: "relative" }}>
-            <ButtonInputSearch
-              size="large"
-              placeholder="What do you need to find?"
-              textbutton="Search"
-              onChange={handleOnChangeInput}
-            />
-            <div className="dropdown">
-              {products?.data?.filter((product) => {
-                const searchTerm = search.toLowerCase();
-                const productNameLower = product.name.toLowerCase();
-                return (
-                  searchTerm &&
-                  productNameLower.includes(searchTerm) &&
-                  productNameLower !== searchTerm
-                );
-              }).length > 0 && <p className="title-box">Product suggests</p>}
-
-              {products?.data
-                ?.filter((product) => {
+        <WrapperHeader
+          style={{
+            justifyContent:
+              isHiddenSearch && isHiddenSearch ? "space-between" : "unset",
+          }}
+        >
+          <Col span={5} style={{ display: "flex", alignItems: "center" }}>
+            <WrapperTextHeader to="/"> WEBPHONE </WrapperTextHeader>
+            {!isHiddenCategory && (
+              <div className="btn-menu" onClick={toggleTypeProduct}>
+                <div className="about__box-content">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 26.99 26.99"
+                    width="20"
+                    height="20"
+                    style={{ marginRight: "5px" }}
+                  >
+                    <defs>
+                      <style>
+                        {`.cls-1 {
+              fill: none;
+              stroke: #fff;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-width: 1.8px;
+            }`}
+                      </style>
+                    </defs>
+                    <g id="Layer_2" data-name="Layer 2">
+                      <g id="Layer_1-2" data-name="Layer 1">
+                        <line
+                          x1="7.06"
+                          y1="7.52"
+                          x2="19.92"
+                          y2="7.52"
+                          className="cls-1"
+                        />
+                        <line
+                          x1="7.06"
+                          y1="13.49"
+                          x2="19.92"
+                          y2="13.49"
+                          className="cls-1"
+                        />
+                        <line
+                          x1="7.06"
+                          y1="19.47"
+                          x2="11.95"
+                          y2="19.47"
+                          className="cls-1"
+                        />
+                        <rect
+                          x="0.9"
+                          y="0.9"
+                          width="25.19"
+                          height="25.19"
+                          rx="4.71"
+                          className="cls-1"
+                        />
+                      </g>
+                    </g>
+                  </svg>
+                  <p>Category</p>
+                </div>
+              </div>
+            )}
+            <div
+              className={`new-wrapper-type-products ${
+                showTypeProduct ? "show" : ""
+              }`}
+            >
+              <div style={{ flex: "2", marginTop: "20px" }}>
+                <WrapperTypeProduct>
+                  {sortedTypeProducts.map((item) => {
+                    const imageIcon = getImageIconByType(item);
+                    return (
+                      <TypeProduct
+                        name={item}
+                        key={item}
+                        imageIcon={imageIcon}
+                        onClick={() => handleTypeProductClick(item)}
+                      />
+                    );
+                  })}
+                </WrapperTypeProduct>
+              </div>
+            </div>
+          </Col>
+          {!isHiddenSearch && (
+            <Col span={13} style={{ position: "relative" }}>
+              <ButtonInputSearch
+                size="large"
+                placeholder="What do you need to find?"
+                textbutton="Search"
+                onChange={handleOnChangeInput}
+              />
+              <div className="dropdown">
+                {products?.data?.filter((product) => {
                   const searchTerm = search.toLowerCase();
                   const productNameLower = product.name.toLowerCase();
                   return (
@@ -198,103 +336,115 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
                     productNameLower.includes(searchTerm) &&
                     productNameLower !== searchTerm
                   );
-                })
-                .slice(0, 10)
-                .map((product) => (
-                  <div
-                    onClick={() => onSearch(product.name)}
-                    className="dropdown-row"
-                    key={product._id}
-                  >
-                    <img
-                      src={product.image} // Đường dẫn tới ảnh sản phẩm
-                      alt={product.name}
-                    />
-                    <div>
-                      <span onClick={() => handleDetailProduct(product._id)}>
-                        {product.name}
-                      </span>
+                }).length > 0 && <p className="title-box">Product suggests</p>}
 
-                      <span
-                        style={{
-                          display: "block",
-                          color: "#db003b",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                        }}
-                      >
-                        {convertPrice(product.price)}VND
-                      </span>
+                {products?.data
+                  ?.filter((product) => {
+                    const searchTerm = search.toLowerCase();
+                    const productNameLower = product.name.toLowerCase();
+                    return (
+                      searchTerm &&
+                      productNameLower.includes(searchTerm) &&
+                      productNameLower !== searchTerm
+                    );
+                  })
+                  .slice(0, 10)
+                  .map((product) => (
+                    <div
+                      onClick={() => onSearch(product.name)}
+                      className="dropdown-row"
+                      key={product._id}
+                    >
+                      <img
+                        src={product.image} // Đường dẫn tới ảnh sản phẩm
+                        alt={product.name}
+                      />
+                      <div>
+                        <span onClick={() => handleDetailProduct(product._id)}>
+                          {product.name}
+                        </span>
+
+                        <span
+                          style={{
+                            display: "block",
+                            color: "#db003b",
+                            fontSize: "12px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {convertPrice(product.price)}VND
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </Col>
+          )}
+          <Col
+            span={6}
+            style={{ display: "flex", gap: "54px", alignItems: "center" }}
+          >
+            <Loading isLoading={loading}>
+              <WrapperHeaderAccount>
+                {userAvatar ? (
+                  <img
+                    src={userAvatar}
+                    alt="avatar"
+                    style={{
+                      height: "40px",
+                      width: "40px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  <UserOutlined style={{ fontSize: "30px" }} />
+                )}
+                {user?.access_token ? (
+                  <Popover content={content} trigger="click" open={isOpenPopup}>
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setIsOpenPopup((prev) => !prev)}
+                    >
+                      {userName?.length ? userName : user?.email}
+                    </div>
+                  </Popover>
+                ) : (
+                  <div
+                    onClick={handleNavigateLogin}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <WrapperTextHeaderSmall>
+                      Sign-In/ Sign-Up
+                    </WrapperTextHeaderSmall>
+                    <div>
+                      <WrapperTextHeaderSmall>Account</WrapperTextHeaderSmall>
+                      <CaretDownOutlined />
                     </div>
                   </div>
-                ))}
-            </div>
+                )}
+              </WrapperHeaderAccount>
+            </Loading>
+            {!isHiddenCart && (
+              <div
+                onClick={handleCartClick}
+                style={{
+                  cursor: "pointer",
+                  display: "inline-block",
+                  verticalAlign: "middle",
+                }}
+              >
+                <Badge count={order?.orderItems?.length} size="small">
+                  <ShoppingCartOutlined
+                    style={{ fontSize: "30px", color: "#fff" }}
+                  />
+                </Badge>
+                <WrapperTextHeaderSmall1>Cart</WrapperTextHeaderSmall1>
+              </div>
+            )}
           </Col>
-        )}
-        <Col
-          span={6}
-          style={{ display: "flex", gap: "54px", alignItems: "center" }}
-        >
-          <Loading isLoading={loading}>
-            <WrapperHeaderAccount>
-              {userAvatar ? (
-                <img
-                  src={userAvatar}
-                  alt="avatar"
-                  style={{
-                    height: "40px",
-                    width: "40px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
-                />
-              ) : (
-                <UserOutlined style={{ fontSize: "30px" }} />
-              )}
-              {user?.access_token ? (
-                <Popover content={content} trigger="click" open={isOpenPopup}>
-                  <div
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setIsOpenPopup((prev) => !prev)}
-                  >
-                    {userName?.length ? userName : user?.email}
-                  </div>
-                </Popover>
-              ) : (
-                <div
-                  onClick={handleNavigateLogin}
-                  style={{ cursor: "pointer" }}
-                >
-                  <WrapperTextHeaderSmall>
-                    Sign-In/ Sign-Up
-                  </WrapperTextHeaderSmall>
-                  <div>
-                    <WrapperTextHeaderSmall>Account</WrapperTextHeaderSmall>
-                    <CaretDownOutlined />
-                  </div>
-                </div>
-              )}
-            </WrapperHeaderAccount>
-          </Loading>
-          {!isHiddenCart && (
-            <div
-              onClick={handleCartClick}
-              style={{
-                cursor: "pointer",
-                display: "inline-block",
-                verticalAlign: "middle",
-              }}
-            >
-              <Badge count={order?.orderItems?.length} size="small">
-                <ShoppingCartOutlined
-                  style={{ fontSize: "30px", color: "#fff" }}
-                />
-              </Badge>
-              <WrapperTextHeaderSmall1>Cart</WrapperTextHeaderSmall1>
-            </div>
-          )}
-        </Col>
-      </WrapperHeader>
+        </WrapperHeader>
+      </div>
     </div>
   );
 };
