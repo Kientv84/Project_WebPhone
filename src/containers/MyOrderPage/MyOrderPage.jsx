@@ -15,12 +15,14 @@ import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import { message } from "antd";
+import { useTranslation } from "react-i18next";
 
 const MyOrderPage = () => {
   const location = useLocation();
   const { state } = location;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const fetchMyOrder = async () => {
     const res = await OrderService.getOrderByUserId(state?.id, state?.token);
@@ -54,7 +56,7 @@ const MyOrderPage = () => {
       { id: order._id, token: state?.token, orderItems: order?.orderItems },
       {
         onSuccess: () => {
-          message.success("Delete order Success");
+          message.success(t('MY_ODER.TOAST_SUCCESS'));
 
           // Cập nhật lại danh sách đơn hàng mà không cần refetch
           queryClient.setQueryData(["orders"], (oldData) => {
@@ -62,7 +64,7 @@ const MyOrderPage = () => {
           });
         },
         onError: () => {
-          message.error("Delete order Failed");
+          message.error(t('MY_ODER.TOAST_FAILED'));
         },
       }
     );
@@ -145,7 +147,7 @@ const MyOrderPage = () => {
             margin: "70px auto 0",
           }}
         >
-          <h3 style={{ marginTop: "5px" }}>My Order</h3>
+          <h3 style={{ marginTop: "5px" }}>{t('MY_ODER.TITLE')}</h3>
           <WrapperListOrder>
             {data?.map((order) => {
               return (
@@ -153,25 +155,25 @@ const MyOrderPage = () => {
                   <WrapperStatus>
                     <span style={{ fontSize: "14px", fontWeight: "bold" }}>
                       {" "}
-                      Status{" "}
+                      {t('MY_ODER.STATUS')}{" "}
                     </span>
                     <div>
                       <span style={{ color: "rgb(255, 66, 78)" }}>
-                        Is Delivered:{" "}
+                        {t('MY_ODER.IS_DELIVERRED')}{" "}
                       </span>
-                      {`${order.isDelivered ? "Delivered" : "Not Delivered"}`}
+                      {`${order.isDelivered ? t('MY_ODER.DELIVERRED') : t('MY_ODER.UN_DELIVERRED')}`}
                     </div>
                     <div>
                       <span style={{ color: "rgb(255, 66, 78)" }}>
-                        Is Paid:{" "}
+                        {t('MY_ODER.IS_PAID')}{" "}
                       </span>
-                      {`${order.isPaid ? "Paid" : "Unpaid"}`}
+                      {`${order.isPaid ? t('MY_ODER.PAID') : t('MY_ODER.UN_PAID')}`}
                     </div>
                   </WrapperStatus>
                   {renderProduct(order?.orderItems)}
                   <WrapperFooterItem>
                     <div>
-                      <span style={{ color: "rgb(255, 66, 78)" }}>Total: </span>
+                      <span style={{ color: "rgb(255, 66, 78)" }}>{t('MY_ODER.TOTAL')}: </span>
                       <span
                         style={{
                           fontSize: "13px",
@@ -192,7 +194,7 @@ const MyOrderPage = () => {
                             border: "1px solid rgb(11, 116, 229)",
                             borderRadius: "4px",
                           }}
-                          textbutton={"Delete Order"}
+                          textbutton={t('MY_ODER.DELETE_ORDER')}
                           styletextbutton={{
                             color: "rgb(11, 116, 229)",
                             fontSize: "14px",
@@ -209,7 +211,7 @@ const MyOrderPage = () => {
                           border: "1px solid rgb(11, 116, 229)",
                           borderRadius: "4px",
                         }}
-                        textbutton={"More Details"}
+                        textbutton={t('MY_ODER.MORE_DETAILS')}
                         styletextbutton={{
                           color: "rgb(11, 116, 229)",
                           fontSize: "14px",

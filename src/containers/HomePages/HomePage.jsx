@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useTranslation } from "react-i18next";
 
 const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -26,6 +27,8 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [limit, setLimit] = useState(12);
   const [typeProducts, setTypeProducts] = useState([]);
   const [branchProducts, setBranchProducts] = useState([]);
+  const { t } = useTranslation();
+
 
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1];
