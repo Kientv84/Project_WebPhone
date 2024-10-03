@@ -96,18 +96,18 @@ const HeaderComponent = ({
   const content = (
     <div>
       <WrapperContentPopup onClick={() => handleClickNavigate("profile")}>
-        My Information
+        {t('HEADER.MY_INFOR')}
       </WrapperContentPopup>
       {user?.isAdmin && (
         <WrapperContentPopup onClick={() => handleClickNavigate("admin")}>
-          Management
+          {t('HEADER.MANAGE')}
         </WrapperContentPopup>
       )}
       <WrapperContentPopup onClick={() => handleClickNavigate("my-order")}>
-        My Order
+        {t('HEADER.MY_ORDER')}
       </WrapperContentPopup>
       <WrapperContentPopup onClick={() => handleClickNavigate()}>
-        Log Out
+        {t('HEADER.LOG_OUT')}
       </WrapperContentPopup>
     </div>
   );

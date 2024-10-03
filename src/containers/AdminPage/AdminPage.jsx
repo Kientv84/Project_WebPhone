@@ -10,11 +10,17 @@ import HeaderComponent from "../../components/HeaderComponent/HeaderComponent";
 import AdminUser from "../../components/AdminUser/AdminUser";
 import AdminProduct from "../../components/AdminProduct/AdminProduct";
 import OrderAdmin from "../../components/OrderAdmin/OrderAdmin";
+import { useTranslation } from "react-i18next";
+
 const AdminPage = () => {
+
+  const { t } = useTranslation();
+
+
   const items = [
-    getItem("Users", "user", <UserOutlined />),
-    getItem("Products", "product", <AppstoreOutlined />),
-    getItem("Orders", "order", <ShoppingCartOutlined />),
+    getItem(t('ADMIN.USER'), "user", <UserOutlined />),
+    getItem(t('ADMIN.PRODUCT'), "product", <AppstoreOutlined />),
+    getItem(t('ADMIN.ORDER'), "order", <ShoppingCartOutlined />),
   ];
 
   const [keySelected, setKeySelected] = useState("user");
@@ -38,7 +44,7 @@ const AdminPage = () => {
   return (
     <>
       <HeaderComponent isHiddenSearch isHiddenCart isHiddenCategory />
-      <div style={{ display: "flex", marginTop: "60px" }}>
+      <div style={{ display: "flex", marginTop: "80px" }}>
         <Menu
           mode="inline"
           style={{

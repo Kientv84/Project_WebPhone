@@ -19,6 +19,7 @@ import { useMutationHook } from "../../hooks/useMutationHook";
 import { useQuery } from "react-query";
 import { storage } from "../../ultis/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { useTranslation } from "react-i18next";
 
 const AdminUser = () => {
   const [rowSelected, setRowSelected] = useState("");
@@ -27,6 +28,8 @@ const AdminUser = () => {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
   const searchInput = useRef(null);
+
+  const { t } = useTranslation();
 
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
@@ -242,24 +245,24 @@ const AdminUser = () => {
 
   const columns = [
     {
-      title: "Name",
+      title: t('ADMIN.USER_NAME'),
       dataIndex: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
       ...getColumnSearchProps("name"), //search name
     },
     {
-      title: "Email",
+      title: t('ADMIN.USER_EMAIL'),
       dataIndex: "email",
       sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
-      title: "Address",
+      title: t('ADMIN.USER_ADDRESS'),
       dataIndex: "address",
       sorter: (a, b) => a.address.localeCompare(b.address),
       ...getColumnSearchProps("address"), //search name
     },
     {
-      title: "Admin",
+      title: t('ADMIN.ADMIN'),
       dataIndex: "isAdmin",
       filters: [
         { text: "True", value: true },
@@ -267,13 +270,13 @@ const AdminUser = () => {
       ],
     },
     {
-      title: "Phone",
+      title: t('ADMIN.USER_PHONE'),
       dataIndex: "phone",
       sorter: (a, b) => a.phone - b.phone,
       ...getColumnSearchProps("phone"), //search phone
     },
     {
-      title: "Action",
+      title: t('ADMIN.ACTION'),
       dataIndex: "action",
       render: renderAction,
     },
@@ -284,7 +287,7 @@ const AdminUser = () => {
       return {
         ...user,
         key: user._id,
-        isAdmin: user.isAdmin ? "TRUE" : "FALSE",
+        isAdmin: user.isAdmin ? t('ADMIN.TRUE') : t('ADMIN.FALSE'),
       };
     });
 
@@ -408,7 +411,7 @@ const AdminUser = () => {
 
   return (
     <div>
-      <WrapperHeader>Manage Users</WrapperHeader>
+      <WrapperHeader>{t('ADMIN.MANAGE_USER')}</WrapperHeader>
       <div style={{ marginTop: "20px" }}>
         <TableComponent
           handleDeleteMany={handleDeleteManyUsers}
@@ -425,7 +428,7 @@ const AdminUser = () => {
         />
       </div>
       <DrawerComponent
-        title="User Details"
+        title={t('ADMIN.USER_DETAIL')}
         isOpen={isOpenDrawer}
         onCancel={() => setIsOpenDrawer(false)}
         footer={null}
@@ -440,9 +443,9 @@ const AdminUser = () => {
             form={form}
           >
             <Form.Item
-              label="Name"
+              label={t('ADMIN.USER_NAME')}
               name="name"
-              rules={[{ required: true, message: "Please input your name!" }]}
+              rules={[{ required: true, message: t('ADMIN.DETAIL_NAME_PLACEHOODER') }]}
             >
               <InputComponent
                 value={stateUserDetails.name}
@@ -452,9 +455,9 @@ const AdminUser = () => {
             </Form.Item>
 
             <Form.Item
-              label="Email"
+              label={t('ADMIN.USER_EMAIL')}
               name="email"
-              rules={[{ required: true, message: "Please input your email!" }]}
+              rules={[{ required: true, message: t('ADMIN.DETAIL_EMAIL_PLACEHOODER') }]}
             >
               <InputComponent
                 value={stateUserDetails.email}
@@ -463,9 +466,9 @@ const AdminUser = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Phone"
+              label={t('ADMIN.USER_PHONE')}
               name="phone"
-              rules={[{ required: true, message: "Please input your phone!" }]}
+              rules={[{ required: true, message: t('ADMIN.DETAIL_PHONE_PLACEHOODER') }]}
             >
               <InputComponent
                 value={stateUserDetails.phone}
@@ -474,10 +477,10 @@ const AdminUser = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Address"
+              label={t('ADMIN.USER_ADDRESS')}
               name="address"
               rules={[
-                { required: true, message: "Please input your address!" },
+                { required: true, message: t('ADMIN.DETAIL_ADDRESS_PLACEHOODER') },
               ]}
             >
               <InputComponent
@@ -487,16 +490,16 @@ const AdminUser = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Avatar"
+              label={t('ADMIN.AVATAR')}
               name="avatar"
-              rules={[{ required: true, message: "Please input your avatar!" }]}
+              rules={[{ required: true, message: t('ADMIN.DETAIL_AVARTA_PLACEHOODER') }]}
             >
               <WrapperUploadFile
                 onChange={handleOnChangeAvatarDetails}
                 maxCount={1}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button>Select File</Button>
+                  <Button>{t('ADMIN.DETAIL_SELECT_PLACEHOODER')}</Button>
                   {stateUserDetails?.avatar && (
                     <img
                       src={stateUserDetails?.avatar}
@@ -515,7 +518,7 @@ const AdminUser = () => {
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 19, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                Apply
+                {t('ADMIN.DETAIL_USER_APPLY')}
               </Button>
             </Form.Item>
           </Form>
