@@ -7,12 +7,14 @@ import jwt_decode from "jwt-decode";
 import * as authService from "../../services/authService";
 import * as message from "../../components/Message/Message";
 import "./LoginSuccessComponent.css";
+import { useTranslation } from "react-i18next";
 
 const LoginSuccessComponent = () => {
   const { userId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -29,7 +31,7 @@ const LoginSuccessComponent = () => {
           if (location?.state) {
             navigate(location.state);
           } else {
-            message.success("Logged in successfully");
+            message.success(t('LOGIN_TOAST.TOAST_SUCCESS'));
             navigate("/");
           }
 
@@ -40,7 +42,7 @@ const LoginSuccessComponent = () => {
             }
           }
         } else {
-          message.error("Login failed. Please try again.");
+          message.error(t('LOGIN_TOAST.TOAST_SUCCESS'));
         }
       } catch (error) {
         console.error("Error fetching token:", error);

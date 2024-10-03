@@ -60,6 +60,45 @@ const resources = {
         "CITY_MESSAGE": "Please input your city!",
         "PHONE_MESSAGE": "Please input your  phone!",
         "ADDRESS_MESSAGE": "Please input your  address!"
+        },
+        SIGN_IN: {
+        "TITLE": "Sign-In for member",
+        "PASSWORD_PLACEHOODER": "password",
+        "SIGN_IN_BUTTON": "Sign-In",
+        "OR": "Or",
+        "FORGOT_PASS": "Forgot Password",
+        "TEXT": "Don't have an account yet?",
+        "REGISTER": "Register",
+        "TITLE_FORGOT_PASS": "Enter Your Email",
+        "FORGOT_PLACEHOODER": "Enter your email address",
+        "BUTTON_FORGOT": "Send",
+        "REGISTER": "Register",
+        "CONFIRM_PASS": "Confirm password",
+        "RES_BUTTON": "Register",
+        "ENTER_NEW_PASS": "Enter New Password",
+        "RES_TEXT": "You already have an account yet?",
+        "SIGN_IN_MESS_SUCCESS": "Logged in successfully",
+        "RESET_MESS_SUCCESS": "Send mail verify successfully",
+        "SIGN_UP_MESS_SUCCESS": "Registered successfully",
+        "NEW_PASS": "New password",
+        "UPDATE_PASS": "Update new password",
+        "UPDATE_BTN": "Update"
+        },
+        PRODUCT_DETAILS: {
+        "BACK_HOMEPAGE": "Back to home page",
+        "PRODUCT_INFOR": "Product Information",
+        "STAR": "Star",
+        "SOLD_OUT": "Sold Out",
+        "MESSAGE_SUCCESS": "Success to add product to cart",
+        "PROMOTION": "Promotion",
+        "QUANTITY": "Quantity",
+        "DESCRIPTION": "Description",
+        "PURCHASE": "Purchase now",
+        "ADD_CART": "Add to cart",
+        },
+        LOGIN_TOAST: {
+          "TOAST_SUCCESS": "Logged in successfully",
+          "TOAST_FAIL": "Login failed. Please try again."
         }
     }
   },
@@ -118,6 +157,45 @@ const resources = {
         "CITY_MESSAGE": "Vui lòng nhập tên thành phố",
         "PHONE_MESSAGE": "Vui lòng nhập số điện thoại của bạn",
         "ADDRESS_MESSAGE": "Vui lòng nhập địa chỉ"
+        },
+        SIGN_IN: {
+        "TITLE": "Người dùng đăng nhập",
+        "PASSWORD_PLACEHOODER": "nhập mật khẩu",
+        "SIGN_IN_BUTTON": "Đăng nhập",
+        "OR": "Hoặc",
+        "FORGOT_PASS": "Quên mật khẩu",
+        "TEXT": "Bạn chưa có tài khoản?",
+        "REGISTER": "Đăng ký",
+        "TITLE_FORGOT_PASS": "Nhập Email của bạn",
+        "FORGOT_PLACEHOODER": "Vui lòng nhập địa chỉ email của bạn",
+        "BUTTON_FORGOT": "Gửi",
+        "REGISTER": "Đăng ký",
+        "CONFIRM_PASS": "Xác nhận lại mật khẩu",
+        "RES_BUTTON": "Đăng ký",
+        "RES_TEXT": "Bạn đã có tài khoản?",
+        "SIGN_IN_MESS_SUCCESS": "Đăng nhập thành công",
+        "ENTER_NEW_PASS": "Nhập mật khẩu mới",
+        "RESET_MESS_SUCCESS": "Gửi mail xác nhận thành công",
+        "SIGN_UP_MESS_SUCCESS": "Đăng ký thành công",
+        "NEW_PASS": "Mật khẩu mới",
+        "UPDATE_PASS": "Cập nhật mật khẩu",
+        "UPDATE_BTN": "Cập Nhật"
+        },
+        PRODUCT_DETAILS: {
+        "BACK_HOMEPAGE": "Trở về trang chủ",
+        "PRODUCT_INFOR": "Thông tin về sản phẩm",
+        "STAR": "Sao",
+        "SOLD_OUT": "Hết hàng",
+        "MESSAGE_SUCCESS": "Thêm giỏ hàng thành công",
+        "PROMOTION": "Khuyến mãi",
+        "QUANTITY": "Số lượng",
+        "DESCRIPTION": "Mô tả",
+        "PURCHASE": "Mua ngay",
+        "ADD_CART": "Thêm giỏ hàng",
+        },
+        LOGIN_TOAST: {
+        "TOAST_SUCCESS": "Đăng nhập thành công",
+        "TOAST_SUCCESS": "Đăng nhập không thành công. Vui lòng thử lại."
         }
     }
   }
