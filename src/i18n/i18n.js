@@ -134,6 +134,7 @@ const resources = {
           "ACTION": "Action",
           "TRUE": "True",
           "FALSE": "False",
+          "DELETE_ALL": "Delete All",
 
           "PRODUCT_NAME": "Name Product",
           "PRODUCT_PRICE": "Price",
@@ -181,6 +182,8 @@ const resources = {
           "NEW_IMG_2": "Image Product",
           "SELECT_IMG_PRODUCT": "Select File",
           "BUTTON_SUBMID_ADD_PRODUCT": "Submit",
+          "PRODUCT_DETAIL": "Product Details",
+
           
           "PLACEHOODER_PRODCUT_NAME": "Please input product name!",
           "PLACEHOODER_TYPE": "Please input product type!",
@@ -202,7 +205,11 @@ const resources = {
           "DETAIL_ADDRESS_PLACEHOODER": "Please input address!",
           "DETAIL_AVARTA_PLACEHOODER": "Please choose avarta!",
           "DETAIL_SELECT_PLACEHOODER": "Select File!",
-          "DETAIL_USER_APPLY": "Apply"
+          "DETAIL_USER_APPLY": "Apply",
+
+          "SEARCH": "Search",
+          "RESET": "Reset",
+          "CLOSE": "Close",
         },
     }
   },
@@ -335,6 +342,7 @@ const resources = {
           "ACTION": "Quản lý",
           "TRUE": "Đúng",
           "FALSE": "Sai",
+          "DELETE_ALL": "Xóa tất cả",
 
           "PRODUCT_NAME": "Tên sản phẩm",
           "PRODUCT_PRICE": "Giá",
@@ -352,36 +360,37 @@ const resources = {
           "ORDER_SHIPPED": "Đã vận chuyển",
           "ORDER_UPDATE_DELIVERED": "Đã giao hàng",
 
-          "DELETE_PRODUCT": "Xóa người dùng",
-          "MESS_DELETE_PRODUCT": "Bạn có chắc sẽ xóa người dùng này?",
+          "DELETE_USER": "Xóa người dùng",
+          "MESS_DELETE_USER": "Bạn có chắc sẽ xóa người dùng này?",
 
-          "DELETE_USER": "Xóa sản phẩm",
-          "MESS_DELETE_USER": "Bạn có chắc sẽ xóa sản phẩm này?",
+          "DELETE_PRODUCT": "Xóa sản phẩm",
+          "MESS_DELETE_PRODUCT": "Bạn có chắc sẽ xóa sản phẩm này?",
 
           "DELETE_ORDER": "Xóa đơn hàng",
           "MESS_DELETE_ORDER": "Bạn có chắc sẽ xóa đơn hàng này?",
           "CANCEL_BUTTON": "Hủy",
           "OKE_BUTTON": "Xóa",
 
-          "ADD_NEW_PRODUCT": "New Product",
-          "NEW_PRODCUT_NAME": "",
-          "NEW_TYPE": "",
+          "ADD_NEW_PRODUCT": "Thêm sản phẩm mới",
+          "NEW_PRODCUT_NAME": "Tên sảm phẩm",
+          "NEW_TYPE": "Loại",
           "ADD_TYPE": "Thêm loại",
-          "ADD_NEW_TYPE": "Loại mới",
+          "ADD_NEW_TYPE": "Thêm loại mới",
           "NEW_BRANCH": "Thương hiệu",
           "ADD_BRANCH": "Thêm thương hiệu",
           "ADD_NEW_BRANCH": "Thương hiệu mới",
-          "COUNT_IN_STOCK": "Số lượng trong kho",
+          "COUNT_IN_STOCK": "Trong kho",
           "PRICE": "Giá",
           "NEW_DESCRIPTION": "Mô tả",
           "NEW_PROMOTION": "Khuyến mãi",
           "NEW_RAING": "Đánh giá",
           "NEW_DISCOUNT": "Giảm giá",
           "NEW_IMG": "Ảnh sản phẩm",
-          "NEW_IMG_1": "Ảnh sản phẩm 1",
-          "NEW_IMG_2": "Ảnh sản phẩm 2",
+          "NEW_IMG_1": "Ảnh 1",
+          "NEW_IMG_2": "Ảnh 2",
           "SELECT_IMG_PRODUCT": "Chọn hình ảnh",
           "BUTTON_SUBMID_ADD_PRODUCT": "Lưu sản phẩm",
+          "PRODUCT_DETAIL": "Chi tiết sản phẩm",
           
           "PLACEHOODER_PRODCUT_NAME": "Vui lòng nhập tên sản phẩm!",
           "PLACEHOODER_TYPE": "Vui lòng nhập loại sản phẩm!",
@@ -403,7 +412,11 @@ const resources = {
           "DETAIL_ADDRESS_PLACEHOODER": "Vui lòng nhập địa chỉ!",
           "DETAIL_AVARTA_PLACEHOODER": "Vui lòng chọn avatar!",
           "DETAIL_SELECT_PLACEHOODER": "Chọn ảnh!",
-          "DETAIL_USER_APPLY": "Cập nhật"
+          "DETAIL_USER_APPLY": "Cập nhật",
+          "SEARCH": "Tìm kím",
+          "RESET": "Làm mới",
+          "CLOSE": "Đóng",
+
         },
     }
   }

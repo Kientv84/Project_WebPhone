@@ -46,7 +46,7 @@ const TableComponent = (props) => {
                     padding: '10px',
                     cursor: 'pointer',
                 }} onClick={handleDeleteAll}>
-                    Delete All
+                    {t('ADMIN.DELETE_ALL')}
                 </div>
             )}
             <button style={{ margin: '20px',}} onClick={exportExcel}>{t('ADMIN.EXPORT_EXCEL')}</button>

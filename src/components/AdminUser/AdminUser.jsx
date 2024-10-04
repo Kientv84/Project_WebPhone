@@ -190,7 +190,7 @@ const AdminUser = () => {
               width: 90,
             }}
           >
-            Search
+           {t('ADMIN.SEARCH')}
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -199,7 +199,7 @@ const AdminUser = () => {
               width: 90,
             }}
           >
-            Reset
+            {t('ADMIN.RESET')}
           </Button>
           <Button
             type="link"
@@ -208,7 +208,7 @@ const AdminUser = () => {
               close();
             }}
           >
-            close
+            {t('ADMIN.CLOSE')}
           </Button>
         </Space>
       </div>
@@ -370,7 +370,7 @@ const AdminUser = () => {
     setIsLoadingUpdate(true); // Đặt trạng thái loading
 
     if (!file.url && !file.preview) {
-      message.error("warn", "Vui lòng chọn tấm ảnh để upload");
+      message.error(t('ADMIN.WARNING'), t('ADMIN.REQUIRE_UPLOAD_IMG'));
       setIsLoadingUpdate(false); // Nếu không có file thì kết thúc loading
       return;
     }
@@ -526,13 +526,13 @@ const AdminUser = () => {
       </DrawerComponent>
       <ModalComponent
         forceRender
-        title="Delete user"
+        title={t('ADMIN.DELETE_USER')}
         open={isModalOpenDelete}
         onCancel={handleCancelDelete}
         onOk={handleDeleteUser}
       >
         <Loading isLoading={isLoadingDeleted}>
-          <div>Are you sure you want to delete this account?</div>
+          <div>{t('ADMIN.MESS_DELETE_USER')}</div>
         </Loading>
       </ModalComponent>
     </div>
