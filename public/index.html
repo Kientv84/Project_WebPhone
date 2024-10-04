@@ -24,18 +24,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <link rel="stylesheet" href="./chatbox.css" />
     <title>WebPhone</title>
-
-    <style>
-      df-messenger::part(titlebar) {
-        background-color: #42c8b7; /* Màu bạn muốn */
-      }
-
-      df-messenger::part(title-wrapper) {
-        background-color: #42c8b7; /* Màu bạn muốn */
-      }
-    </style>
   </head>
 
   <body>
@@ -60,14 +49,18 @@
       nonce="w5AtEpaX"
     ></script>
 
-    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <!-- <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 
     <df-messenger
       intent="WELCOME"
       chat-title="WebPhone"
       agent-id="dbb32cb8-3cfd-444c-a587-69b94e4bce03"
       language-code="en"
-      style="-title-wrapper-background-color: #42c8b7"
-    ></df-messenger>
+      style="
+        --df-messenger-button-titlebar-color: #42c8b7;
+        --df-messenger-send-icon: #42c8b7;
+        margin-bottom: 50px;
+      "
+    ></df-messenger> -->
   </body>
 </html>

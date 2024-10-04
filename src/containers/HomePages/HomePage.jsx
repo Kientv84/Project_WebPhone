@@ -19,7 +19,7 @@ import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
 
-const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
+const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 1000);
   const [loading, setLoading] = useState(false);
@@ -69,6 +69,8 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
       Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
       Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+      Watch: "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
+      Gear: "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
     };
 
     // Trả về icon hoặc chuỗi rỗng nếu không có icon
@@ -79,6 +81,8 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     "Phone, Tablet",
     "Laptop",
     "Sound",
+    "Watch",
+    "Gear",
     "Screen",
     "Television",
   ]; // Thứ tự mong muốn
@@ -93,12 +97,18 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       <Loading isLoading={isLoading || loading}>
         <div
           className="body"
-          style={{ width: "100vw", backgroundColor: "#efefef" }}
+          style={{
+            width: "100%",
+            backgroundColor: "#efefef",
+            margin: "0",
+            overflowX: "hidden",
+          }}
         >
           <div
             style={{
               display: "flex",
-              width: "1270px",
+              width: "100%",
+              maxWidth: "1270px",
               margin: "60px auto 0",
               gap: "20px",
             }}

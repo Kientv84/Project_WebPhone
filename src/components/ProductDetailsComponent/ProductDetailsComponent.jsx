@@ -1,9 +1,6 @@
 import { Col, Row, Image, Rate, Form } from "antd";
 import React, { useEffect, useState } from "react";
-// import imageProduct from '../../assets/images/image.png.webp'
-import imageProductSmall from "../../assets/images/imagesmall1.png.webp";
 import {
-  WrapperAddressProduct,
   WrapperInputNumber,
   WrapperPriceProduct,
   WrapperPriceTextProduct,
@@ -13,7 +10,6 @@ import {
   WrapperStyleImageSmall,
   WrapperStyleTextSell,
   WrapperDecriptionTextProduct,
-  WrapperStyleImageSmall1,
   Box,
   PromotionHeader,
   IconGift,

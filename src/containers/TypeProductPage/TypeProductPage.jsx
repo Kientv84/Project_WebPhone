@@ -1,8 +1,7 @@
 import React from "react";
-// import NavBarComponent from '../../components/NavbarComponent/NavbarComponent'
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { Col, Pagination, Row } from "antd";
-import { WrapperNavbar, WrapperProducts, WrapperTypeProduct } from "./style";
+import { WrapperProducts } from "./style";
 import { useLocation } from "react-router-dom";
 import * as ProductService from "../../services/ProductService";
 import { useEffect } from "react";
@@ -10,7 +9,6 @@ import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
-import TypeProduct from "../../components/TypeProduct/TypeProduct";
 
 const TypeProductPage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -24,7 +22,6 @@ const TypeProductPage = () => {
     limit: 10,
     total: 1,
   });
-  const [typeProducts, setTypeProducts] = useState([]);
 
   const fetchProductType = async (type, page, limit) => {
     setLoading(true);
@@ -66,13 +63,7 @@ const TypeProductPage = () => {
               height: "calc(100% - 20px)",
             }}
           >
-            {/* <WrapperNavbar span={4} >
-                            {/* <NavBarComponent /> */}
-            {/* <TypeProduct /> */}
-            {/* </WrapperNavbar> */}
-
             <Col
-              span={20}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -80,7 +71,9 @@ const TypeProductPage = () => {
                 gap: "10px",
               }}
             >
-              <WrapperProducts>
+              <WrapperProducts
+                style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}
+              >
                 {products
                   ?.filter((pro) => {
                     if (searchDebounce === "") {

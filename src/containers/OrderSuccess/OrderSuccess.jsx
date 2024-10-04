@@ -1,12 +1,9 @@
 import React from "react";
 import {
   Label,
-  WrapperCountOrder,
   WrapperInfo,
-  WrapperContainer,
   WrapperValue,
   WrapperItemOrder,
-  WrapperLeft,
   WrapperItemOrderInfo,
   WrapperInfo1,
 } from "./style";
@@ -19,9 +16,7 @@ import { orderConstant } from "../../constant";
 const OrderSuccess = () => {
   const order = useSelector((state) => state.order);
   const location = useLocation();
-  // console.log('location', location)
   const { state } = location;
-  // console.log('state', state)
 
   return (
     <div

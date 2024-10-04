@@ -12,7 +12,6 @@ import {
   WrapperStyleContent,
   WrapperStyleHeader,
 } from "./style";
-// import logo from '../../assets/images/logo.png'
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import * as OrderService from "../../services/OrderService";

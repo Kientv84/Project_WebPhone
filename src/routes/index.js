@@ -70,11 +70,13 @@ export const routes = [
     path: "/sign-in",
     page: SignInPage,
     isShowHeader: true,
+    isShowChatbox: false,
   },
   {
     path: "/sign-up",
     page: SignUpPage,
     isShowHeader: true,
+    isShowChatbox: false,
   },
   {
     path: "/product-details/:id",
@@ -92,6 +94,7 @@ export const routes = [
     page: AdminPage,
     isShowHeader: false,
     isPrivate: true,
+    isShowChatbox: false,
   },
   {
     path: "/forgot-password",
@@ -110,5 +113,7 @@ export const routes = [
   {
     path: "*",
     page: NotFoundPage,
+    isShowHeader: true,
+    isShowFooter: true,
   },
 ];

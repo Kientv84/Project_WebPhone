@@ -1,8 +1,7 @@
 import React from "react";
-// import NavBarComponent from '../../components/NavbarComponent/NavbarComponent'
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { Col, Pagination, Row } from "antd";
-import { WrapperNavbar, WrapperProducts, WrapperBranchProduct } from "./style";
+import { WrapperProducts } from "./style";
 import { useLocation } from "react-router-dom";
 import * as ProductService from "../../services/ProductService";
 import { useEffect } from "react";
@@ -10,7 +9,6 @@ import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
-import BranchProduct from "../../components/BranchProduct/BranchProduct";
 
 const BranchProductPage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -24,7 +22,6 @@ const BranchProductPage = () => {
     limit: 10,
     total: 1,
   });
-  const [branchProducts, setBranchProducts] = useState([]);
 
   const fetchProductBranch = async (branch, page, limit) => {
     setLoading(true);

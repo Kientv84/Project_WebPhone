@@ -138,7 +138,6 @@ const SignUpPage = () => {
           )}
           <Loading isLoading={isLoading}>
             <ButtonComponent
-              // disabled={!email.length || !password.length || !confirmPassword.length}
               onClick={handleSignUp}
               size={40}
               styleButton={{

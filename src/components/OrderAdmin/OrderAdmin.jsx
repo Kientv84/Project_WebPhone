@@ -136,7 +136,6 @@ const OrderAdmin = () => {
   };
 
   const handleDeleteManyOrders = (ids) => {
-    // console.log('accc', user?.access_token)
     mutationDeletedMany.mutate(
       { ids: ids, token: user?.access_token },
       {
@@ -153,12 +152,6 @@ const OrderAdmin = () => {
       rowSelected,
       user?.access_token
     );
-    // console.log('StateOrderDelivery', stateOrderDelivery)
-    // if (res?.data) {
-    //   // setStateOrderDelivery({
-    //   //   isDelivered: res?.data?.isDelivered
-    //   // })
-    // }
     setIsLoadingUpdate(false);
   };
 
@@ -168,12 +161,6 @@ const OrderAdmin = () => {
       rowSelected,
       user?.access_token
     );
-    // console.log('StateOrderDelivery', stateOrderDelivery)
-    // if (res?.data) {
-    //   // setStateOrderDelivery({
-    //   //   isDelivered: res?.data?.isDelivered
-    //   // })
-    // }
     setIsLoadingUpdate(false);
   };
 
@@ -217,7 +204,6 @@ const OrderAdmin = () => {
   }, [isSuccessDeleted]);
 
   useEffect(() => {
-    // console.log('rowSelected', rowSelected)
     if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true);
       fetchGetDetailsOrder(rowSelected);
@@ -225,7 +211,6 @@ const OrderAdmin = () => {
   }, [rowSelected, isOpenDrawer]);
 
   useEffect(() => {
-    // console.log('rowSelected', rowSelected)
     if (rowSelected && isOpenDrawerPayment) {
       setIsLoadingUpdate(true);
       fetchGetDetailsOrderPayment(rowSelected);

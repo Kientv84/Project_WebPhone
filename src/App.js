@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { updateUser } from "./redux/slice/userslide";
 import Loading from "./components/LoadingComponent/Loading";
 import DefautFooterComponent from "./components/DefautFooterComponent/DefautFooterComponent";
+import Chatbot from "./components/ChatbotComponent/Chatbot";
 
 function App() {
   const dispatch = useDispatch();
@@ -67,6 +68,7 @@ function App() {
               const LayoutFooter = route.isShowFooter
                 ? DefautFooterComponent
                 : Fragment;
+              const isShowChatbox = route.isShowChatbox !== false;
               return (
                 <Route
                   key={route.path}
@@ -74,6 +76,7 @@ function App() {
                   element={
                     <Layout>
                       <Page />
+                      {isShowChatbox && <Chatbot />}
                       <LayoutFooter />
                     </Layout>
                   }

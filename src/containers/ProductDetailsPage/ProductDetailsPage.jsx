@@ -14,7 +14,7 @@ const ProductDetailsPage = () => {
         marginTop: "60px",
       }}
     >
-      <h5 style={{ fontWeight: "normal", marginTop: "5px", fontSize: "13px" }}>
+      <h5 style={{ fontWeight: "normal", marginTop: "15px", fontSize: "13px" }}>
         {" "}
         <span
           style={{ cursor: "pointer", fontWeight: "bold", fontSize: "15px" }}

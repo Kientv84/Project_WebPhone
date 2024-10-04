@@ -41,8 +41,6 @@ const SignInPage = () => {
         navigate("/");
       }
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
-      // localStorage.setItem('refresh_token', JSON.stringify(data?.refresh_token))
-      // console.log(data)
       if (data?.access_token) {
         const decoded = jwt_decode(data?.access_token);
         if (decoded?.id) {
@@ -172,7 +170,6 @@ const SignInPage = () => {
                 className={styles.facebook_btn}
                 onClick={() => handleSignInAuth("facebook")}
               >
-                {/* <img src={facebookIcon} alt="facebook icon" /> */}
                 <span style={{ color: "white" }}>Facebook</span>
               </button>
             </div>

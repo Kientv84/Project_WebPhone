@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader, WrapperUploadFile } from "./style";
-import { Button, Form, Modal, Space } from "antd";
+import { Button, Form, Space } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
