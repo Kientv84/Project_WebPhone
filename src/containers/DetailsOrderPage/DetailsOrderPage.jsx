@@ -21,12 +21,14 @@ import { orderConstant } from "../../constant";
 import { convertPrice } from "../../utils";
 import { useMemo } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
+import { useTranslation } from "react-i18next";
 
 const DetailsOrderPage = () => {
   const params = useParams();
   const location = useLocation();
   const { state } = location;
   const { id } = params;
+  const { t } = useTranslation();
 
   const fetchDetailsOrder = async () => {
     const res = await OrderService.getDetailsOrder(id, state?.token);
@@ -66,10 +68,10 @@ const DetailsOrderPage = () => {
             padding: "0.1px 0px",
           }}
         >
-          <h3>Order Details</h3>
+          <h3>{t('ORDER_DETAIL.TITLE')}</h3>
           <WrapperHeaderUser>
             <WrapperInfoUser>
-              <WrapperLabel>Recipient's address</WrapperLabel>
+              <WrapperLabel>{t('ORDER_DETAIL.RECEPTION_ADDRESS')}</WrapperLabel>
               <WrapperContentInfo>
                 <div className="name-info">
                   {data?.shippingAddress?.fullName}
@@ -84,25 +86,24 @@ const DetailsOrderPage = () => {
               </WrapperContentInfo>
             </WrapperInfoUser>
             <WrapperInfoUser>
-              <WrapperLabel>Shipping method</WrapperLabel>
+              <WrapperLabel>{t('ORDER_DETAIL.SHIPPING_METHOD')}</WrapperLabel>
               <WrapperContentInfo>
                 <div className="delivery-info">
-                  <span className="name-delivery">FAST </span>Giao hàng tiết
-                  kiệm
+                  <span className="name-delivery">FAST </span>{t('ORDER_DETAIL.FAST')}
                 </div>
                 <div className="delivery-fee">
-                  <span>Shipping Cost: </span> {data?.shippingPrice}
+                  <span>{t('ORDER_DETAIL.SHIPPING_COST')} </span> {data?.shippingPrice}
                 </div>
               </WrapperContentInfo>
             </WrapperInfoUser>
             <WrapperInfoUser>
-              <WrapperLabel>Payment method</WrapperLabel>
+              <WrapperLabel>{t('ORDER_DETAIL.PAYMENT_METHOD')}</WrapperLabel>
               <WrapperContentInfo>
                 <div className="payment-info">
                   {orderConstant.payment[data?.paymentMethod]}
                 </div>
                 <div className="status-payment">
-                  {data?.isPaid ? "Paid" : "Unpaid"}
+                  {data?.isPaid ? t('ORDER_DETAIL.PAID') : t('ORDER_DETAIL.UNPAID')}
                 </div>
               </WrapperContentInfo>
             </WrapperInfoUser>
@@ -117,10 +118,10 @@ const DetailsOrderPage = () => {
                 justifyContent: "space-between",
               }}
             >
-              <div style={{ width: "670px", fontWeight: "bold" }}>Product</div>
-              <WrapperItemLabel>Price</WrapperItemLabel>
-              <WrapperItemLabel>Quantity</WrapperItemLabel>
-              <WrapperItemLabel>Discount</WrapperItemLabel>
+              <div style={{ width: "670px", fontWeight: "bold" }}>{t('ORDER_DETAIL.PRODUCT')}</div>
+              <WrapperItemLabel>{t('ORDER_DETAIL.PRICE')}</WrapperItemLabel>
+              <WrapperItemLabel>{t('ORDER_DETAIL.QUANTITY')}</WrapperItemLabel>
+              <WrapperItemLabel>{t('ORDER_DETAIL.DISCOUNT')}</WrapperItemLabel>
             </WrapperStyleHeader>
             {data?.orderItems?.map((order) => {
               return (

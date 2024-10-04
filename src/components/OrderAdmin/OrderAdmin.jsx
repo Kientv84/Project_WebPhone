@@ -19,9 +19,13 @@ import PieChartComponent from "./PieChart";
 import ModalComponent from "../ModalComponent/ModalComponent";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import Loading from "../LoadingComponent/Loading";
+import { useTranslation } from "react-i18next";
 
 const OrderAdmin = () => {
   const user = useSelector((state) => state?.user);
+
+  const { t } = useTranslation();
+
   const [rowSelected, setRowSelected] = useState("");
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isOpenDrawerPayment, setIsOpenDrawerPayment] = useState(false);
@@ -180,27 +184,27 @@ const OrderAdmin = () => {
   //Cập nhật giao hàng
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success("Update Delivery Success");
+      message.success(t('ADMIN.UPDATE_DELIVERY_SUCC'));
       setIsOpenDrawer(false);
     } else if (isErrorUpdated) {
-      message.error("Update Fail");
+      message.error(t('ADMIN.UPDATE_DELIVERY_FAIL'));
     }
   }, [isSuccessUpdated, isErrorUpdated]);
 
   //Cập nhật payment
   useEffect(() => {
     if (isSuccessUpdatedPayment && dataUpdatedPayment?.status === "OK") {
-      message.success("Update Payment Success");
+      message.success(t('ADMIN.UPDATE_PAY_SUCC'));
       setIsOpenDrawerPayment(false);
     } else if (isErrorUpdatedPayment) {
-      message.error("Update Fail");
+      message.error(t('ADMIN.UPDATE_PAY_FAIL'));
     }
   }, [isSuccessUpdatedPayment, isErrorUpdatedPayment]);
 
   //Xoá nhiều
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
-      message.success("Delete orders Success");
+      message.success(t('ADMIN.DELETE_TOAST'));
     } else if (isErrorDeletedMany) {
       message.error();
     }
@@ -209,7 +213,7 @@ const OrderAdmin = () => {
   //Xoá 1
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success("Delete order Success");
+      message.success(t('ADMIN.DELETE_TOAST'));
       setIsModalOpenDelete(false);
     } else if (isErrorDeleted) {
       message.error();
@@ -314,56 +318,56 @@ const OrderAdmin = () => {
 
   const columns = [
     {
-      title: "User name",
+      title: t('ADMIN.ORDER_USER'),
       dataIndex: "userName",
       sorter: (a, b) => a.userName.length - b.userName.length,
       ...getColumnSearchProps("userName"),
     },
     {
-      title: "Phone",
+      title: t('ADMIN.ORDER_PHONE'),
       dataIndex: "phone",
       sorter: (a, b) => a.phone.length - b.phone.length,
       ...getColumnSearchProps("phone"),
     },
     {
-      title: "Address",
+      title: t('ADMIN.ORDER_ADDRESS'),
       dataIndex: "address",
       sorter: (a, b) => a.address.length - b.address.length,
       ...getColumnSearchProps("address"),
     },
     {
-      title: "Payment method",
+      title: t('ADMIN.ORDER_PAYMENT_METHOD'),
       dataIndex: "paymentMethod",
       sorter: (a, b) => a.paymentMethod.length - b.paymentMethod.length,
       ...getColumnSearchProps("paymentMethod"),
     },
     {
-      title: "Total price",
+      title: t('ADMIN.ORDER_TOTAL_PRICE'),
       dataIndex: "totalPrice",
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
       ...getColumnSearchProps("totalPrice"),
     },
     {
-      title: "Paid",
+      title: t('ADMIN.ORDER_PAID'),
       dataIndex: "isPaid",
       sorter: (a, b) => a.isPaid.length - b.isPaid.length,
       ...getColumnSearchProps("isPaid"),
     },
     {
-      title: "Update Payment",
+      title: t('ADMIN.ORDER_UPDATE_PAY'),
       dataIndex: "isPaid",
       render: renderActionPay,
       sorter: (a, b) => a.isPaid.length - b.isPaid.length,
       ...getColumnSearchProps("isPaid"),
     },
     {
-      title: "Shipped",
+      title: t('ADMIN.ORDER_SHIPPED'),
       dataIndex: "isDelivered",
       sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
       ...getColumnSearchProps("isDelivered"),
     },
     {
-      title: "Update Delivered",
+      title: t('ADMIN.ORDER_UPDATE_DELIVERED'),
       dataIndex: "isDelivered",
       render: renderAction,
       sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
@@ -381,8 +385,8 @@ const OrderAdmin = () => {
         phone: order?.shippingAddress?.phone,
         address: order?.shippingAddress?.address,
         paymentMethod: orderConstant.payment[order?.paymentMethod],
-        isPaid: order?.isPaid ? "TRUE" : "FALSE",
-        isDelivered: order?.isDelivered ? "Delivered" : "Not Shipped",
+        isPaid: order?.isPaid ? t('ADMIN.TRUE') : t('ADMIN.FALSE'),
+        isDelivered: order?.isDelivered ? t('ADMIN.DELIVERED') : t('ADMIN.NOT_SHIPPED'),
         totalPrice: convertPrice(order?.totalPrice),
       };
     });
@@ -411,7 +415,7 @@ const OrderAdmin = () => {
 
   return (
     <div>
-      <WrapperHeader>Manage Orders</WrapperHeader>
+      <WrapperHeader>{t('ADMIN.MANAGE_ODERS')}</WrapperHeader>
       <div
         style={{
           height: 200,
@@ -439,10 +443,13 @@ const OrderAdmin = () => {
       </div>
 
       <DrawerComponent
-        title="Update Delivery"
+        title={t('ADMIN.UPDATE_DELIVERY')}
         isOpen={isOpenDrawer}
         onCancel={() => setIsOpenDrawer(false)}
         footer={null}
+        bodyStyle={{ padding: '24px' }} 
+        centered 
+        width={800} 
       >
         {/* ... */}
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
@@ -454,12 +461,12 @@ const OrderAdmin = () => {
             autoComplete="on"
           >
             <Form.Item
-              label="Delivery State:"
+              label={t('ADMIN.DELIVERY_STATE')}
               name="isDelivered"
               rules={[
                 {
                   required: true,
-                  message: "Please select the delivery state!",
+                  message: t('ADMIN.SELECT_DELIVERY'),
                 },
               ]}
             >
@@ -469,14 +476,14 @@ const OrderAdmin = () => {
                   setStateOrderDelivery({ isDelivered: value })
                 }
               >
-                <Select.Option value={true}>True</Select.Option>
-                <Select.Option value={false}>False</Select.Option>
+                <Select.Option value={true}>{t('ADMIN.TRUE')}</Select.Option>
+                <Select.Option value={false}>{t('ADMIN.FALSE')}</Select.Option>
               </Select>
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                Apply
+                {t('ADMIN.DETAIL_USER_APPLY')}
               </Button>
             </Form.Item>
           </Form>
@@ -484,7 +491,7 @@ const OrderAdmin = () => {
       </DrawerComponent>
 
       <DrawerComponent
-        title="Update Payment"
+        title={t('ADMIN.ORDER_UPDATE_PAY')}
         isOpen={isOpenDrawerPayment}
         onCancel={() => setIsOpenDrawerPayment(false)}
         footer={null}
@@ -501,21 +508,21 @@ const OrderAdmin = () => {
               label="Payment State:"
               name="isPaid"
               rules={[
-                { required: true, message: "Please select the payment state!" },
+                { required: true, message: t('ADMIN.SELECT_PAY')},
               ]}
             >
               <Select
                 defaultValue={stateOrderPayment.isPaid}
                 onChange={(value) => setStateOrderPayment({ isPaid: value })}
               >
-                <Select.Option value={true}>True</Select.Option>
-                <Select.Option value={false}>False</Select.Option>
+                <Select.Option value={true}>{t('ADMIN.TRUE')}</Select.Option>
+                <Select.Option value={false}>{t('ADMIN.FALSE')}</Select.Option>
               </Select>
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                Apply
+                {t('ADMIN.DETAIL_USER_APPLY')}
               </Button>
             </Form.Item>
           </Form>
@@ -529,7 +536,7 @@ const OrderAdmin = () => {
         onOk={handleDeleteOrder}
       >
         <Loading isLoading={isLoadingDeleted}>
-          <div>Are you sure you want to delete this order?</div>
+          <div>{t('ADMIN.MESS_DELETE_ORDER')}</div>
         </Loading>
       </ModalComponent>
     </div>

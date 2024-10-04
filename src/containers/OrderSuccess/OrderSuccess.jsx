@@ -15,6 +15,7 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { orderConstant } from "../../constant";
+import { useTranslation } from "react-i18next";
 
 const OrderSuccess = () => {
   const order = useSelector((state) => state.order);
@@ -22,6 +23,7 @@ const OrderSuccess = () => {
   // console.log('location', location)
   const { state } = location;
   // console.log('state', state)
+  const { t } = useTranslation();
 
   return (
     <div
@@ -42,23 +44,23 @@ const OrderSuccess = () => {
             padding: "0.1px 0px ",
           }}
         >
-          <h3 style={{ fontWeight: "bold" }}>Order Success</h3>
+          <h3 style={{ fontWeight: "bold" }}>{t('ORDER_SUCCESS.TITLE')}</h3>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <div>
               <WrapperInfo1>
                 <div>
-                  <Label>Shipping method</Label>
+                  <Label>{t('ORDER_SUCCESS.TITLE_SHIPPING')}</Label>
                   <WrapperValue>
                     <span style={{ color: "#ea8500", fontWeight: "bold" }}>
                       {orderConstant.delivery[state?.delivery]}
                     </span>{" "}
-                    Giao hàng tiết kiệm
+                    {t('ORDER_SUCCESS.FAST_GO_JECT')}
                   </WrapperValue>
                 </div>
               </WrapperInfo1>
               <WrapperInfo>
                 <div>
-                  <Label>Payment method</Label>
+                  <Label>{t('ORDER_SUCCESS.TITLE_PAYMENT')}</Label>
                   <WrapperValue>
                     {orderConstant.payment[state?.payment]}
                   </WrapperValue>
@@ -105,12 +107,12 @@ const OrderSuccess = () => {
                       >
                         <span>
                           <span style={{ fontSize: "13px", color: "#242424" }}>
-                            Price: {convertPrice(order?.price)}
+                            {t('ORDER_SUCCESS.PRICE')}: {convertPrice(order?.price)}
                           </span>
                         </span>
                         <span>
                           <span style={{ fontSize: "13px", color: "#242424" }}>
-                            Quantity: {order?.amount}
+                            {t('ORDER_SUCCESS.QUANTITY')}: {order?.amount}
                           </span>
                         </span>
                       </div>
@@ -120,7 +122,7 @@ const OrderSuccess = () => {
               </WrapperItemOrderInfo>
               <div>
                 <span style={{ fontSize: "16px", color: "red" }}>
-                  Total: {convertPrice(state?.totalPriceMemo)}
+                   {t('ORDER_SUCCESS.TOTAL')}: {convertPrice(state?.totalPriceMemo)}
                 </span>
               </div>
             </div>
