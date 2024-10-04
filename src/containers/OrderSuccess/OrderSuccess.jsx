@@ -9,12 +9,10 @@ import {
 } from "./style";
 import { convertPrice } from "../../utils";
 import Loading from "../../components/LoadingComponent/Loading";
-import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { orderConstant } from "../../constant";
 
 const OrderSuccess = () => {
-  const order = useSelector((state) => state.order);
   const location = useLocation();
   const { state } = location;
 

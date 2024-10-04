@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import * as UserService from "../../services/UserService";
@@ -13,6 +13,15 @@ const LoginSuccessComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleGetDetailsUser = useCallback(
+    async (id, token) => {
+      const res = await UserService.getDetailsUser(id, token);
+      console.log("res", res.data);
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -49,13 +58,7 @@ const LoginSuccessComponent = () => {
     };
 
     fetchToken();
-  }, [userId, navigate, location]);
-
-  const handleGetDetailsUser = async (id, token) => {
-    const res = await UserService.getDetailsUser(id, token);
-    console.log("res", res.data);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
-  };
+  }, [userId, navigate, handleGetDetailsUser, location]);
 
   return <div className="conatainer_proccess">Đang xử lý đăng nhập...</div>;
 };

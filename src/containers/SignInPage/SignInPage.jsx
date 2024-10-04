@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
@@ -32,10 +32,18 @@ const SignInPage = () => {
 
   const { data, isLoading, isSuccess } = mutation;
 
+  const handleGetDetailsUser = useCallback(
+    async (id, token) => {
+      const res = await UserService.getDetailsUser(id, token);
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    },
+    [dispatch]
+  ); // memoize với 'dispatch'
+  const locations = location?.state;
   useEffect(() => {
     if (isSuccess && data?.status === "OK") {
-      if (location?.state) {
-        navigate(location?.state);
+      if (locations) {
+        navigate(locations);
       } else {
         message.success("Logged in successfully");
         navigate("/");
@@ -48,12 +56,7 @@ const SignInPage = () => {
         }
       }
     }
-  }, [isSuccess, data]);
-
-  const handleGetDetailsUser = async (id, token) => {
-    const res = await UserService.getDetailsUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
-  };
+  }, [isSuccess, data, handleGetDetailsUser, navigate, locations]);
 
   const handleOnChangeEmail = (value) => {
     setEmail(value);

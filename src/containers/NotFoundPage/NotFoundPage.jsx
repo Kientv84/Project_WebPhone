@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./NotFoundPage.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/LoadingComponent/Loading";
 

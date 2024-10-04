@@ -22,7 +22,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 1000);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [limit, setLimit] = useState(12);
   const [typeProducts, setTypeProducts] = useState([]);
   const [branchProducts, setBranchProducts] = useState([]);
@@ -94,7 +94,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <Loading isLoading={isLoading || loading}>
+      <Loading isLoading={isLoading}>
         <div
           className="body"
           style={{

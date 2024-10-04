@@ -5,6 +5,7 @@ import ProductDetailsComponent from "../../components/ProductDetailsComponent/Pr
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   return (
     <div
       style={{

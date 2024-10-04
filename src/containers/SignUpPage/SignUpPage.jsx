@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
@@ -27,14 +27,20 @@ const SignUpPage = () => {
 
   const { data, isLoading, isError, isSuccess } = mutation;
 
+  const handleNavigateSignIn = useCallback(() => {
+    navigate("/sign-in");
+  }, [navigate]);
+
+  const status = data?.status;
+
   useEffect(() => {
-    if (isSuccess && data?.status === "OK") {
+    if (isSuccess && status === "OK") {
       message.success();
       handleNavigateSignIn();
     } else if (isError) {
       message.error();
     }
-  }, [isError, isSuccess]);
+  }, [isError, isSuccess, handleNavigateSignIn, status]);
 
   const handleOnChangeEmail = (value) => {
     setEmail(value);
@@ -54,10 +60,6 @@ const SignUpPage = () => {
       password,
       confirmPassword,
     });
-  };
-
-  const handleNavigateSignIn = () => {
-    navigate("/sign-in");
   };
 
   return (

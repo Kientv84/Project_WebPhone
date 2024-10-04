@@ -403,11 +403,13 @@ const HeaderComponent = ({
                   <img
                     src={userAvatar}
                     alt="avatar"
+                    onClick={() => setIsOpenPopup((prev) => !prev)}
                     style={{
                       height: "40px",
                       width: "40px",
                       borderRadius: "50%",
                       objectFit: "cover",
+                      cursor: "pointer",
                     }}
                   />
                 ) : (

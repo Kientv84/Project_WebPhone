@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { Col, Pagination, Row } from "antd";
 import { WrapperProducts } from "./style";
@@ -23,23 +23,26 @@ const TypeProductPage = () => {
     total: 1,
   });
 
-  const fetchProductType = async (type, page, limit) => {
-    setLoading(true);
-    const res = await ProductService.getProductType(type, page, limit);
-    if (res?.status == "OK") {
-      setLoading(false);
-      setProducts(res?.data);
-      setPanigate({ ...panigate, total: res?.totalPage });
-    } else {
-      setLoading(false);
-    }
-  };
+  const fetchProductType = useCallback(
+    async (type, page, limit) => {
+      setLoading(true);
+      const res = await ProductService.getProductType(type, page, limit);
+      if (res?.status === "OK") {
+        setLoading(false);
+        setProducts(res?.data);
+        setPanigate({ ...panigate, total: res?.totalPage });
+      } else {
+        setLoading(false);
+      }
+    },
+    [panigate]
+  );
 
   useEffect(() => {
     if (state) {
       fetchProductType(state, panigate.page, panigate.limit);
     }
-  }, [state, panigate.page, panigate.limit]);
+  }, [state, fetchProductType, panigate.page, panigate.limit]);
 
   const onChange = (current, pageSize) => {
     setPanigate({ ...panigate, page: current - 1, limit: pageSize });
@@ -77,14 +80,15 @@ const TypeProductPage = () => {
                 {products
                   ?.filter((pro) => {
                     if (searchDebounce === "") {
-                      return pro;
+                      return true; // Trả về true để giữ lại tất cả các sản phẩm
                     } else if (
                       pro?.name
                         ?.toLowerCase()
                         ?.includes(searchDebounce?.toLowerCase())
                     ) {
-                      return pro;
+                      return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
                     }
+                    return false;
                   })
                   ?.map((product) => {
                     return (

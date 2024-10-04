@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { Col, Pagination, Row } from "antd";
 import { WrapperProducts } from "./style";
@@ -23,23 +23,26 @@ const BranchProductPage = () => {
     total: 1,
   });
 
-  const fetchProductBranch = async (branch, page, limit) => {
-    setLoading(true);
-    const res = await ProductService.getProductBranch(branch, page, limit);
-    if (res?.status == "OK") {
-      setLoading(false);
-      setProducts(res?.data);
-      setPanigate({ ...panigate, total: res?.totalPage });
-    } else {
-      setLoading(false);
-    }
-  };
+  const fetchProductBranch = useCallback(
+    async (branch, page, limit) => {
+      setLoading(true);
+      const res = await ProductService.getProductBranch(branch, page, limit);
+      if (res?.status === "OK") {
+        setLoading(false);
+        setProducts(res?.data);
+        setPanigate({ ...panigate, total: res?.totalPage });
+      } else {
+        setLoading(false);
+      }
+    },
+    [panigate]
+  );
 
   useEffect(() => {
     if (state) {
       fetchProductBranch(state, panigate.page, panigate.limit);
     }
-  }, [state, panigate.page, panigate.limit]);
+  }, [state, fetchProductBranch, panigate.page, panigate.limit]);
 
   const onChange = (current, pageSize) => {
     setPanigate({ ...panigate, page: current - 1, limit: pageSize });
@@ -80,14 +83,15 @@ const BranchProductPage = () => {
                 {products
                   ?.filter((pro) => {
                     if (searchDebounce === "") {
-                      return pro;
+                      return true; // Trả về true để giữ lại tất cả các sản phẩm
                     } else if (
                       pro?.name
                         ?.toLowerCase()
                         ?.includes(searchDebounce?.toLowerCase())
                     ) {
-                      return pro;
+                      return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
                     }
+                    return false;
                   })
                   ?.map((product) => {
                     return (

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes/index";
 import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
@@ -15,16 +15,8 @@ function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    setIsLoading(true);
-    const { storageData, decoded } = handleDecoded();
-    if (decoded?.id) {
-      handleGetDetailsUser(decoded.id, storageData);
-    }
-    setIsLoading(false);
-  }, []);
-
-  const handleDecoded = () => {
+  // Memoize handleDecoded để tránh tái tạo lại hàm trong mỗi lần render
+  const handleDecoded = useCallback(() => {
     let storageData = localStorage.getItem("access_token");
     let decoded = {};
     if (storageData && isJsonString(storageData)) {
@@ -32,12 +24,29 @@ function App() {
       decoded = jwt_decode(storageData);
     }
     return { decoded, storageData };
-  };
+  }, []);
+
+  // Memoize handleGetDetailsUser để tránh tái tạo lại hàm trong mỗi lần render
+  const handleGetDetailsUser = useCallback(
+    async (id, token) => {
+      const res = await UserService.getDetailsUser(id, token);
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    setIsLoading(true);
+    const { storageData, decoded } = handleDecoded();
+    if (decoded?.id) {
+      handleGetDetailsUser(decoded.id, storageData);
+    }
+    setIsLoading(false);
+  }, [handleDecoded, handleGetDetailsUser]); // Thêm handleDecoded và handleGetDetailsUser vào mảng phụ thuộc
 
   // Add a request interceptor
   UserService.axiosJWT.interceptors.request.use(
     async (config) => {
-      // Do something before request is sent
       const currentTime = new Date();
       const { decoded } = handleDecoded();
       if (decoded?.exp < currentTime.getTime() / 1000) {
@@ -47,15 +56,9 @@ function App() {
       return config;
     },
     function (error) {
-      // Do something with request error
       return Promise.reject(error);
     }
   );
-
-  const handleGetDetailsUser = async (id, token) => {
-    const res = await UserService.getDetailsUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
-  };
 
   return (
     <div style={{ height: "100vh", width: "100%" }}>

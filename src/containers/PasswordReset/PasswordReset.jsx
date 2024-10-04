@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { WrapperContainerLeft } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
@@ -25,23 +25,25 @@ const PasswordReset = () => {
 
   const { data, isLoading, isError, isSuccess } = mutation;
 
+  const handleNavigateSignIn = useCallback(() => {
+    navigate("/sign-in");
+  }, [navigate]);
+
+  const status = data?.status;
+
   useEffect(() => {
-    if (isSuccess && data?.status === "Success") {
+    if (isSuccess && status === "Success") {
       message.success("Send mail verify successfully");
       handleNavigateSignIn();
-    } else if (isError && data?.status === "ERR") {
+    } else if (isError && status === "ERR") {
       message.error();
     }
-  }, [isError, isSuccess]);
+  }, [isError, isSuccess, handleNavigateSignIn, status]);
 
   const updatePassword = async () => {
     await mutation.mutate({
       password,
     });
-  };
-
-  const handleNavigateSignIn = () => {
-    navigate("/sign-in");
   };
 
   return (

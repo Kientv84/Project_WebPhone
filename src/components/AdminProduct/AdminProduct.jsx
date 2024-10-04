@@ -1,5 +1,11 @@
 import { Button, Form, Space, Select, Input } from "antd";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -152,9 +158,9 @@ const AdminProduct = () => {
   }, [rowSelected, isOpenDrawer]);
 
   //
-  const handleDetailsProduct = () => {
+  const handleDetailsProduct = useCallback(() => {
     setIsOpenDrawer(true);
-  };
+  }, [setIsOpenDrawer]);
 
   const handleDeleteManyProducts = (ids) => {
     mutationDeletedMany.mutate(
@@ -226,7 +232,8 @@ const AdminProduct = () => {
   });
 
   const { isLoading: isLoadingProducts, data: products } = queryProduct;
-  const renderAction = () => {
+
+  const renderAction = useCallback(() => {
     return (
       <div>
         <DeleteOutlined
@@ -239,7 +246,7 @@ const AdminProduct = () => {
         />
       </div>
     );
-  };
+  }, [setIsModalOpenDelete, handleDetailsProduct]);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -248,81 +255,87 @@ const AdminProduct = () => {
     clearFilters();
   };
 
-  const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div
-        style={{
-          padding: 8,
-        }}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
-        <InputComponent
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+  const getColumnSearchProps = useCallback(
+    (dataIndex) => ({
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+        close,
+      }) => (
+        <div
           style={{
-            marginBottom: 8,
-            display: "block",
+            padding: 8,
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <InputComponent
+            ref={searchInput}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={(e) =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
+            onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            style={{
+              marginBottom: 8,
+              display: "block",
+            }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => clearFilters && handleReset(clearFilters)}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Reset
+            </Button>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => {
+                close();
+              }}
+            >
+              close
+            </Button>
+          </Space>
+        </div>
+      ),
+      filterIcon: (filtered) => (
+        <SearchOutlined
+          style={{
+            color: filtered ? "#1677ff" : undefined,
           }}
         />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{
-          color: filtered ? "#1677ff" : undefined,
-        }}
-      />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-  });
+      ),
+      onFilter: (value, record) =>
+        record[dataIndex]
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase()),
+      onFilterDropdownOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput.current?.select(), 100);
+        }
+      },
+    }),
+    []
+  );
 
   // Memoize some values to avoid unnecessary recalculations
   const memoizedColumns = useMemo(() => {
@@ -379,7 +392,7 @@ const AdminProduct = () => {
         render: renderAction,
       },
     ];
-  }, []);
+  }, [getColumnSearchProps, renderAction]);
 
   const dataTable =
     products?.data?.length &&
@@ -387,79 +400,7 @@ const AdminProduct = () => {
       return { ...product, key: product._id };
     });
 
-  //Thêm mới sp
-  useEffect(() => {
-    if (isSuccess && data?.status === "OK") {
-      message.success();
-      handleCancel();
-    } else if (isError) {
-      message.error();
-    }
-  }, [isSuccess]);
-
-  //Xoá nhiều sp
-  useEffect(() => {
-    if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
-      message.success();
-    } else if (isErrorDeletedMany) {
-      message.error();
-    }
-  }, [isSuccessDeletedMany]);
-
-  //Xoá 1 sp
-  useEffect(() => {
-    if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success();
-      handleCancelDelete();
-    } else if (isErrorDeleted) {
-      message.error();
-    }
-  }, [isSuccessDeleted]);
-
-  //Cập nhật sp
-  useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success();
-      handleCancelDrawer();
-    } else if (isErrorUpdated) {
-      message.error();
-    }
-  }, [isSuccessUpdated]);
-
-  const handleCancelDrawer = () => {
-    setIsOpenDrawer(false);
-    setStateProductDetails({
-      name: "",
-      price: "",
-      description: "",
-      promotion: "",
-      rating: "",
-      image: "",
-      image1: "",
-      image2: "",
-      type: "",
-      branch: "",
-      countInStock: "",
-    });
-    form.resetFields();
-  };
-
-  const handleCancelDelete = () => {
-    setIsModalOpenDelete(false);
-  };
-
-  const handleDeleteProduct = () => {
-    mutationDeleted.mutate(
-      { id: rowSelected, token: product?.access_token },
-      {
-        onSettled: () => {
-          queryProduct.refetch();
-        },
-      }
-    );
-  };
-
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setIsModalOpen(false);
     setStateProduct({
       name: "",
@@ -476,6 +417,84 @@ const AdminProduct = () => {
       discount: "",
     });
     form.resetFields();
+  }, [form]);
+
+  const statuss = data?.status;
+  //Thêm mới sp
+  useEffect(() => {
+    if (isSuccess && statuss === "OK") {
+      message.success();
+      handleCancel();
+    } else if (isError) {
+      message.error();
+    }
+  }, [isSuccess, statuss, handleCancel, isError]);
+
+  const statusDeletedMany = dataDeletedMany?.status;
+  //Xoá nhiều sp
+  useEffect(() => {
+    if (isSuccessDeletedMany && statusDeletedMany === "OK") {
+      message.success();
+    } else if (isErrorDeletedMany) {
+      message.error();
+    }
+  }, [isSuccessDeletedMany, statusDeletedMany, isErrorDeletedMany]);
+
+  const handleCancelDelete = useCallback(() => {
+    setIsModalOpenDelete(false);
+  }, []);
+
+  const statusDeleted = dataDeleted?.status;
+
+  //Xoá 1 sp
+  useEffect(() => {
+    if (isSuccessDeleted && statusDeleted === "OK") {
+      message.success();
+      handleCancelDelete();
+    } else if (isErrorDeleted) {
+      message.error();
+    }
+  }, [isSuccessDeleted, statusDeleted, handleCancelDelete, isErrorDeleted]);
+
+  const handleCancelDrawer = useCallback(() => {
+    setIsOpenDrawer(false);
+    setStateProductDetails({
+      name: "",
+      price: "",
+      description: "",
+      promotion: "",
+      rating: "",
+      image: "",
+      image1: "",
+      image2: "",
+      type: "",
+      branch: "",
+      countInStock: "",
+    });
+    form.resetFields();
+  }, [form]);
+
+  const statusUpdated = dataUpdated?.status;
+
+  //Cập nhật sp
+  useEffect(() => {
+    if (isSuccessUpdated && statusUpdated === "OK") {
+      message.success();
+      handleCancelDrawer();
+    } else if (isErrorUpdated) {
+      message.error();
+    }
+  }, [isSuccessUpdated, statusUpdated, handleCancelDrawer, isErrorUpdated]);
+
+  const handleDeleteProduct = () => {
+    mutationDeleted.mutate(
+      { id: rowSelected, token: product?.access_token },
+      {
+        onSettled: () => {
+          queryProduct.refetch();
+        },
+      }
+    );
   };
 
   const onFinish = () => {
