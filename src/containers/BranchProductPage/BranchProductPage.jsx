@@ -42,7 +42,7 @@ const BranchProductPage = () => {
     if (state) {
       fetchProductBranch(state, panigate.page, panigate.limit);
     }
-  }, [state, fetchProductBranch, panigate.page, panigate.limit]);
+  }, [state, panigate.page, panigate.limit]);
 
   const onChange = (current, pageSize) => {
     setPanigate({ ...panigate, page: current - 1, limit: pageSize });
