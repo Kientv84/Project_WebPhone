@@ -1,6 +1,5 @@
-
 import { Button, Form, Space, Select, Input } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -32,66 +31,63 @@ const AdminProduct = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const product = useSelector((state) => state?.product);
-
     const { t } = useTranslation();
 
   // const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
 
   const initial = () => ({
-    name: '',
-    price: '',
-    description: '',
-    promotion: '',
-    rating: '',
-    image: '',
-    image1: '',
-    image2: '',
-    type: '',
-    branch: '',
-    countInStock: '',
-    newType: '',
-    newBranch: '',
-    discount: '',
-  })
+    name: "",
+    price: "",
+    description: "",
+    promotion: "",
+    rating: "",
+    image: "",
+    image1: "",
+    image2: "",
+    type: "",
+    branch: "",
+    countInStock: "",
+    newType: "",
+    newBranch: "",
+    discount: "",
+  });
   const [stateProduct, setStateProduct] = useState(initial());
   const [stateProductDetails, setStateProductDetails] = useState(initial());
 
   const [form] = Form.useForm();
 
-  const mutation = useMutationHook(
-    (data) => {
-      const {
-        name,
-        price,
-        description,
-        promotion,
-        rating,
-        image,
-        image1,
-        image2,
-        type,
-        branch,
-        countInStock,
-        discount,
-      } = data
-      const res = ProductService.createProduct({
-        name,
-        price,
-        description,
-        promotion,
-        rating, 
-        image,
-        image1,
-        image2,
-        type,
-        branch,
-        countInStock,
-        discount,
-      })
-      return res
-    }
-  )
+  const mutation = useMutationHook((data) => {
+    const {
+      name,
+      price,
+      description,
+      promotion,
+      rating,
+      image,
+      image1,
+      image2,
+      type,
+      branch,
+      countInStock,
+      discount,
+    } = data;
+    const res = ProductService.createProduct({
+      name,
+      price,
+      description,
+      promotion,
+      rating,
+      image,
+      image1,
+      image2,
+      type,
+      branch,
+      countInStock,
+      discount,
+    });
+    return res;
+  });
 
   const mutationUpdate = useMutationHook((data) => {
     const { id, token, ...rests } = data;
@@ -162,9 +158,9 @@ const AdminProduct = () => {
   }, [rowSelected, isOpenDrawer]);
 
   //
-  const handleDetailsProduct = () => {
+  const handleDetailsProduct = useCallback(() => {
     setIsOpenDrawer(true);
-  };
+  }, [setIsOpenDrawer]);
 
   const handleDeleteManyProducts = (ids) => {
     mutationDeletedMany.mutate(
@@ -180,31 +176,28 @@ const AdminProduct = () => {
   const handleChangeSelect = (value) => {
     setStateProduct({
       ...stateProduct,
-      type: value
-    })
-    console.log('value', value)
-  }
+      type: value,
+    });
+    console.log("value", value);
+  };
 
   const handleChangeSelectBranch = (valueBranch) => {
     setStateProduct({
       ...stateProduct,
-      branch: valueBranch
-    })
-    console.log('value', valueBranch)
-  }  
-
+      branch: valueBranch,
+    });
+    console.log("value", valueBranch);
+  };
 
   const fetchAllTypeProduct = async () => {
-    const res = await ProductService.getAllTypeProduct()
-    return res
-  }
+    const res = await ProductService.getAllTypeProduct();
+    return res;
+  };
 
   const fetchAllBranchProduct = async () => {
-    const res = await ProductService.getAllBranchProduct()
-    return res
-  }
-
-
+    const res = await ProductService.getAllBranchProduct();
+    return res;
+  };
 
   const { data, isLoading, isSuccess, isError } = mutation;
   const {
@@ -225,12 +218,22 @@ const AdminProduct = () => {
     isError: isErrorDeletedMany,
   } = mutationDeletedMany;
 
-  const queryProduct = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
-  const typeProduct = useQuery({ queryKey: ['type-product'], queryFn: fetchAllTypeProduct })
-  const branchProduct = useQuery({ queryKey: ['branch-product'], queryFn: fetchAllBranchProduct })
+  const queryProduct = useQuery({
+    queryKey: ["products"],
+    queryFn: getAllProduct,
+  });
+  const typeProduct = useQuery({
+    queryKey: ["type-product"],
+    queryFn: fetchAllTypeProduct,
+  });
+  const branchProduct = useQuery({
+    queryKey: ["branch-product"],
+    queryFn: fetchAllBranchProduct,
+  });
 
-  const { isLoading: isLoadingProducts, data: products } = queryProduct
-  const renderAction = () => {
+  const { isLoading: isLoadingProducts, data: products } = queryProduct;
+
+  const renderAction = useCallback(() => {
     return (
       <div>
         <DeleteOutlined
@@ -243,7 +246,7 @@ const AdminProduct = () => {
         />
       </div>
     );
-  };
+  }, [setIsModalOpenDelete, handleDetailsProduct]);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -252,81 +255,87 @@ const AdminProduct = () => {
     clearFilters();
   };
 
-  const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div
-        style={{
-          padding: 8,
-        }}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
-        <InputComponent
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+  const getColumnSearchProps = useCallback(
+    (dataIndex) => ({
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+        close,
+      }) => (
+        <div
           style={{
-            marginBottom: 8,
-            display: "block",
+            padding: 8,
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <InputComponent
+            ref={searchInput}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={(e) =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
+            onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            style={{
+              marginBottom: 8,
+              display: "block",
+            }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => clearFilters && handleReset(clearFilters)}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Reset
+            </Button>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => {
+                close();
+              }}
+            >
+              close
+            </Button>
+          </Space>
+        </div>
+      ),
+      filterIcon: (filtered) => (
+        <SearchOutlined
+          style={{
+            color: filtered ? "#1677ff" : undefined,
           }}
         />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-          {t('ADMIN.SEARCH')}
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            {t('ADMIN.RESET')}
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-          {t('ADMIN.CLOSE')}
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{
-          color: filtered ? "#1677ff" : undefined,
-        }}
-      />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-  });
+      ),
+      onFilter: (value, record) =>
+        record[dataIndex]
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase()),
+      onFilterDropdownOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInput.current?.select(), 100);
+        }
+      },
+    }),
+    []
+  );
 
   // Memoize some values to avoid unnecessary recalculations
     const columns = [
@@ -382,74 +391,97 @@ const AdminProduct = () => {
         render: renderAction,
       },
     ];
-
-
   const dataTable =
     products?.data?.length &&
     products?.data?.map((product) => {
       return { ...product, key: product._id };
     });
 
+  const handleCancel = useCallback(() => {
+    setIsModalOpen(false);
+    setStateProduct({
+      name: "",
+      price: "",
+      description: "",
+      promotion: "",
+      rating: "",
+      image: "",
+      image1: "",
+      image2: "",
+      type: "",
+      branch: "",
+      countInStock: "",
+      discount: "",
+    });
+    form.resetFields();
+  }, [form]);
+
+  const statuss = data?.status;
   //Thêm mới sp
   useEffect(() => {
-    if (isSuccess && data?.status === "OK") {
+    if (isSuccess && statuss === "OK") {
       message.success();
       handleCancel();
     } else if (isError) {
       message.error();
     }
-  }, [isSuccess]);
+  }, [isSuccess, statuss, handleCancel, isError]);
 
+  const statusDeletedMany = dataDeletedMany?.status;
   //Xoá nhiều sp
   useEffect(() => {
-    if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
+    if (isSuccessDeletedMany && statusDeletedMany === "OK") {
       message.success();
     } else if (isErrorDeletedMany) {
       message.error();
     }
-  }, [isSuccessDeletedMany]);
+  }, [isSuccessDeletedMany, statusDeletedMany, isErrorDeletedMany]);
+
+  const handleCancelDelete = useCallback(() => {
+    setIsModalOpenDelete(false);
+  }, []);
+
+  const statusDeleted = dataDeleted?.status;
 
   //Xoá 1 sp
   useEffect(() => {
-    if (isSuccessDeleted && dataDeleted?.status === "OK") {
+    if (isSuccessDeleted && statusDeleted === "OK") {
       message.success();
       handleCancelDelete();
     } else if (isErrorDeleted) {
       message.error();
     }
-  }, [isSuccessDeleted]);
+  }, [isSuccessDeleted, statusDeleted, handleCancelDelete, isErrorDeleted]);
+
+  const handleCancelDrawer = useCallback(() => {
+    setIsOpenDrawer(false);
+    setStateProductDetails({
+      name: "",
+      price: "",
+      description: "",
+      promotion: "",
+      rating: "",
+      image: "",
+      image1: "",
+      image2: "",
+      type: "",
+      branch: "",
+      countInStock: "",
+    });
+    form.resetFields();
+  }, [form]);
+
+  const statusUpdated = dataUpdated?.status;
 
   //Cập nhật sp
   useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === "OK") {
+    if (isSuccessUpdated && statusUpdated === "OK") {
       message.success();
       handleCancelDrawer();
     } else if (isErrorUpdated) {
       message.error();
     }
-  }, [isSuccessUpdated]);
-
-  const handleCancelDrawer = () => {
-    setIsOpenDrawer(false);
-    setStateProductDetails({
-      name: '',
-      price: '',
-      description: '',
-      promotion: '',
-      rating: '',
-      image: '',
-      image1: '',
-      image2: '',
-      type: '',
-      branch: '',
-      countInStock: '',
-    })
-    form.resetFields()
-  };
-
-  const handleCancelDelete = () => {
-    setIsModalOpenDelete(false);
-  };
+  }, [isSuccessUpdated, statusUpdated, handleCancelDrawer, isErrorUpdated]);
 
   const handleDeleteProduct = () => {
     mutationDeleted.mutate(
@@ -462,25 +494,6 @@ const AdminProduct = () => {
     );
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setStateProduct({
-      name: '',
-      price: '',
-      description: '',
-      promotion: '',
-      rating: '',
-      image: '',
-      image1: '',
-      image2: '',
-      type: '',
-      branch: '',
-      countInStock: '',
-      discount: '',
-    })
-    form.resetFields()
-  };
-
   const onFinish = () => {
     const params = {
       name: stateProduct.name,
@@ -491,8 +504,14 @@ const AdminProduct = () => {
       image: stateProduct.image,
       image1: stateProduct.image1,
       image2: stateProduct.image2,
-      type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
-      branch: stateProduct.branch === 'add_branch' ? stateProduct.newBranch : stateProduct.branch,
+      type:
+        stateProduct.type === "add_type"
+          ? stateProduct.newType
+          : stateProduct.type,
+      branch:
+        stateProduct.branch === "add_branch"
+          ? stateProduct.newBranch
+          : stateProduct.branch,
       countInStock: stateProduct.countInStock,
       discount: stateProduct.discount,
     };
@@ -850,18 +869,21 @@ const AdminProduct = () => {
                 valueBranch={stateProduct.branch}
                 onChange={handleChangeSelectBranch}
                 options={renderOptionsBranch(branchProduct?.data?.data)}
-            />
+              />
             </Form.Item>
-             {stateProduct.branch === 'add_branch' && (
+            {stateProduct.branch === "add_branch" && (
               <Form.Item
                 label={t('ADMIN.ADD_NEW_BRANCH')}
                 name="newBranch"
                 rules={[{ required: true, message: t('ADMIN.PLACEHOODER_BRANCH') }]}
               >
-                <InputComponent value={stateProduct.newBranch} onChange={handleOnchange} name="newBranch" />
+                <InputComponent
+                  value={stateProduct.newBranch}
+                  onChange={handleOnchange}
+                  name="newBranch"
+                />
               </Form.Item>
             )}
-
 
             <Form.Item
               label={t('ADMIN.COUNT_IN_STOCK')}
@@ -1015,7 +1037,7 @@ const AdminProduct = () => {
                 </div>
               </WrapperUploadFile>
             </Form.Item>
-            
+
             <Form.Item
               label={t('ADMIN.NEW_IMG_2')}
               name="image2"
@@ -1088,15 +1110,23 @@ const AdminProduct = () => {
               name="type"
               rules={[{ required: true, message: t('ADMIN.NEW_TYPE')}]}
             >
-              <InputComponent value={stateProductDetails['type']} onChange={handleOnchangeDetails} name="type" />
+              <InputComponent
+                value={stateProductDetails["type"]}
+                onChange={handleOnchangeDetails}
+                name="type"
+              />
             </Form.Item>
              <Form.Item
               label={t('ADMIN.NEW_BRANCH')}
               name="branch"
               rules={[{ required: true, message: t('ADMIN.PLACEHOODER_BRANCH')}]}
             >
-              <InputComponent value={stateProductDetails['branch']} onChange={handleOnchangeDetails} name="branch" />    
-            </Form.Item> 
+              <InputComponent
+                value={stateProductDetails["branch"]}
+                onChange={handleOnchangeDetails}
+                name="branch"
+              />
+            </Form.Item>
             <Form.Item
               label={t('ADMIN.COUNT_IN_STOCK')}
               name="countInStock"

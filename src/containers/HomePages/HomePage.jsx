@@ -20,10 +20,10 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useTranslation } from "react-i18next";
 
-const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
+const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 1000);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [limit, setLimit] = useState(12);
   const [typeProducts, setTypeProducts] = useState([]);
   const [branchProducts, setBranchProducts] = useState([]);
@@ -72,6 +72,8 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
       Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
       Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+      Watch: "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
+      Gear: "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
     };
 
     // Trả về icon hoặc chuỗi rỗng nếu không có icon
@@ -82,6 +84,8 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     "Phone, Tablet",
     "Laptop",
     "Sound",
+    "Watch",
+    "Gear",
     "Screen",
     "Television",
   ]; // Thứ tự mong muốn
@@ -93,15 +97,21 @@ const HomePage = ({ isHiddenSearch = false, isHiddenCart = false }) => {
 
   return (
     <div>
-      <Loading isLoading={isLoading || loading}>
+      <Loading isLoading={isLoading}>
         <div
           className="body"
-          style={{ width: "100vw", backgroundColor: "#efefef" }}
+          style={{
+            width: "100%",
+            backgroundColor: "#efefef",
+            margin: "0",
+            overflowX: "hidden",
+          }}
         >
           <div
             style={{
               display: "flex",
-              width: "1270px",
+              width: "100%",
+              maxWidth: "1270px",
               margin: "60px auto 0",
               gap: "20px",
             }}

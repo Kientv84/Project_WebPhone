@@ -22,7 +22,6 @@ import * as UserService from "../../services/UserService";
 import { resetUser } from "../../redux/slice/userslide";
 import Loading from "../LoadingComponent/Loading";
 import { searchProduct } from "../../redux/slice/productSlide";
-// import Fuse from 'fuse.js';
 import { setOrderItems } from "../../redux/slice/orderSlide";
 import { resetOrder1 } from "../../redux/slice/orderSlide";
 import { convertPrice } from "../../utils";
@@ -146,12 +145,18 @@ const HeaderComponent = ({
 
   const handleOnChangeInput = (event) => {
     setSearch(event.target.value);
-    setSearch("");
   };
 
   const handleDetailProduct = (id) => {
     navigate(`/product-details/${id}`);
+    setSearch("");
   };
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/product-details")) {
+      setSearch(""); // Xóa thanh tìm kiếm khi vào trang product-details
+    }
+  }, [location.pathname]);
 
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1];
@@ -185,11 +190,13 @@ const HeaderComponent = ({
         "https://cellphones.com.vn/media/icons/menu/icon-cps-3.svg",
       Laptop:
         "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon-cps-380.svg",
+      Watch: "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
 
       Television:
         "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
       Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
       Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+      Gear: "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
     };
 
     // Trả về icon hoặc chuỗi rỗng nếu không có icon
@@ -200,6 +207,8 @@ const HeaderComponent = ({
     "Phone, Tablet",
     "Laptop",
     "Sound",
+    "Watch",
+    "Gear",
     "Screen",
     "Television",
   ]; // Thứ tự mong muốn
@@ -246,6 +255,7 @@ const HeaderComponent = ({
         className="header"
         style={{
           width: "100%",
+          maxWidth: "100vw",
           background: "#42C8B7",
           display: "flex",
           justifyContent: "center",
@@ -350,6 +360,7 @@ const HeaderComponent = ({
                 placeholder={t('HEADER.SEARCH_PLACEHODER')}
                 textbutton={t('HEADER.BUTTON_SEARCH')}
                 onChange={handleOnChangeInput}
+                value={search}
               />
               <div className="dropdown">
                 {products?.data?.filter((product) => {
@@ -380,6 +391,7 @@ const HeaderComponent = ({
                       key={product._id}
                     >
                       <img
+                        onClick={() => handleDetailProduct(product._id)}
                         src={product.image} // Đường dẫn tới ảnh sản phẩm
                         alt={product.name}
                       />
@@ -389,6 +401,7 @@ const HeaderComponent = ({
                         </span>
 
                         <span
+                          onClick={() => handleDetailProduct(product._id)}
                           style={{
                             display: "block",
                             color: "#db003b",
@@ -414,11 +427,13 @@ const HeaderComponent = ({
                   <img
                     src={userAvatar}
                     alt="avatar"
+                    onClick={() => setIsOpenPopup((prev) => !prev)}
                     style={{
                       height: "40px",
                       width: "40px",
                       borderRadius: "50%",
                       objectFit: "cover",
+                      cursor: "pointer",
                     }}
                   />
                 ) : (

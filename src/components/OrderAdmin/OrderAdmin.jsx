@@ -1,5 +1,5 @@
 import { Button, Form, Select, Space, message } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { WrapperHeader } from "./style";
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
@@ -93,7 +93,7 @@ const OrderAdmin = () => {
   } = mutationDeleted;
   const {
     data: dataDeletedMany,
-    isLoading: isLoadingDeletedMany,
+    // isLoading: isLoadingDeletedMany,
     isSuccess: isSuccessDeletedMany,
     isError: isErrorDeletedMany,
   } = mutationDeletedMany;
@@ -140,7 +140,6 @@ const OrderAdmin = () => {
   };
 
   const handleDeleteManyOrders = (ids) => {
-    // console.log('accc', user?.access_token)
     mutationDeletedMany.mutate(
       { ids: ids, token: user?.access_token },
       {
@@ -152,36 +151,41 @@ const OrderAdmin = () => {
   };
 
   // show ra tình trạng đơn hàng
-  const fetchGetDetailsOrder = async (rowSelected) => {
-    const res = await OrderService.getDetailsOrder(
-      rowSelected,
-      user?.access_token
-    );
-    // console.log('StateOrderDelivery', stateOrderDelivery)
-    // if (res?.data) {
-    //   // setStateOrderDelivery({
-    //   //   isDelivered: res?.data?.isDelivered
-    //   // })
-    // }
-    setIsLoadingUpdate(false);
-  };
+  const accessToken = user?.access_token;
+  const fetchGetDetailsOrder = useCallback(
+    async (rowSelected) => {
+      const res = await OrderService.getDetailsOrder(rowSelected, accessToken);
+
+      if (res?.status === "OK") {
+        setStateOrderDelivery(res.data);
+      } else {
+        message.error("Failed to fetch order details");
+      }
+
+      setIsLoadingUpdate(false);
+    },
+    [accessToken]
+  );
 
   //Show tinh trang thanh toan
-  const fetchGetDetailsOrderPayment = async (rowSelected) => {
-    const res = await OrderService.getDetailsOrder(
-      rowSelected,
-      user?.access_token
-    );
-    // console.log('StateOrderDelivery', stateOrderDelivery)
-    // if (res?.data) {
-    //   // setStateOrderDelivery({
-    //   //   isDelivered: res?.data?.isDelivered
-    //   // })
-    // }
-    setIsLoadingUpdate(false);
-  };
+  const fetchGetDetailsOrderPayment = useCallback(
+    async (rowSelected) => {
+      const res = await OrderService.getDetailsOrder(rowSelected, accessToken);
+
+      if (res?.status === "OK") {
+        // Giả sử bạn muốn lấy chi tiết thanh toán và lưu vào state
+        setStateOrderPayment(res.data);
+      } else {
+        message.error("Failed to fetch payment details");
+      }
+
+      setIsLoadingUpdate(false);
+    },
+    [accessToken]
+  );
 
   //Cập nhật giao hàng
+  const statusDataUpdated = dataUpdated?.status;
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === "OK") {
       message.success(t('ADMIN.UPDATE_DELIVERY_SUCC'));
@@ -189,9 +193,10 @@ const OrderAdmin = () => {
     } else if (isErrorUpdated) {
       message.error(t('ADMIN.UPDATE_DELIVERY_FAIL'));
     }
-  }, [isSuccessUpdated, isErrorUpdated]);
+  }, [isSuccessUpdated, isErrorUpdated, statusDataUpdated]);
 
   //Cập nhật payment
+  const statusDataUpdatedPayment = dataUpdatedPayment?.status;
   useEffect(() => {
     if (isSuccessUpdatedPayment && dataUpdatedPayment?.status === "OK") {
       message.success(t('ADMIN.UPDATE_PAY_SUCC'));
@@ -199,18 +204,24 @@ const OrderAdmin = () => {
     } else if (isErrorUpdatedPayment) {
       message.error(t('ADMIN.UPDATE_PAY_FAIL'));
     }
-  }, [isSuccessUpdatedPayment, isErrorUpdatedPayment]);
+  }, [
+    isSuccessUpdatedPayment,
+    isErrorUpdatedPayment,
+    statusDataUpdatedPayment,
+  ]);
 
   //Xoá nhiều
+  const statusDataDeletedMany = dataDeletedMany?.status;
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
       message.success(t('ADMIN.DELETE_TOAST'));
     } else if (isErrorDeletedMany) {
       message.error();
     }
-  }, [isSuccessDeletedMany]);
+  }, [isSuccessDeletedMany, statusDataDeletedMany, isErrorDeletedMany]);
 
   //Xoá 1
+  const statusDataDeleted = dataDeleted?.status;
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === "OK") {
       message.success(t('ADMIN.DELETE_TOAST'));
@@ -218,23 +229,21 @@ const OrderAdmin = () => {
     } else if (isErrorDeleted) {
       message.error();
     }
-  }, [isSuccessDeleted]);
+  }, [isSuccessDeleted, statusDataDeleted, isErrorDeleted]);
 
   useEffect(() => {
-    // console.log('rowSelected', rowSelected)
     if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true);
       fetchGetDetailsOrder(rowSelected);
     }
-  }, [rowSelected, isOpenDrawer]);
+  }, [rowSelected, isOpenDrawer, fetchGetDetailsOrder]);
 
   useEffect(() => {
-    // console.log('rowSelected', rowSelected)
     if (rowSelected && isOpenDrawerPayment) {
       setIsLoadingUpdate(true);
       fetchGetDetailsOrderPayment(rowSelected);
     }
-  }, [rowSelected, isOpenDrawerPayment]);
+  }, [rowSelected, isOpenDrawerPayment, fetchGetDetailsOrderPayment]);
 
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({

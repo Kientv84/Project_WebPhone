@@ -4,7 +4,8 @@
   display: flex;
   flex-direction: column;
   border-radius: 5px;
-  width: 586.24px;
+  width: 100%;
+  max-width: 586.24px;
   z-index: 1000; /* Đảm bảo dropdown hiển thị trên cùng */
   max-height: 300px; /* Giới hạn chiều cao */
   overflow-y: auto; /* Kích hoạt cuộn dọc nếu có nhiều sản phẩm */

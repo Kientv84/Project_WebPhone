@@ -98,7 +98,7 @@ const OrderPage = () => {
 
   useEffect(() => {
     dispatch(selectedOrder({ listChecked }));
-  }, [listChecked]);
+  }, [listChecked, dispatch]);
 
   useEffect(() => {
     form.setFieldsValue(stateUserDetails);
@@ -178,8 +178,7 @@ const OrderPage = () => {
     return res;
   });
 
-  const { isLoading, data } = mutationUpdate;
-  // console.log('data', data)
+  const { isLoading } = mutationUpdate;
 
   const handleCancelUpdate = () => {
     setStateUserDetails({

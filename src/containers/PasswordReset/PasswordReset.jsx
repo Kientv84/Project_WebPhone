@@ -11,23 +11,24 @@ import * as UserService from '../../services/UserService'
 import Loading from '../../components/LoadingComponent/Loading'
 import { useTranslation } from "react-i18next";
 
+
 const PasswordReset = () => {
-    const [isShowPassword, setIsShowPassword] = useState(false)
-    const navigate = useNavigate()
-    const [password, setPassword] = useState('');
-    const { id, token } = useParams()
+  const [isShowPassword, setIsShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const [password, setPassword] = useState("");
+  const { id, token } = useParams();
 
     const { t } = useTranslation();
 
-    const handleOnChangePassword = (value) => {
-        setPassword(value)
-    }
+  const handleOnChangePassword = (value) => {
+    setPassword(value);
+  };
 
-    const mutation = useMutationHook(
-        data => UserService.resetPassword(id, token, data),
-    )
+  const mutation = useMutationHook((data) =>
+    UserService.resetPassword(id, token, data)
+  );
 
-    const { data, isLoading, isError, isSuccess } = mutation
+  const { data, isLoading, isError, isSuccess } = mutation;
 
     useEffect(() => {
         if (isSuccess && data?.status === 'Success') {
@@ -37,17 +38,27 @@ const PasswordReset = () => {
             message.error()
         }
     }, [isError, isSuccess])
+  
+  const handleNavigateSignIn = useCallback(() => {
+    navigate("/sign-in");
+  }, [navigate]);
 
-    const updatePassword = async () => {
-        await mutation.mutate({
-            password
-        });
-    };
+  const status = data?.status;
 
-
-    const handleNavigateSignIn = () => {
-        navigate('/sign-in')
+  useEffect(() => {
+    if (isSuccess && status === "Success") {
+      message.success("Send mail verify successfully");
+      handleNavigateSignIn();
+    } else if (isError && status === "ERR") {
+      message.error();
     }
+  }, [isError, isSuccess, handleNavigateSignIn, status]);
+
+  const updatePassword = async () => {
+    await mutation.mutate({
+      password,
+    });
+  };
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#ccc', height: '100vh' }}>
@@ -97,5 +108,7 @@ const PasswordReset = () => {
         </div>
     )
 }
+  );
+};
 
-export default PasswordReset
+export default PasswordReset;

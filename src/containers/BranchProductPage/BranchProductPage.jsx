@@ -1,8 +1,7 @@
-import React from "react";
-// import NavBarComponent from '../../components/NavbarComponent/NavbarComponent'
+import React, { useCallback } from "react";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { Col, Pagination, Row } from "antd";
-import { WrapperNavbar, WrapperProducts, WrapperBranchProduct } from "./style";
+import { WrapperProducts } from "./style";
 import { useLocation } from "react-router-dom";
 import * as ProductService from "../../services/ProductService";
 import { useEffect } from "react";
@@ -10,7 +9,6 @@ import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
-import BranchProduct from "../../components/BranchProduct/BranchProduct";
 
 const BranchProductPage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -24,19 +22,21 @@ const BranchProductPage = () => {
     limit: 10,
     total: 1,
   });
-  const [branchProducts, setBranchProducts] = useState([]);
 
-  const fetchProductBranch = async (branch, page, limit) => {
-    setLoading(true);
-    const res = await ProductService.getProductBranch(branch, page, limit);
-    if (res?.status == "OK") {
-      setLoading(false);
-      setProducts(res?.data);
-      setPanigate({ ...panigate, total: res?.totalPage });
-    } else {
-      setLoading(false);
-    }
-  };
+  const fetchProductBranch = useCallback(
+    async (branch, page, limit) => {
+      setLoading(true);
+      const res = await ProductService.getProductBranch(branch, page, limit);
+      if (res?.status === "OK") {
+        setLoading(false);
+        setProducts(res?.data);
+        setPanigate({ ...panigate, total: res?.totalPage });
+      } else {
+        setLoading(false);
+      }
+    },
+    [panigate]
+  );
 
   useEffect(() => {
     if (state) {
@@ -83,14 +83,15 @@ const BranchProductPage = () => {
                 {products
                   ?.filter((pro) => {
                     if (searchDebounce === "") {
-                      return pro;
+                      return true; // Trả về true để giữ lại tất cả các sản phẩm
                     } else if (
                       pro?.name
                         ?.toLowerCase()
                         ?.includes(searchDebounce?.toLowerCase())
                     ) {
-                      return pro;
+                      return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
                     }
+                    return false;
                   })
                   ?.map((product) => {
                     return (

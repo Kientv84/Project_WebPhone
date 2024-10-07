@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { WrapperContainerLeft } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
@@ -18,14 +18,20 @@ const ForgotPassPage = () => {
 
   const { data, isLoading, isError, isSuccess } = mutation;
 
+  const handleNavigateSignIn = useCallback(() => {
+    navigate("/sign-in");
+  }, [navigate]);
+
+  const status = data?.status;
+
   useEffect(() => {
-    if (isSuccess && data?.status === "Success") {
+    if (isSuccess && status === "Success") {
       message.success("Send mail verify successfully");
       handleNavigateSignIn();
     } else if (isError) {
       message.error();
     }
-  }, [isError, isSuccess]);
+  }, [isError, isSuccess, handleNavigateSignIn, status]);
 
   const handleOnChangeEmail = (value) => {
     setEmail(value);
@@ -34,10 +40,6 @@ const ForgotPassPage = () => {
     await mutation.mutate({
       email,
     });
-  };
-
-  const handleNavigateSignIn = () => {
-    navigate("/sign-in");
   };
 
   return (

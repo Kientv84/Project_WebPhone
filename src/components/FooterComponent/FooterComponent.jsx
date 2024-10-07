@@ -1,7 +1,5 @@
 import React from "react";
-// import { Box, Columns, Columns1, Footer, FooterContainer, StoreTitle, Title } from './style'
 import { Box, Typography } from "@mui/material";
-import "./footer.css";
 
 const FooterComponent = () => {
   return (

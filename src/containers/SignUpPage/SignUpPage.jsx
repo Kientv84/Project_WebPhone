@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
@@ -30,6 +30,12 @@ const SignUpPage = () => {
 
   const { data, isLoading, isError, isSuccess } = mutation;
 
+  const handleNavigateSignIn = useCallback(() => {
+    navigate("/sign-in");
+  }, [navigate]);
+
+  const status = data?.status;
+
   useEffect(() => {
     if (isSuccess && data?.status === "OK") {
       message.success(t('SIGN_IN.SIGN_UP_MESS_SUCCESS'));
@@ -37,7 +43,7 @@ const SignUpPage = () => {
     } else if (isError) {
       message.error();
     }
-  }, [isError, isSuccess]);
+  }, [isError, isSuccess, handleNavigateSignIn, status]);
 
   const handleOnChangeEmail = (value) => {
     setEmail(value);
@@ -57,10 +63,6 @@ const SignUpPage = () => {
       password,
       confirmPassword,
     });
-  };
-
-  const handleNavigateSignIn = () => {
-    navigate("/sign-in");
   };
 
   return (
@@ -141,7 +143,6 @@ const SignUpPage = () => {
           )}
           <Loading isLoading={isLoading}>
             <ButtonComponent
-              // disabled={!email.length || !password.length || !confirmPassword.length}
               onClick={handleSignUp}
               size={40}
               styleButton={{

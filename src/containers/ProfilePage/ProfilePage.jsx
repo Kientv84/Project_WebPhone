@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   WrapperContentProfile,
   WrapperHeader,
@@ -30,13 +30,25 @@ const ProfilePage = () => {
   const [avatar, setAvatar] = useState("");
   const [isLoadings, setIsLoadings] = useState(false);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  const handleGetDetailsUser = useCallback(
+    async (id, token) => {
+      const res = await UserService.getDetailsUser(id, token);
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    },
+    [dispatch] // Thêm dispatch vào mảng phụ thuộc
+  );
 
   const mutation = useMutationHook((data) => {
     const { id, access_token, ...rests } = data;
     UserService.updateUser(id, rests, access_token);
   });
-  const dispatch = useDispatch();
-  const { data, isLoading, isSuccess, isError } = mutation;
+
+  const { isLoading, isSuccess, isError } = mutation;
+  const userId = user?.id;
+  const userToken = user?.access_token;
+
   useEffect(() => {
     setEmail(user?.email);
     setName(user?.name);
@@ -44,6 +56,7 @@ const ProfilePage = () => {
     setAddress(user?.address);
     setAvatar(user?.avatar);
   }, [user]);
+
   useEffect(() => {
     if (isSuccess) {
       message.success(t('PROFILE.UPDATE_SUCCESS'));
@@ -51,35 +64,32 @@ const ProfilePage = () => {
     } else if (isError) {
       message.error();
     }
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError, handleGetDetailsUser, userId, userToken]);
 
-  const handleGetDetailsUser = async (id, token) => {
-    const res = await UserService.getDetailsUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
-  };
   const handleOnChangeEmail = (value) => {
     setEmail(value);
   };
+
   const handleOnChangeName = (value) => {
     setName(value);
   };
+
   const handleOnChangePhone = (value) => {
     setPhone(value);
   };
+
   const handleOnChangeAddress = (value) => {
     setAddress(value);
   };
+
   const handleOnChangeAvatar = async ({ fileList }) => {
     const file = fileList[0];
 
-    // Nếu file chưa có URL hoặc preview, tạo preview từ file gốc
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
 
-    setAvatar(file.preview); // Cập nhật ảnh đại diện bằng preview
-
-    setIsLoadings(true); // Đặt trạng thái loading
+    setAvatar(file.preview);
 
     if (!file.url && !file.preview) {
       message.error(t('PROFILE.WARNING'), t('PROFILE.REQUIRE_UPLOAD_IMG'));
@@ -95,12 +105,10 @@ const ProfilePage = () => {
       (snapshot) => {},
       (err) => {
         console.log(err);
-        setIsLoadings(false); // Nếu lỗi, kết thúc loading
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          setAvatar(url); // Cập nhật URL ảnh đã tải lên
-          setIsLoadings(false); // Hoàn thành upload và kết thúc loading
+          setAvatar(url);
         });
       }
     );
@@ -117,6 +125,7 @@ const ProfilePage = () => {
       access_token: user?.access_token,
     });
   };
+
   return (
     <div style={{ width: "1270px", margin: "75px auto 0px", height: "500px" }}>
       <WrapperHeader>{t('PROFILE.TITLE')}</WrapperHeader>

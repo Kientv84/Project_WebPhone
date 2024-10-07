@@ -7,7 +7,6 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-
   return (
     <div
       style={{
