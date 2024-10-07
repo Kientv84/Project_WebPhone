@@ -7,10 +7,12 @@ import * as UserService from "../../services/UserService";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from "../../components/Message/Message";
+import { useTranslation } from "react-i18next";
 
 const ForgotPassPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const { t } = useTranslation();
 
   const mutation = useMutationHook((data) => UserService.forgotPassword(data));
 
@@ -63,11 +65,11 @@ const ForgotPassPage = () => {
           <h1
             style={{ fontSize: "30px", marginBottom: "8px", marginTop: "0px" }}
           >
-            Enter Your Email
+            {t('SIGN_IN.TITLE_FORGOT_PASS')}
           </h1>
           <InputForm
             style={{ marginBottom: "8px", marginTop: "10px" }}
-            placeholder="Enter your email address"
+            placeholder={t('SIGN_IN.FORGOT_PLACEHOODER')}
             value={email}
             onChange={handleOnChangeEmail}
           />
@@ -86,7 +88,7 @@ const ForgotPassPage = () => {
                 borderRadius: "4px",
                 margin: "26px 0 10px",
               }}
-              textbutton={"Send"}
+              textbutton={t('SIGN_IN.BUTTON_FORGOT')}
               styletextbutton={{
                 color: "#fff",
                 fontSize: "15px",

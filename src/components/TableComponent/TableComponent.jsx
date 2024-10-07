@@ -2,6 +2,7 @@ import { Table } from 'antd';
 import React, { useMemo, useState } from 'react';
 import Loading from '../LoadingComponent/Loading';
 import { Excel } from "antd-table-saveas-excel";
+import { useTranslation } from "react-i18next";
 
 const TableComponent = (props) => {
     const { selectionType = 'checkbox', data: dataSource = [], isLoading = false, columns = [], handleDeleteMany } = props
@@ -10,6 +11,9 @@ const TableComponent = (props) => {
         const arr = columns?.filter((col) => col.dataIndex !== 'action')
         return arr
     }, [columns])
+
+      const { t } = useTranslation();
+
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
@@ -42,10 +46,10 @@ const TableComponent = (props) => {
                     padding: '10px',
                     cursor: 'pointer',
                 }} onClick={handleDeleteAll}>
-                    Delete All
+                    {t('ADMIN.DELETE_ALL')}
                 </div>
             )}
-            <button onClick={exportExcel}>Export Excel</button>
+            <button style={{ margin: '20px',}} onClick={exportExcel}>{t('ADMIN.EXPORT_EXCEL')}</button>
             <Table
                 rowSelection={{
                     type: selectionType,

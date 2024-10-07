@@ -14,6 +14,7 @@ import { useMutationHook } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from "../../components/Message/Message";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const SignUpPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -22,6 +23,8 @@ const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const { t } = useTranslation();
 
   const mutation = useMutationHook((data) => UserService.signupUser(data));
 
@@ -34,8 +37,8 @@ const SignUpPage = () => {
   const status = data?.status;
 
   useEffect(() => {
-    if (isSuccess && status === "OK") {
-      message.success();
+    if (isSuccess && data?.status === "OK") {
+      message.success(t('SIGN_IN.SIGN_UP_MESS_SUCCESS'));
       handleNavigateSignIn();
     } else if (isError) {
       message.error();
@@ -85,7 +88,7 @@ const SignUpPage = () => {
           <h1
             style={{ fontSize: "30px", marginBottom: "8px", marginTop: "0px" }}
           >
-            Register
+            {t('SIGN_IN.REGISTER')}
           </h1>
           <InputForm
             style={{ marginBottom: "8px", marginTop: "10px" }}
@@ -107,7 +110,7 @@ const SignUpPage = () => {
               {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
             </span>
             <InputForm
-              placeholder="password"
+              placeholder= {t('SIGN_IN.PASSWORD_PLACEHOODER')}
               type={isShowPassword ? "text" : "password"}
               style={{ marginBottom: "10px" }}
               value={password}
@@ -128,7 +131,7 @@ const SignUpPage = () => {
               {isShowConfirmPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
             </span>
             <InputForm
-              placeholder="confirm password"
+              placeholder={t('SIGN_IN.FORGOT_PLACEHOODER')}
               type={isShowConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={handleOnChangeConfirmPassword}
@@ -150,7 +153,7 @@ const SignUpPage = () => {
                 borderRadius: "4px",
                 margin: "26px 0 10px",
               }}
-              textbutton={"Register"}
+              textbutton= {t('SIGN_IN.RES_BUTTON')}
               styletextbutton={{
                 color: "#fff",
                 fontSize: "15px",
@@ -159,10 +162,10 @@ const SignUpPage = () => {
             ></ButtonComponent>
           </Loading>
           <p style={{ fontSize: " 15px" }}>
-            You already have an account yet?{" "}
+            {t('SIGN_IN.RES_TEXT')}{" "}
             <WrapperTextLight onClick={handleNavigateSignIn}>
               {" "}
-              Sign-In
+              {t('SIGN_IN.SIGN_IN_BUTTON')}
             </WrapperTextLight>
           </p>
         </WrapperContainerLeft>

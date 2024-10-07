@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Col, Popover } from "antd";
+import { Badge, Col, Popover, Button  } from "antd";
 import {
   WrapperHeaderAccount,
   WrapperHeader,
@@ -8,6 +8,7 @@ import {
   WrapperContentPopup,
   WrapperTextHeaderSmall1,
   WrapperTypeProduct,
+  WrapperLanguages
 } from "./style";
 import {
   UserOutlined,
@@ -29,6 +30,8 @@ import { useQuery } from "react-query";
 import { useDebounce } from "../../hooks/useDebounce";
 import TypeProduct from "../TypeProduct/TypeProduct";
 import "./HeaderCoponent.css";
+import { useTranslation } from "react-i18next";
+import i18next from 'i18next';
 
 const HeaderComponent = ({
   isHiddenSearch = false,
@@ -49,6 +52,15 @@ const HeaderComponent = ({
   const searchDebounce = useDebounce(searchProduct, 1000);
   const [showTypeProduct, setShowTypeProduct] = useState(false);
   const location = useLocation();
+
+  const { t } = useTranslation();
+  const [language, setLanguage] = useState('en'); // Mặc định là tiếng Việt
+
+  const toggleLanguage = (lang) => {
+    i18next.changeLanguage(lang);
+    setLanguage(lang);
+  };
+  
 
   const handleNavigateLogin = () => {
     setShowTypeProduct(false);
@@ -83,18 +95,18 @@ const HeaderComponent = ({
   const content = (
     <div>
       <WrapperContentPopup onClick={() => handleClickNavigate("profile")}>
-        My Information
+        {t('HEADER.MY_INFOR')}
       </WrapperContentPopup>
       {user?.isAdmin && (
         <WrapperContentPopup onClick={() => handleClickNavigate("admin")}>
-          Management
+          {t('HEADER.MANAGE')}
         </WrapperContentPopup>
       )}
       <WrapperContentPopup onClick={() => handleClickNavigate("my-order")}>
-        My Order
+        {t('HEADER.MY_ORDER')}
       </WrapperContentPopup>
       <WrapperContentPopup onClick={() => handleClickNavigate()}>
-        Log Out
+        {t('HEADER.LOG_OUT')}
       </WrapperContentPopup>
     </div>
   );
@@ -221,6 +233,18 @@ const HeaderComponent = ({
     setShowTypeProduct(false);
   };
 
+   // Hàm renderLanguages
+  const renderLanguages = () => (
+    <div>
+      <Button onClick={() => toggleLanguage('en')} style={{ margin: '8px', cursor:'pointer' , color: '#333'}}>
+        English
+      </Button>
+      <Button onClick={() => toggleLanguage('vi')} style={{ margin: '8px', cursor:'pointer' , color: '#333'}}>
+        Vietnamese
+      </Button>
+    </div>
+  );
+
   return (
     <div>
       <div
@@ -303,7 +327,7 @@ const HeaderComponent = ({
                       </g>
                     </g>
                   </svg>
-                  <p>Category</p>
+                  <p>{t('HEADER.CATEGORY')}</p>
                 </div>
               </div>
             )}
@@ -333,8 +357,8 @@ const HeaderComponent = ({
             <Col span={13} style={{ position: "relative" }}>
               <ButtonInputSearch
                 size="large"
-                placeholder="What do you need to find?"
-                textbutton="Search"
+                placeholder={t('HEADER.SEARCH_PLACEHODER')}
+                textbutton={t('HEADER.BUTTON_SEARCH')}
                 onChange={handleOnChangeInput}
                 value={search}
               />
@@ -347,7 +371,7 @@ const HeaderComponent = ({
                     productNameLower.includes(searchTerm) &&
                     productNameLower !== searchTerm
                   );
-                }).length > 0 && <p className="title-box">Product suggests</p>}
+                }).length > 0 && <p className="title-box">{t('PROFILE.PRODUCT_SUGGET')}</p>}
 
                 {products?.data
                   ?.filter((product) => {
@@ -430,10 +454,10 @@ const HeaderComponent = ({
                     style={{ cursor: "pointer" }}
                   >
                     <WrapperTextHeaderSmall>
-                      Sign-In/ Sign-Up
+                      {t('HEADER.SIGN_IN_UP')}
                     </WrapperTextHeaderSmall>
                     <div>
-                      <WrapperTextHeaderSmall>Account</WrapperTextHeaderSmall>
+                      <WrapperTextHeaderSmall>{t('HEADER.ACCOUNT')}</WrapperTextHeaderSmall>
                       <CaretDownOutlined />
                     </div>
                   </div>
@@ -454,11 +478,18 @@ const HeaderComponent = ({
                     style={{ fontSize: "30px", color: "#fff" }}
                   />
                 </Badge>
-                <WrapperTextHeaderSmall1>Cart</WrapperTextHeaderSmall1>
+                <WrapperTextHeaderSmall1>{t('HEADER.CART')}</WrapperTextHeaderSmall1>
               </div>
             )}
           </Col>
         </WrapperHeader>
+        <WrapperLanguages>
+          <Popover content={renderLanguages()} trigger="click">
+            <Button style={{cursor: 'pointer' , color: '#333'}}>
+              {language === 'vi' ? 'VI' : 'EN'}
+            </Button>
+          </Popover>
+        </WrapperLanguages>
       </div>
     </div>
   );

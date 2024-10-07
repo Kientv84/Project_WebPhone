@@ -58,3 +58,19 @@ export const WrapperTypeProduct = styled.div`
   top: 0;
   width: 190px;
 `;
+
+export const WrapperLanguages = styled.div`
+  display: flex;
+  justify-content: center; /* Căng giữa */
+  padding: 20px; 
+   border-radius: 5px;
+`;
+
+//  border-radius: 5px; /* Bo góc */
+//   font-size: 18px;
+//   font-weight: bold;
+//   text-align: left;
+//   cursor: pointer;
+//   &:hover {
+//     color: #42c8b7;
+//   }

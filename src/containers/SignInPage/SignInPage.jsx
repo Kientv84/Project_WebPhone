@@ -19,6 +19,8 @@ import { useDispatch } from "react-redux";
 import { updateUser } from "../../redux/slice/userslide";
 import styles from "./styles.module.css";
 import googleIcon from "../../assets/images/image45.93ceca6.png";
+import { useTranslation } from "react-i18next";
+
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -27,6 +29,9 @@ const SignInPage = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
+
 
   const mutation = useMutationHook((data) => UserService.loginUser(data));
 
@@ -45,7 +50,7 @@ const SignInPage = () => {
       if (locations) {
         navigate(locations);
       } else {
-        message.success("Logged in successfully");
+        message.success(t('SIGN_IN.SIGN_IN_MESS_SUCCESS'));
         navigate("/");
       }
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
@@ -108,7 +113,7 @@ const SignInPage = () => {
           <h1
             style={{ fontSize: "30px", marginBottom: "5px", marginTop: "0px" }}
           >
-            Sign-In for member
+            {t('SIGN_IN.TITLE')}
           </h1>
           <InputForm
             style={{ marginBottom: "10px", marginTop: "40px" }}
@@ -130,7 +135,7 @@ const SignInPage = () => {
               {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
             </span>
             <InputForm
-              placeholder="password"
+              placeholder={t('SIGN_IN.PASSWORD_PLACEHOODER')}
               type={isShowPassword ? "text" : "password"}
               value={password}
               onChange={handleOnChangePassword}
@@ -152,14 +157,14 @@ const SignInPage = () => {
                 borderRadius: "4px",
                 margin: "15px 0 10px",
               }}
-              textbutton={"Sign-In"}
+              textbutton={t('SIGN_IN.SIGN_IN_BUTTON')}
               styletextbutton={{
                 color: "#fff",
                 fontSize: "15px",
                 fontWeight: "700",
               }}
             ></ButtonComponent>
-            <p className={styles.text}>or</p>
+            <p className={styles.text}>{t('SIGN_IN.OR')}</p>
             <div className={styles.container_btn}>
               <button
                 className={styles.google_btn}
@@ -181,13 +186,13 @@ const SignInPage = () => {
             style={{ marginBottom: "-10px", marginTop: "-8px" }}
             onClick={handleNavigateForgotPass}
           >
-            <WrapperTextLight>Forgot Password</WrapperTextLight>
+            <WrapperTextLight>{t('SIGN_IN.FORGOT_PASS')}</WrapperTextLight>
           </p>
           <p style={{ fontSize: " 15px" }}>
-            Don't have an account yet?{" "}
+            {t('SIGN_IN.TEXT')}{" "}
             <WrapperTextLight onClick={handleNavigateSignUp}>
               {" "}
-              Register
+              {t('SIGN_IN.REGISTER')}
             </WrapperTextLight>
           </p>
         </WrapperContainerLeft>

@@ -29,6 +29,7 @@ import { updateUser } from "../../redux/slice/userslide";
 import { useNavigate } from "react-router-dom";
 import { PayPalButton } from "react-paypal-button-v2";
 import * as PaymentService from "../../services/PaymentService";
+import { useTranslation } from "react-i18next";
 
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
@@ -42,6 +43,8 @@ const PaymentPage = () => {
 
   const navigate = useNavigate();
   const [sdkReady, setSdkReady] = useState(false);
+
+  const { t } = useTranslation();
 
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
   const [isOpenModalQRcode, setIsOpenModalQRcode] = useState(false);
@@ -136,43 +139,49 @@ const PaymentPage = () => {
       });
     }
   };
+const handleQrCodePayment = () => {
+  setIsOpenModalQRcode(true); // Mở modal QR code
 
-  const handleQrCodePayment = () => {
-    setIsOpenModalQRcode(true); // Mở modal QR code
+  let timeLeft = 300; // 15 phút = 900 giây
+  const interval = setInterval(async () => {
+    if (timeLeft > 0) {
+      try {
+        // Gọi hàm checkPaid để kiểm tra thanh toán
+        const paymentSuccess = await checkPaid(totalPriceMemo, content);
 
-    let timeLeft = 300; // 15 phút = 900 giây
-    const interval = setInterval(async () => {
-      if (timeLeft > 0) {
-        try {
-          // Gọi hàm checkPaid để kiểm tra thanh toán
-          const paymentSuccess = await checkPaid(totalPriceMemo, content);
+        if (paymentSuccess) {
+          clearInterval(interval); // Dừng interval nếu thanh toán thành công
+          message.success(t('PAYMENT.PAY_SUCCESS'));
 
-          if (paymentSuccess) {
-            clearInterval(interval); // Dừng interval nếu thanh toán thành công
-            message.success("Thanh toán thành công!");
+          setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
 
-            setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
-
-            mutationAddOrder.mutate({
-              token: user?.access_token,
-              orderItems: order?.orderItemsSelected,
-              fullName: user?.name,
-              address: user?.address,
-              phone: user?.phone,
-              city: user?.city,
-              paymentMethod: "qr_code",
-              itemsPrice: priceMemo,
-              shippingPrice: deliveryPriceMemo,
-              totalPrice: totalPriceMemo,
-              user: user?.id,
-              email: user?.email,
-              isPaid: true,
-            });
-          }
-        } catch (error) {
-          console.error("Lỗi khi kiểm tra thanh toán:", error);
+          mutationAddOrder.mutate({
+          token: user?.access_token,
+          orderItems: order?.orderItemsSelected,
+          fullName: user?.name,
+          address: user?.address,
+          phone: user?.phone,
+          city: user?.city,
+          paymentMethod: "qr_code",
+          itemsPrice: priceMemo,
+          shippingPrice: deliveryPriceMemo,
+          totalPrice: totalPriceMemo,
+          user: user?.id,
+          email: user?.email,
+          isPaid: true,  
+         });
         }
+      } catch (error) {
+        console.error("Lỗi khi kiểm tra thanh toán:", error);
+      }
 
+      timeLeft -= 3; // Cập nhật thời gian còn lại (2 giây mỗi lần)
+    } else {
+      clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
+      message.error(t('PAYMENT.PAY_QR_CODE_FAIL'));
+      setIsOpenModalQRcode(false); // Đóng modal nếu hết thời gian
+    }
+  }, 5000); // Kiểm tra mỗi 2 giây
         timeLeft -= 3; // Cập nhật thời gian còn lại (2 giây mỗi lần)
       } else {
         clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
@@ -211,7 +220,7 @@ const PaymentPage = () => {
         arrayOrdered.push(element.product);
       });
       dispatch(removeAllOrderProduct({ listChecked: arrayOrdered }));
-      message.success("Đặt hàng thành công");
+      message.success(t('PAYMENT.ORDER_SUCCESS'));
       navigate("/order-success", {
         state: {
           delivery,
@@ -221,7 +230,7 @@ const PaymentPage = () => {
         },
       });
     } else if (isError) {
-      message.error("Đã xảy ra lỗi khi đặt hàng");
+      message.error(t('PAYMENT.MESS_ERR_ORDER'));
     }
   }, [isSuccess, isError]);
 
@@ -378,30 +387,30 @@ const PaymentPage = () => {
             <WrapperLeft>
               <WrapperInfo2>
                 <div>
-                  <Label>Choose payment method</Label>
+                  <Label>{t('PAYMENT.CHOOSE_DELIVERED_METHOD')}</Label>
                   <WrapperRadio onChange={handleDelivery} value={delivery}>
                     <Radio value="fast">
                       <span style={{ color: "#ea8500", fontWeight: "bold" }}>
                         FAST
                       </span>{" "}
-                      Giao hàng tiết kiệm
+                      {t('PAYMENT.FAST_GO_JECT')}
                     </Radio>
                     <Radio value="gojek">
                       <span style={{ color: "#ea8500", fontWeight: "bold" }}>
                         GO_JEK
                       </span>{" "}
-                      Giao hàng tiết kiệm
+                      {t('PAYMENT.FAST_GO_JECT')}
                     </Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo2>
               <WrapperInfo3>
                 <div>
-                  <Label>Choose delivery method</Label>
+                  <Label>{t('PAYMENT.CHOOSE_PAYMENT_METHOD')}</Label>
                   <WrapperRadio onChange={handlePayment} value={payment}>
-                    <Radio value="later_money"> Cash on Delivery (COD)</Radio>
-                    <Radio value="paypal"> Pay with PayPal</Radio>
-                    <Radio value="qr_code"> Pay with QR code</Radio>
+                    <Radio value="later_money">{t('PAYMENT.COD')}</Radio>
+                    <Radio value="paypal">{t('PAYMENT.PAYPAL')}</Radio>
+                    <Radio value="qr_code">{t('PAYMENT.QR_CODE')}</Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo3>
@@ -411,7 +420,7 @@ const PaymentPage = () => {
               <div style={{ width: "100%" }}>
                 <WrapperInfo1>
                   <div>
-                    <span>Address: </span>
+                    <span>{t('PAYMENT.ADDRESS')}: </span>
                     <span style={{ fontWeight: "bold" }}>
                       {`${user?.address} ${user?.city}`}{" "}
                     </span>
@@ -419,7 +428,7 @@ const PaymentPage = () => {
                       onClick={handleChangeAddress}
                       style={{ color: "#9255FD", cursor: "pointer" }}
                     >
-                      Change
+                      {t('PAYMENT.CHANGE')}
                     </span>
                   </div>
                 </WrapperInfo1>
@@ -431,7 +440,7 @@ const PaymentPage = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span>Subtotal</span>
+                    <span>{t('PAYMENT.SUBTOTAL')}</span>
                     <span
                       style={{
                         color: "#000",
@@ -449,7 +458,7 @@ const PaymentPage = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span>Discount</span>
+                    <span>{t('PAYMENT.DISCOUNT')}</span>
                     <span
                       style={{
                         color: "#000",
@@ -467,7 +476,7 @@ const PaymentPage = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span>Delivery Cost</span>
+                    <span>{t('PAYMENT.DELIVERY_COST')}</span>
                     <span
                       style={{
                         color: "#000",
@@ -480,7 +489,7 @@ const PaymentPage = () => {
                   </div>
                 </WrapperInfo>
                 <WrapperTotal>
-                  <span>Total</span>
+                  <span>{t('PAYMENT.TOTAL')}</span>
                   <span style={{ display: "flex", flexDirection: "column" }}>
                     <span
                       style={{
@@ -492,7 +501,7 @@ const PaymentPage = () => {
                       {convertPrice(totalPriceMemo)}
                     </span>
                     <span style={{ color: "#000", fontSize: "11px" }}>
-                      (Including VAT if applicable)
+                      {t('PAYMENT.VAT')}
                     </span>
                   </span>
                 </WrapperTotal>
@@ -519,7 +528,7 @@ const PaymentPage = () => {
                     border: "none",
                     borderRadius: "4px",
                   }}
-                  textbutton={"Pay with QR Code"}
+                  textbutton= {t('PAYMENT.PAY_WITH_QR')}
                   styletextbutton={{
                     color: "#fff",
                     fontSize: "15px",
@@ -537,7 +546,7 @@ const PaymentPage = () => {
                     border: "none",
                     borderRadius: "4px",
                   }}
-                  textbutton={"Order Now"}
+                  textbutton={t('PAYMENT.ORDER_NOW')}
                   styletextbutton={{
                     color: "#fff",
                     fontSize: "15px",
@@ -549,7 +558,7 @@ const PaymentPage = () => {
           </div>
         </div>
         <ModalQRcode
-          title="Mời bạn thanh toán bằng QR code"
+          title={t('PAYMENT.TILE_QR_CODE')}
           open={isOpenModalQRcode}
           amount={totalPriceMemo} // Số tiền là 100,000 VND
           productName={content}
@@ -560,7 +569,7 @@ const PaymentPage = () => {
         </ModalQRcode>
 
         <ModalComponent
-          title="Update shipping address"
+          title={t('PAYMENT.UPDATE_SHIPPING_ADDRESS')}
           open={isOpenModalUpdateInfo}
           onCancel={handleCancelUpdate}
           onOk={handleUpdateInfoUser}
@@ -575,9 +584,9 @@ const PaymentPage = () => {
               form={form}
             >
               <Form.Item
-                label="Name"
+                label={t('PAYMENT.NAME')}
                 name="name"
-                rules={[{ required: true, message: "Please input your name!" }]}
+                rules={[{ required: true, message: t('PAYMENT.PLACEHOODER_NAME') }]}
               >
                 <InputComponent
                   value={stateUserDetails["name"]}
@@ -586,9 +595,9 @@ const PaymentPage = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="City"
+                label={t('PAYMENT.CITY')}
                 name="city"
-                rules={[{ required: true, message: "Please input your city!" }]}
+                rules={[{ required: true, message: t('PAYMENT.PLACEHOODER_CITY')}]}
               >
                 <InputComponent
                   value={stateUserDetails["city"]}
@@ -597,10 +606,10 @@ const PaymentPage = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="Phone"
+                label={t('PAYMENT.PHONE')}
                 name="phone"
                 rules={[
-                  { required: true, message: "Please input your  phone!" },
+                  { required: true, message: t('PAYMENT.PLACEHOODER_PHONE')},
                 ]}
               >
                 <InputComponent
@@ -611,10 +620,10 @@ const PaymentPage = () => {
               </Form.Item>
 
               <Form.Item
-                label="Address"
+                label={t('PAYMENT.ADDRESS')}
                 name="address"
                 rules={[
-                  { required: true, message: "Please input your  address!" },
+                  { required: true, message: t('PAYMENT.PLACEHOODER_ADDRESS')},
                 ]}
               >
                 <InputComponent

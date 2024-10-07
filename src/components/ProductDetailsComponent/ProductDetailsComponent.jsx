@@ -30,12 +30,12 @@ import { resetOrder } from "../../redux/slice/orderSlide.js";
 import LikeButtonComponent from "../LikeButtonComponent/LikeButtonComponent.jsx";
 import CommentComponent from "../CommentComponent/CommentComponent.jsx";
 import "./ProductDetailsComponent.css";
-import ModalComponent from "../ModalComponent/ModalComponent.jsx";
 import { useMutationHook } from "../../hooks/useMutationHook.js";
 import * as UserService from "../../services/UserService";
 import { updateAddress } from "../../redux/slice/userslide";
 import InputComponent from "../InputComponent/InputComponent.jsx";
 import addToCart from "../../assets/images/art-to-carts.png";
+import { useTranslation } from "react-i18next";
 
 const ProductDetailsComponent = ({ idProduct }) => {
   const [numProduct, setNumProduct] = useState(1);
@@ -43,6 +43,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const order = useSelector((state) => state.order);
   const [ErrorLimitOrder, setErrorLimitOrder] = useState(false);
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
+  const { t } = useTranslation();
 
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
@@ -88,7 +89,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
 
   useEffect(() => {
     if (order.isSuccessOrder) {
-      message.success("Success to add product to cart");
+      message.success(t('PRODUCT_DETAILS.MESSAGE_SUCCESS'));
     }
     return () => {
       dispatch(resetOrder());
@@ -330,7 +331,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   fontWeight: "bold",
                 }}
               >
-                Description
+                {t('PRODUCT_DETAILS.DESCRIPTION')}
               </PromotionHeaderDecription>
               <WrapperDecriptionTextProduct>
                 {productDetails?.description}
@@ -352,7 +353,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
               />
               <WrapperStyleTextSell>
                 {" "}
-                | Sold {productDetails?.selled}
+                | {t('PRODUCT_DETAILS.STAR')} {productDetails?.selled}
               </WrapperStyleTextSell>
             </div>
             <WrapperPriceProduct>
@@ -398,7 +399,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                       marginLeft: "-10px",
                     }}
                   >
-                    Promotion
+                    {t('PRODUCT_DETAILS.PROMOTION')}
                   </div>
                 </div>
               </PromotionHeader>
@@ -415,7 +416,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 borderBottom: "1px solid #e5e5e5",
               }}
             >
-              <div style={{ marginBottom: "10px" }}>Quantity</div>
+              <div style={{ marginBottom: "10px" }}>{t('PRODUCT_DETAILS.QUANTITY')}</div>
               <WrapperQualityProduct>
                 <button
                   style={{
@@ -466,7 +467,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   opacity: ErrorLimitOrder ? 0.5 : 1,
                 }}
                 onClick={handleBuyOrderProduct}
-                textbutton={"Purchase now"}
+                textbutton={t('PRODUCT_DETAILS.PURCHASE')}
                 styletextbutton={{
                   color: "#fff",
                   fontSize: "15px",
@@ -482,7 +483,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 }}
               >
                 <img src={addToCart} alt="cart-icon" />
-                <span>Add to Cart</span>
+                <span>{t('PRODUCT_DETAILS.ADD_CART')}</span>
               </button>
             </div>
             {ErrorLimitOrder && (
@@ -493,7 +494,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   alignItems: "center",
                 }}
               >
-                Sold Out
+                {t('PRODUCT_DETAILS.SOLD_OUT')}
               </span>
             )}
           </Col>
@@ -504,71 +505,10 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 ? "https://developers.facebook.com/docs/plugins/comments#configurator"
                 : window.location.href
             }
-            width="1640"
+            width="1234"
           />
         </Row>
       </Loading>
-      <ModalComponent
-        title="Update Information"
-        open={isOpenModalUpdateInfo}
-        onCancel={handleCancelUpdate}
-        onOk={handleUpdateInfoUser}
-      >
-        <Form
-          name="basic"
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
-          // onFinish={onUpdateUser}
-          autoComplete="on"
-          form={form}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please input your name!" }]}
-          >
-            <InputComponent
-              value={stateUserDetails.name}
-              onChange={handleOnchangeDetails}
-              name="name"
-            />
-          </Form.Item>
-          <Form.Item
-            label="City"
-            name="city"
-            rules={[{ required: true, message: "Please input your city!" }]}
-          >
-            <InputComponent
-              value={stateUserDetails.city}
-              onChange={handleOnchangeDetails}
-              name="city"
-            />
-          </Form.Item>
-          <Form.Item
-            label="Phone"
-            name="phone"
-            rules={[{ required: true, message: "Please input your  phone!" }]}
-          >
-            <InputComponent
-              value={stateUserDetails.phone}
-              onChange={handleOnchangeDetails}
-              name="phone"
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Address"
-            name="address"
-            rules={[{ required: true, message: "Please input your  address!" }]}
-          >
-            <InputComponent
-              value={stateUserDetails.address}
-              onChange={handleOnchangeDetails}
-              name="address"
-            />
-          </Form.Item>
-        </Form>
-      </ModalComponent>
     </div>
   );
 };
