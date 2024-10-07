@@ -1,9 +1,6 @@
 import { Col, Row, Image, Rate, Form } from "antd";
 import React, { useEffect, useState } from "react";
-// import imageProduct from '../../assets/images/image.png.webp'
-import imageProductSmall from "../../assets/images/imagesmall1.png.webp";
 import {
-  WrapperAddressProduct,
   WrapperInputNumber,
   WrapperPriceProduct,
   WrapperPriceTextProduct,
@@ -13,7 +10,6 @@ import {
   WrapperStyleImageSmall,
   WrapperStyleTextSell,
   WrapperDecriptionTextProduct,
-  WrapperStyleImageSmall1,
   Box,
   PromotionHeader,
   IconGift,
@@ -60,13 +56,14 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const handleChangeAddress = () => {
-    setIsOpenModalUpdateInfo(true);
-  };
+  // const handleChangeAddress = () => {
+  //   setIsOpenModalUpdateInfo(true);
+  // };
 
   const onChange = (value) => {
     setNumProduct(Number(value));
   };
+
   const fetchGetDetailsProduct = async (context) => {
     const id = context?.queryKey && context?.queryKey[1];
     if (id) {
@@ -96,15 +93,15 @@ const ProductDetailsComponent = ({ idProduct }) => {
     return () => {
       dispatch(resetOrder());
     };
-  }, [order.isSuccessOrder]);
+  }, [order.isSuccessOrder, dispatch]);
 
   const handleChangeCount = (type, limit) => {
     if (type === "increase") {
-      if (!limit) {
+      if (!limit && numProduct < productDetails.countInStock) {
         setNumProduct(numProduct + 1);
       }
     } else {
-      if (!limit) {
+      if (!limit && numProduct > 1) {
         setNumProduct(numProduct - 1);
       }
     }
@@ -188,7 +185,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
     return res;
   });
 
-  const { isLoading1, data } = mutationUpdate;
+  // const { isLoading1, data } = mutationUpdate;
 
   const handleCancelUpdate = () => {
     setStateUserDetails({
@@ -231,12 +228,11 @@ const ProductDetailsComponent = ({ idProduct }) => {
     setSelectedImage(Image);
   };
 
+  const productDetailss = productDetails?.image;
   useEffect(() => {
     // Set initial image
-    setSelectedImage(productDetails?.image);
-  }, [productDetails?.image]);
-
-  const gift = () => {};
+    setSelectedImage(productDetailss);
+  }, [productDetailss]);
 
   return (
     <div>

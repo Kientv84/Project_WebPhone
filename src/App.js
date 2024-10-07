@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes/index";
 import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
@@ -9,10 +9,31 @@ import { useDispatch } from "react-redux";
 import { updateUser } from "./redux/slice/userslide";
 import Loading from "./components/LoadingComponent/Loading";
 import DefautFooterComponent from "./components/DefautFooterComponent/DefautFooterComponent";
+import Chatbot from "./components/ChatbotComponent/Chatbot";
 
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Memoize handleDecoded để tránh tái tạo lại hàm trong mỗi lần render
+  const handleDecoded = useCallback(() => {
+    let storageData = localStorage.getItem("access_token");
+    let decoded = {};
+    if (storageData && isJsonString(storageData)) {
+      storageData = JSON.parse(storageData);
+      decoded = jwt_decode(storageData);
+    }
+    return { decoded, storageData };
+  }, []);
+
+  // Memoize handleGetDetailsUser để tránh tái tạo lại hàm trong mỗi lần render
+  const handleGetDetailsUser = useCallback(
+    async (id, token) => {
+      const res = await UserService.getDetailsUser(id, token);
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -21,22 +42,11 @@ function App() {
       handleGetDetailsUser(decoded.id, storageData);
     }
     setIsLoading(false);
-  }, []);
-
-  const handleDecoded = () => {
-    let storageData = localStorage.getItem("access_token");
-    let decoded = {};
-    if (storageData && isJsonString(storageData)) {
-      storageData = JSON.parse(storageData);
-      decoded = jwt_decode(storageData);
-    }
-    return { decoded, storageData };
-  };
+  }, [handleDecoded, handleGetDetailsUser]); // Thêm handleDecoded và handleGetDetailsUser vào mảng phụ thuộc
 
   // Add a request interceptor
   UserService.axiosJWT.interceptors.request.use(
     async (config) => {
-      // Do something before request is sent
       const currentTime = new Date();
       const { decoded } = handleDecoded();
       if (decoded?.exp < currentTime.getTime() / 1000) {
@@ -46,15 +56,9 @@ function App() {
       return config;
     },
     function (error) {
-      // Do something with request error
       return Promise.reject(error);
     }
   );
-
-  const handleGetDetailsUser = async (id, token) => {
-    const res = await UserService.getDetailsUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
-  };
 
   return (
     <div style={{ height: "100vh", width: "100%" }}>
@@ -67,6 +71,7 @@ function App() {
               const LayoutFooter = route.isShowFooter
                 ? DefautFooterComponent
                 : Fragment;
+              const isShowChatbox = route.isShowChatbox !== false;
               return (
                 <Route
                   key={route.path}
@@ -74,6 +79,7 @@ function App() {
                   element={
                     <Layout>
                       <Page />
+                      {isShowChatbox && <Chatbot />}
                       <LayoutFooter />
                     </Layout>
                   }

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { WrapperHeader, WrapperUploadFile } from "./style";
-import { Button, Form, Modal, Space } from "antd";
+import { Button, Form, Space } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -305,16 +305,7 @@ const AdminUser = () => {
     }
   }, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany]);
 
-  useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success();
-      handleCancelDrawer();
-    } else if (isErrorUpdated) {
-      message.error();
-    }
-  }, [isSuccessUpdated, isErrorUpdated, dataUpdated]);
-
-  const handleCancelDrawer = () => {
+  const handleCancelDrawer = useCallback(() => {
     setIsOpenDrawer(false);
     setStateUserDetails({
       name: "",
@@ -323,7 +314,16 @@ const AdminUser = () => {
       isAdmin: false,
     });
     form.resetFields();
-  };
+  }, [form]);
+
+  useEffect(() => {
+    if (isSuccessUpdated && dataUpdated?.status === "OK") {
+      message.success();
+      handleCancelDrawer();
+    } else if (isErrorUpdated) {
+      message.error();
+    }
+  }, [isSuccessUpdated, isErrorUpdated, dataUpdated, handleCancelDrawer]);
 
   const handleCancelDelete = () => {
     setIsModalOpenDelete(false);

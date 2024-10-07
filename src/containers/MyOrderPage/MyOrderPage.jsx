@@ -45,7 +45,7 @@ const MyOrderPage = () => {
 
   const mutation = useMutationHook((data) => {
     const { id, token, orderItems } = data;
-    const res = OrderService.cancelOrder(id, token, orderItems);
+    OrderService.cancelOrder(id, token, orderItems);
     return;
   });
 
@@ -67,23 +67,6 @@ const MyOrderPage = () => {
       }
     );
   };
-
-  // const handleCancelOrder = (order) => {
-  //   mutation.mutate(
-  //     { id: order._id, token: state?.token, orderItems: order?.orderItems },
-  //     {
-  //       onSuccess: () => {
-  //         message.success("Delete order Success");
-
-  //         // Sau khi xóa thành công, refetch lại danh sách đơn hàng
-  //         queryOrder.refetch();
-  //       },
-  //       onError: () => {
-  //         message.error("Delete order Failed");
-  //       },
-  //     }
-  //   );
-  // };
 
   const {
     isLoading: isLoadingCancel,

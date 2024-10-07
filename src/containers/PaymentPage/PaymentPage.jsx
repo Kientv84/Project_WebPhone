@@ -38,14 +38,13 @@ const PaymentPage = () => {
 
   const [delivery, setDelivery] = useState("fast");
   const [payment, setPayment] = useState("later_money");
-  const [paymentbyQRCode, setPaymentbyQRCode] = useState("qr_code")
-  
+  const [paymentbyQRCode, setPaymentbyQRCode] = useState("qr_code");
+
   const navigate = useNavigate();
   const [sdkReady, setSdkReady] = useState(false);
 
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
   const [isOpenModalQRcode, setIsOpenModalQRcode] = useState(false);
-  // const [isSuccessPaied, setIsSuccessPaied] =  useState(false);
 
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
@@ -110,8 +109,6 @@ const PaymentPage = () => {
     );
   }, [priceMemo, priceDiscountMemo, deliveryPriceMemo]);
 
-
-
   const handleAddOrder = () => {
     if (
       user?.access_token &&
@@ -123,7 +120,6 @@ const PaymentPage = () => {
       priceMemo &&
       user?.id
     ) {
-      // console.log('first', user)
       mutationAddOrder.mutate({
         token: user?.access_token,
         orderItems: order?.orderItemsSelected,
@@ -140,55 +136,53 @@ const PaymentPage = () => {
       });
     }
   };
- 
 
-const handleQrCodePayment = () => {
-  setIsOpenModalQRcode(true); // Mở modal QR code
+  const handleQrCodePayment = () => {
+    setIsOpenModalQRcode(true); // Mở modal QR code
 
-  let timeLeft = 300; // 15 phút = 900 giây
-  const interval = setInterval(async () => {
-    if (timeLeft > 0) {
-      try {
-        // Gọi hàm checkPaid để kiểm tra thanh toán
-        const paymentSuccess = await checkPaid(totalPriceMemo, content);
+    let timeLeft = 300; // 15 phút = 900 giây
+    const interval = setInterval(async () => {
+      if (timeLeft > 0) {
+        try {
+          // Gọi hàm checkPaid để kiểm tra thanh toán
+          const paymentSuccess = await checkPaid(totalPriceMemo, content);
 
-        if (paymentSuccess) {
-          clearInterval(interval); // Dừng interval nếu thanh toán thành công
-          message.success("Thanh toán thành công!");
+          if (paymentSuccess) {
+            clearInterval(interval); // Dừng interval nếu thanh toán thành công
+            message.success("Thanh toán thành công!");
 
-          setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
+            setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
 
-          mutationAddOrder.mutate({
-          token: user?.access_token,
-          orderItems: order?.orderItemsSelected,
-          fullName: user?.name,
-          address: user?.address,
-          phone: user?.phone,
-          city: user?.city,
-          paymentMethod: "qr_code",
-          itemsPrice: priceMemo,
-          shippingPrice: deliveryPriceMemo,
-          totalPrice: totalPriceMemo,
-          user: user?.id,
-          email: user?.email,
-          isPaid: true,  
-         });
+            mutationAddOrder.mutate({
+              token: user?.access_token,
+              orderItems: order?.orderItemsSelected,
+              fullName: user?.name,
+              address: user?.address,
+              phone: user?.phone,
+              city: user?.city,
+              paymentMethod: "qr_code",
+              itemsPrice: priceMemo,
+              shippingPrice: deliveryPriceMemo,
+              totalPrice: totalPriceMemo,
+              user: user?.id,
+              email: user?.email,
+              isPaid: true,
+            });
+          }
+        } catch (error) {
+          console.error("Lỗi khi kiểm tra thanh toán:", error);
         }
-      } catch (error) {
-        console.error("Lỗi khi kiểm tra thanh toán:", error);
+
+        timeLeft -= 3; // Cập nhật thời gian còn lại (2 giây mỗi lần)
+      } else {
+        clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
+        message.error("Thời gian thanh toán đã hết. Vui lòng thử lại.");
+        setIsOpenModalQRcode(false); // Đóng modal nếu hết thời gian
       }
+    }, 5000); // Kiểm tra mỗi 2 giây
 
-      timeLeft -= 3; // Cập nhật thời gian còn lại (2 giây mỗi lần)
-    } else {
-      clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
-      message.error("Thời gian thanh toán đã hết. Vui lòng thử lại.");
-      setIsOpenModalQRcode(false); // Đóng modal nếu hết thời gian
-    }
-  }, 5000); // Kiểm tra mỗi 2 giây
-
-   setPaymentInterval(interval); // Lưu ID interval
-};
-
+    setPaymentInterval(interval); // Lưu ID interval
+  };
 
   const mutationUpdate = useMutationHook((data) => {
     const { id, token, ...rests } = data;
@@ -242,7 +236,6 @@ const handleQrCodePayment = () => {
     setIsOpenModalUpdateInfo(false);
   };
   const handleUpdateInfoUser = () => {
-    // console.log('stateUserDetails', stateUserDetails)
     const { name, address, city, phone } = stateUserDetails;
     if (name && address && city && phone) {
       mutationUpdate.mutate(
@@ -257,14 +250,12 @@ const handleQrCodePayment = () => {
     }
   };
 
-
   const handleOnchangeDetails = (e) => {
     setStateUserDetails({
       ...stateUserDetails,
       [e.target.name]: e.target.value,
     });
   };
-
 
   const handleDelivery = (e) => {
     setDelivery(e.target.value);
@@ -292,7 +283,6 @@ const handleQrCodePayment = () => {
       paidAt: details.update_time,
       email: user?.email,
     });
-    // console.log('details, data', details, data)
   };
 
   const handleCancel = () => {
@@ -322,22 +312,22 @@ const handleQrCodePayment = () => {
     }
   }, []);
 
-
   useEffect(() => {
-  if (order?.orderItemsSelected?.length > 0) {
-      let  productNames = order?.orderItemsSelected?.map(item => item.name)
-      .join('')
-      .replace(/\s+/g, ''); // Xóa tất cả khoảng trắng
-    
+    if (order?.orderItemsSelected?.length > 0) {
+      let productNames = order?.orderItemsSelected
+        ?.map((item) => item.name)
+        .join("")
+        .replace(/\s+/g, ""); // Xóa tất cả khoảng trắng
+
       // Hàm loại bỏ dấu
       const removeDiacritics = (str) => {
-        return  str
-        .normalize('NFD') // Phân tách các ký tự có dấu
-        .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
-        .replace(/đ/g, 'd') 
-        .replace(/Đ/g, 'D')
-        .replace(/[$\\@\\\#%\^\&\*\(\)\[\]\+\_\{\}\`\~\=\|\[/]/g, ''); // Xóa các ký tự đặc biệt
-      }
+        return str
+          .normalize("NFD") // Phân tách các ký tự có dấu
+          .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
+          .replace(/đ/g, "d")
+          .replace(/Đ/g, "D")
+          .replace(/[$\\@\\\#%\^\&\*\(\)\[\]\+\_\{\}\`\~\=\|\[/]/g, ""); // Xóa các ký tự đặc biệt
+      };
       productNames = removeDiacritics(productNames);
 
       if (productNames.length > 35) {
@@ -345,39 +335,31 @@ const handleQrCodePayment = () => {
       }
 
       setContent(productNames);
-  }
-}, [order?.orderItemsSelected]);
-
-//  console.log('content',content);
-
-//  console.log('order',order);
- 
- async function checkPaid(price, content) {
-  try {
-    // Fetch dữ liệu từ API
-    const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbz9KsEavJS7aClWoTM_3Yte-kNxfsXa8N6O96je2TQ7bDoeJmcSGqLm-_sFdQvYzkusdA/exec"
-    );
-
-    const data = await response.json();
-    const lastPaid = data.data[data.data.length -1];
-    const lastPrice = lastPaid["Giá trị"];  
-    const lastContent = lastPaid["Mô tả"]
-
-    // console.log('lastPrice',lastPrice >= price);
-
-    // console.log('lastContent',lastContent.includes(content));
-
-    if (lastPrice >= price && lastContent.includes(content))  {
-      return true; 
-    } else {
-      return false; 
     }
-  } catch (error) {
-    console.error("Lỗi khi kiểm tra thanh toán:", error);
-    return false;
+  }, [order?.orderItemsSelected]);
+
+  async function checkPaid(price, content) {
+    try {
+      // Fetch dữ liệu từ API
+      const response = await fetch(
+        "https://script.google.com/macros/s/AKfycbz9KsEavJS7aClWoTM_3Yte-kNxfsXa8N6O96je2TQ7bDoeJmcSGqLm-_sFdQvYzkusdA/exec"
+      );
+
+      const data = await response.json();
+      const lastPaid = data.data[data.data.length - 1];
+      const lastPrice = lastPaid["Giá trị"];
+      const lastContent = lastPaid["Mô tả"];
+
+      if (lastPrice >= price && lastContent.includes(content)) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Lỗi khi kiểm tra thanh toán:", error);
+      return false;
+    }
   }
-}
 
   return (
     <div
@@ -528,7 +510,7 @@ const handleQrCodePayment = () => {
                 </div>
               ) : payment === "qr_code" ? (
                 <ButtonComponent
-                  onClick={() => handleQrCodePayment() } // Hàm xử lý cho thanh toán qua QR Code
+                  onClick={() => handleQrCodePayment()} // Hàm xử lý cho thanh toán qua QR Code
                   size={40}
                   styleButton={{
                     background: "rgb(0, 123, 255)", // Màu nền cho QR Code Payment (tuỳ chỉnh)
@@ -574,17 +556,15 @@ const handleQrCodePayment = () => {
           onCancel={handleCancel}
           onOk={handleCancel}
         >
-          <Loading isLoading={isLoading}>
-
-          </Loading>
+          <Loading isLoading={isLoading}></Loading>
         </ModalQRcode>
-        
+
         <ModalComponent
           title="Update shipping address"
           open={isOpenModalUpdateInfo}
           onCancel={handleCancelUpdate}
           onOk={handleUpdateInfoUser}
-        > 
+        >
           <Loading isLoading={isLoading}>
             <Form
               name="basic"

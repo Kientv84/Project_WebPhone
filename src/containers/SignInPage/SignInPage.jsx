@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
@@ -32,17 +32,23 @@ const SignInPage = () => {
 
   const { data, isLoading, isSuccess } = mutation;
 
+  const handleGetDetailsUser = useCallback(
+    async (id, token) => {
+      const res = await UserService.getDetailsUser(id, token);
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    },
+    [dispatch]
+  ); // memoize với 'dispatch'
+  const locations = location?.state;
   useEffect(() => {
     if (isSuccess && data?.status === "OK") {
-      if (location?.state) {
-        navigate(location?.state);
+      if (locations) {
+        navigate(locations);
       } else {
         message.success("Logged in successfully");
         navigate("/");
       }
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
-      // localStorage.setItem('refresh_token', JSON.stringify(data?.refresh_token))
-      // console.log(data)
       if (data?.access_token) {
         const decoded = jwt_decode(data?.access_token);
         if (decoded?.id) {
@@ -50,12 +56,7 @@ const SignInPage = () => {
         }
       }
     }
-  }, [isSuccess, data]);
-
-  const handleGetDetailsUser = async (id, token) => {
-    const res = await UserService.getDetailsUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
-  };
+  }, [isSuccess, data, handleGetDetailsUser, navigate, locations]);
 
   const handleOnChangeEmail = (value) => {
     setEmail(value);
@@ -172,7 +173,6 @@ const SignInPage = () => {
                 className={styles.facebook_btn}
                 onClick={() => handleSignInAuth("facebook")}
               >
-                {/* <img src={facebookIcon} alt="facebook icon" /> */}
                 <span style={{ color: "white" }}>Facebook</span>
               </button>
             </div>
