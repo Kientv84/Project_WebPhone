@@ -268,8 +268,8 @@ const resources = {
           ORDER_DETAIL: {
           "TITLE": "Order Details",
           "RECEPTION_ADDRESS": "Recipient's address",
-          "ADDRESS": "Address",
-          "PHONE_NUMBER": "Phone Number",
+          "ADDRESS": "Address:",
+          "PHONE_NUMBER": "Phone Number:",
           "SHIPPING_METHOD": "Shipping method",
           "PAYMENT_METHOD": "Payment method",
           "FAST": "Economical delivery",
@@ -283,6 +283,11 @@ const resources = {
           "DISCOUNT": "Discount",
           "SUBTOTAL": "Subtotal",
           "TOTAL": "Total"
+        },
+          CONSTANT: {
+          'LATER_MONEY': 'Cash on Delivery (COD)',
+          'PAYPAL': 'Payment with Paypal',
+          'QR_CODE': 'Payment with QR code',
         }
     }
   },
@@ -548,8 +553,8 @@ const resources = {
         ORDER_DETAIL: {
           "TITLE": "Chi tiết đơn hàng",
           "RECEPTION_ADDRESS": "Địa chỉ của người nhận",
-          "ADDRESS": "Địa chỉ",
-          "PHONE_NUMBER": "Số điện thoại",
+          "ADDRESS": "Địa chỉ:",
+          "PHONE_NUMBER": "Số điện thoại:",
           "SHIPPING_METHOD": "Phương thức giao hàng",
           "PAYMENT_METHOD": "Phương thức thanh toán",
           "FAST": "Giao hàng tiết kiệm",
@@ -563,6 +568,11 @@ const resources = {
           "DISCOUNT": "Giảm giá",
           "SUBTOTAL": "Tổng tiền",
           "TOTAL": "Tổng số"
+        },
+        CONSTANT: {
+          'LATER_MONEY': 'Thanh toán khi nhận hàng',
+          'PAYPAL': 'thanh toán bằng Paypal',
+          'QR_CODE': 'thanh toán bằng mã QR',
         }
     }
   }
