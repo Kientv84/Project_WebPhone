@@ -139,59 +139,54 @@ const PaymentPage = () => {
       });
     }
   };
-const handleQrCodePayment = () => {
-  setIsOpenModalQRcode(true); // Mở modal QR code
 
-  let timeLeft = 300; // 15 phút = 900 giây
-  const interval = setInterval(async () => {
-    if (timeLeft > 0) {
-      try {
-        // Gọi hàm checkPaid để kiểm tra thanh toán
-        const paymentSuccess = await checkPaid(totalPriceMemo, content);
+  const handleQrCodePayment = () => {
+    setIsOpenModalQRcode(true); // Mở modal QR code
 
-        if (paymentSuccess) {
-          clearInterval(interval); // Dừng interval nếu thanh toán thành công
-          message.success(t('PAYMENT.PAY_SUCCESS'));
+    let timeLeft = 300; // 15 phút = 900 giây
+    const interval = setInterval(async () => {
+      if (timeLeft > 0) {
+        try {
+          // Gọi hàm checkPaid để kiểm tra thanh toán
+          const paymentSuccess = await checkPaid(totalPriceMemo, content);
 
-          setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
+          if (paymentSuccess) {
+            clearInterval(interval); // Dừng interval nếu thanh toán thành công
+            message.success(t("PAYMENT.PAY_SUCCESS"));
 
-          mutationAddOrder.mutate({
-          token: user?.access_token,
-          orderItems: order?.orderItemsSelected,
-          fullName: user?.name,
-          address: user?.address,
-          phone: user?.phone,
-          city: user?.city,
-          paymentMethod: "qr_code",
-          itemsPrice: priceMemo,
-          shippingPrice: deliveryPriceMemo,
-          totalPrice: totalPriceMemo,
-          user: user?.id,
-          email: user?.email,
-          isPaid: true,  
-         });
+            setIsOpenModalQRcode(false); // Đóng modal sau khi thanh toán thành công
+
+            mutationAddOrder.mutate({
+              token: user?.access_token,
+              orderItems: order?.orderItemsSelected,
+              fullName: user?.name,
+              address: user?.address,
+              phone: user?.phone,
+              city: user?.city,
+              paymentMethod: "qr_code",
+              itemsPrice: priceMemo,
+              shippingPrice: deliveryPriceMemo,
+              totalPrice: totalPriceMemo,
+              user: user?.id,
+              email: user?.email,
+              isPaid: true,
+            });
+          }
+        } catch (error) {
+          console.error("Lỗi khi kiểm tra thanh toán:", error);
         }
-      } catch (error) {
-        console.error("Lỗi khi kiểm tra thanh toán:", error);
-      }
 
-      timeLeft -= 3; // Cập nhật thời gian còn lại (2 giây mỗi lần)
-    } else {
-      clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
-      message.error(t('PAYMENT.PAY_QR_CODE_FAIL'));
-      setIsOpenModalQRcode(false); // Đóng modal nếu hết thời gian
-    }
-  }, 5000); // Kiểm tra mỗi 2 giây
         timeLeft -= 3; // Cập nhật thời gian còn lại (2 giây mỗi lần)
       } else {
         clearInterval(interval); // Hết thời gian, dừng việc kiểm tra
-        message.error("Thời gian thanh toán đã hết. Vui lòng thử lại.");
+        message.error(t("PAYMENT.PAY_QR_CODE_FAIL"));
         setIsOpenModalQRcode(false); // Đóng modal nếu hết thời gian
       }
     }, 5000); // Kiểm tra mỗi 2 giây
-
     setPaymentInterval(interval); // Lưu ID interval
   };
+
+
 
   const mutationUpdate = useMutationHook((data) => {
     const { id, token, ...rests } = data;

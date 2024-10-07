@@ -16,11 +16,8 @@ import { useTranslation } from "react-i18next";
 const OrderSuccess = () => {
   const location = useLocation();
   const { state } = location;
-<<<<<<< multi_-languages
   // console.log('state', state)
   const { t } = useTranslation();
-=======
->>>>>>> master
 
   return (
     <div

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { WrapperContainerLeft } from './style'
 import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
@@ -108,7 +108,5 @@ const PasswordReset = () => {
         </div>
     )
 }
-  );
-};
 
 export default PasswordReset;
