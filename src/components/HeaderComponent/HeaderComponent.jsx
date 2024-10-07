@@ -371,7 +371,7 @@ const HeaderComponent = ({
                     productNameLower.includes(searchTerm) &&
                     productNameLower !== searchTerm
                   );
-                }).length > 0 && <p className="title-box">{t('PROFILE.PRODUCT_SUGGET')}</p>}
+                }).length > 0 && <p className="title-box">{t('HEADER.PRODUCT_SUGGET')}</p>}
 
                 {products?.data
                   ?.filter((product) => {

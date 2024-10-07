@@ -139,6 +139,7 @@ const PaymentPage = () => {
       });
     }
   };
+
   const handleQrCodePayment = () => {
     setIsOpenModalQRcode(true); // Mở modal QR code
 
@@ -374,7 +375,7 @@ const PaymentPage = () => {
     >
       <Loading isLoading={isLoadingAddOrder}>
         <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
-          <h3 style={{ fontWeight: "bold" }}>Payment</h3>
+          <h3 style={{ fontWeight: "bold" }}>{t("PAYMENT.TITLE")}</h3>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <WrapperLeft>
               <WrapperInfo2>
@@ -625,6 +626,7 @@ const PaymentPage = () => {
                 <InputComponent
                   value={stateUserDetails.address}
                   onChange={handleOnchangeDetails}
+                  MESS_PLS
                   name="address"
                 />
               </Form.Item>

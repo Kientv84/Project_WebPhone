@@ -76,11 +76,11 @@ const DetailsOrderPage = () => {
                   {data?.shippingAddress?.fullName}
                 </div>
                 <div className="address-info">
-                  <span>Address: </span>{" "}
+                  <span>{t('ORDER_DETAIL.ADDRESS')} </span>{" "}
                   {`${data?.shippingAddress?.address} ${data?.shippingAddress?.city}`}
                 </div>
                 <div className="phone-info">
-                  <span>Phone Number: </span> {data?.shippingAddress?.phone}
+                  <span>{t('ORDER_DETAIL.PHONE_NUMBER')} </span> {data?.shippingAddress?.phone}
                 </div>
               </WrapperContentInfo>
             </WrapperInfoUser>
@@ -162,15 +162,15 @@ const DetailsOrderPage = () => {
             })}
 
             <WrapperAllPrice>
-              <WrapperItemLabel>Subtotal</WrapperItemLabel>
+              <WrapperItemLabel>{t('ORDER_DETAIL.SUBTOTAL')}</WrapperItemLabel>
               <WrapperItem>{convertPrice(priceMemo)}</WrapperItem>
             </WrapperAllPrice>
             <WrapperAllPrice>
-              <WrapperItemLabel>Shipping Cost</WrapperItemLabel>
+              <WrapperItemLabel>{t('ORDER_DETAIL.SHIPPING_COST')}</WrapperItemLabel>
               <WrapperItem>{convertPrice(data?.shippingPrice)}</WrapperItem>
             </WrapperAllPrice>
             <WrapperAllPrice>
-              <WrapperItemLabel>Total</WrapperItemLabel>
+              <WrapperItemLabel>{t('ORDER_DETAIL.TOTAL')}</WrapperItemLabel>
               <WrapperItem>
                 <WrapperItem>{convertPrice(data?.totalPrice)}</WrapperItem>
               </WrapperItem>

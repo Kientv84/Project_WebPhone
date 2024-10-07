@@ -1,6 +1,7 @@
 import { Modal, Statistic } from "antd";
 import React from "react";
 import { QRCodeImage } from "./style";
+import { useTranslation } from "react-i18next";
 
 const ModalQRcode = ({
   title,
@@ -12,6 +13,8 @@ const ModalQRcode = ({
   ...rests
 }) => {
   const { Countdown } = Statistic;
+
+    const { t } = useTranslation();
 
   const MY_BANK = {
     BANK_ID: 970422,
@@ -40,7 +43,7 @@ const ModalQRcode = ({
 
         {/* Hiển thị đồng hồ đếm ngược */}
         <Countdown
-          title="Vui lòng thanh toán sau"
+          title={t('PAYMENT.MESS_PLS')}
           value={deadline}
           onFinish={onCountdownFinish} // Gọi khi hết thời gian
           format="mm:ss" // Hiển thị phút:giây
