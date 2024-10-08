@@ -222,6 +222,27 @@ const resources = {
           "SEARCH": "Search",
           "RESET": "Reset",
           "CLOSE": "Close",
+
+          "DELETE_USER_SUCCESS": "Deltete user sucess!",
+          "DELETE_USER_FAIL": "Delete user fail!",
+          "UPDATE_USER_SUCCESS": "Update user sucess!",
+          "UPDATE_USER_FAIL": "Update user fail!",
+
+          "ADD_SUCCESS": "Add product success!",
+          "ADD_FAIL": "Add product fail",
+          "DELETE_SUCCESS": "Deltete product sucess!",
+          "DELETE_FAIL": "Delete product fail!",
+          "UPDATE_SUCCESS": "Update product sucess!",
+          "UPDATE_FAIL": "Update product fail!",
+
+         "DELETE_ORDER_SUCCESS": "Deltete order sucess!",
+          "DELETE_ORDER_FAIL": "Delete order fail!",
+          "UPDATE_ORDER_SUCCESS": "Update order sucess!",
+          "UPDATE_ORDER_FAIL": "Update order fail!",
+
+
+          "DELETE_MANY_SUCCESS": "Delete many success!",
+          "DELETE_MANY_FAIL": "Delete many fail!",
         },
         PAYMENT: {
           "TITLE": "Payment",
@@ -410,7 +431,7 @@ const resources = {
           "PRODUCT": "Sản Phẩm",
           "ORDER": "Đơn Hàng",
           "MANAGE_USER": "Quản lý người dùng",
-          "MANAGE_PRODUCT": "Quảng lý sản phẩm",
+          "MANAGE_PRODUCT": "Quản lý sản phẩm",
           "MANAGE_ODERS": "Quản lý đơn hàng",
           "EXPORT_EXCEL": "In ra bảng",
           "USER_NAME": "Tên",
@@ -507,6 +528,27 @@ const resources = {
           "SEARCH": "Tìm kím",
           "RESET": "Làm mới",
           "CLOSE": "Đóng",
+
+          "DELETE_USER_SUCCESS": "Xóa người dùng thành công!",
+          "DELETE_USER_FAIL": "Xóa người dùng thất bại!",
+          "UPDATE_USER_SUCCESS": "Cập nhật thông tin thành công!",
+          "UPDATE_USER_FAIL": "Cập nhật thông tin người dùng thất bại!",
+
+
+          "ADD_SUCCESS": "Thêm sản phẩm thành công!",
+          "ADD_FAIL": "Thêm sản phẩm thất bại!",
+          "DELETE_SUCCESS": "xóa sản phẩm thành công!",
+          "DELETE_FAIL": "xóa sản phẩm thất bại!",
+          "UPDATE_SUCCESS": "cập nhật sản phẩm thành công!",
+          "UPDATE_FAIL": "cập nhật sản phẩm thất bại!",
+
+          "DELETE_ORDER_SUCCESS": "xóa đơn hàng thành công!",
+          "DELETE_ORDER_FAIL": "xóa đơn hàng thất bại!",
+          "UPDATE_ORDER_SUCCESS": "cập nhật đơn hàng thành công!",
+          "UPDATE_ORDER_FAIL": "cập nhật đơn hàng thất bại!",
+
+          "DELETE_MANY_SUCCESS": "Xóa nhiều thành công!",
+          "DELETE_MANY_FAIL": "Xóa nhiều thất bại!",
         },
          PAYMENT: {
           "TITLE": "Thanh toán",

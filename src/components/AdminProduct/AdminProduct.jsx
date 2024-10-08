@@ -420,10 +420,10 @@ const AdminProduct = () => {
   //Thêm mới sp
   useEffect(() => {
     if (isSuccess && statuss === "OK") {
-      message.success();
+      message.success(t('ADMIN.ADD_SUCCESS'));
       handleCancel();
     } else if (isError) {
-      message.error();
+      message.error(t('ADMIN.ADD_FAIL)'));
     }
   }, [isSuccess, statuss, handleCancel, isError]);
 
@@ -431,9 +431,9 @@ const AdminProduct = () => {
   //Xoá nhiều sp
   useEffect(() => {
     if (isSuccessDeletedMany && statusDeletedMany === "OK") {
-      message.success();
+      message.success(t('ADMIN.DELETE_MANY_SUCCESS'));
     } else if (isErrorDeletedMany) {
-      message.error();
+      message.error(t('ADMIN.DELETE_MANY_FAIL'));
     }
   }, [isSuccessDeletedMany, statusDeletedMany, isErrorDeletedMany]);
 
@@ -446,10 +446,10 @@ const AdminProduct = () => {
   //Xoá 1 sp
   useEffect(() => {
     if (isSuccessDeleted && statusDeleted === "OK") {
-      message.success();
+      message.success(t('ADMIN.DELETE_SUCCESS'));
       handleCancelDelete();
     } else if (isErrorDeleted) {
-      message.error();
+      message.error(t('ADMIN.DELETE_FAIL'));
     }
   }, [isSuccessDeleted, statusDeleted, handleCancelDelete, isErrorDeleted]);
 
@@ -476,10 +476,10 @@ const AdminProduct = () => {
   //Cập nhật sp
   useEffect(() => {
     if (isSuccessUpdated && statusUpdated === "OK") {
-      message.success();
+      message.success(t('ADMIN.UPDATE_SUCCESS'));
       handleCancelDrawer();
     } else if (isErrorUpdated) {
-      message.error();
+      message.error(t('ADMIN.UPDATE_FAIL'));
     }
   }, [isSuccessUpdated, statusUpdated, handleCancelDrawer, isErrorUpdated]);
 
@@ -1316,13 +1316,13 @@ const AdminProduct = () => {
         </Loading>
       </DrawerComponent>
       <ModalComponent
-        title="Delete product"
+        title={t('ADMIN.DELETE_PRODUCT')}
         open={isModalOpenDelete}
         onCancel={handleCancelDelete}
         onOk={handleDeleteProduct}
       >
         <Loading isLoading={isLoadingDeleted}>
-          <div>Are you sure you want to delete this product?</div>
+          <div>{t('ADMIN.MESS_DELETE_PRODUCT')}</div>
         </Loading>
       </ModalComponent>
     </div>

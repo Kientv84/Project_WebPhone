@@ -54,11 +54,12 @@ const HeaderComponent = ({
   const location = useLocation();
 
   const { t } = useTranslation();
-  const [language, setLanguage] = useState('en'); // Mặc định là tiếng Việt
+  const [language, setLanguage] = useState(i18next.language); // Mặc định là tiếng Việt
 
   const toggleLanguage = (lang) => {
-    i18next.changeLanguage(lang);
-    setLanguage(lang);
+      i18next.changeLanguage(lang).then(() => {
+      setLanguage(lang); // Cập nhật trạng thái ngôn ngữ
+    });
   };
   
 
@@ -486,7 +487,7 @@ const HeaderComponent = ({
         <WrapperLanguages>
           <Popover content={renderLanguages()} trigger="click">
             <Button style={{cursor: 'pointer' , color: '#333'}}>
-              {language === 'vi' ? 'VI' : 'EN'}
+              {language === 'vi' ? 'VI' : language === 'en' ? 'EN' : ''}
             </Button>
           </Popover>
         </WrapperLanguages>
