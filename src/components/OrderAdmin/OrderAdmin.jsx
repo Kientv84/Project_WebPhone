@@ -204,9 +204,9 @@ const OrderAdmin = () => {
   //Xoá nhiều
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
-      message.success(t('ADMIN.DELETE_TOAST'));
+      message.success(t('ADMIN.DELETE_MANY_SUCCESS'));
     } else if (isErrorDeletedMany) {
-      message.error();
+      message.error(t('ADMIN.DELETE_MANY_FAIL'));
     }
   }, [isSuccessDeletedMany]);
 
@@ -216,7 +216,7 @@ const OrderAdmin = () => {
       message.success(t('ADMIN.DELETE_TOAST'));
       setIsModalOpenDelete(false);
     } else if (isErrorDeleted) {
-      message.error();
+      message.error(t('ADMIN.DELETE_TOAST_FAIL'));
     }
   }, [isSuccessDeleted]);
 

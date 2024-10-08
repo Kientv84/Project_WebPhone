@@ -393,27 +393,27 @@ const AdminProduct = () => {
   //Thêm mới sp
   useEffect(() => {
     if (isSuccess && data?.status === "OK") {
-      message.success();
+      message.success(t('ADMIN.ADD_SUCCESS'));
       handleCancel();
     } else if (isError) {
-      message.error();
+      message.error(t('ADMIN.ADD_FAIL)'));
     }
   }, [isSuccess]);
 
   //Xoá nhiều sp
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
-      message.success();
+      message.success(t('ADMIN.DELETE_MANY_SUCCESS'));
     } else if (isErrorDeletedMany) {
-      message.error();
+      message.error(t('ADMIN.DELETE_MANY_FAIL'));
     }
   }, [isSuccessDeletedMany]);
 
   //Xoá 1 sp
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success();
-      handleCancelDelete();
+      message.success(t('ADMIN.DELETE_SUCCESS'));
+      handleCancelDelete(t('ADMIN.DELETE_FAIL'));
     } else if (isErrorDeleted) {
       message.error();
     }
@@ -422,10 +422,10 @@ const AdminProduct = () => {
   //Cập nhật sp
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success();
+      message.success(t('ADMIN.UPDATE_SUCCESS'));
       handleCancelDrawer();
     } else if (isErrorUpdated) {
-      message.error();
+      message.error(t('ADMIN.UPDATE_FAIL'));
     }
   }, [isSuccessUpdated]);
 
@@ -1286,13 +1286,13 @@ const AdminProduct = () => {
         </Loading>
       </DrawerComponent>
       <ModalComponent
-        title="Delete product"
+        title={t('ADMIN.DELETE_PRODUCT')}
         open={isModalOpenDelete}
         onCancel={handleCancelDelete}
         onOk={handleDeleteProduct}
       >
         <Loading isLoading={isLoadingDeleted}>
-          <div>Are you sure you want to delete this product?</div>
+          <div>{t('ADMIN.MESS_DELETE_PRODUCT')}</div>
         </Loading>
       </ModalComponent>
     </div>

@@ -154,9 +154,10 @@ const resources = {
           "ORDER_UPDATE_DELIVERED": "Update Delivered",
           "UPDATE_DELIVERY_SUCC": "Update Delivery Success",
           "UPDATE_DELIVERY_FAIL": "Update Fail",
-          "UPDATE_PAY_SUCC": "Update Delivery Success",
-          "UPDATE_PAY_FAIL": "Update Fail",
-          "DELETE_TOAST": "Delete order Success",
+          "UPDATE_PAY_SUCC": "Update payment method Success",
+          "UPDATE_PAY_FAIL": "Update payment method Fail",
+          "DELETE_TOAST": "Delete order Success!",
+          "DELETE_TOAST_FAIL": "Delete order fail!",
           "DELIVERED": "Delivered",
           "NOT_SHIPPED": "Not Shipped",
           "UPDATE_DELIVERY": "Update Delivery",
@@ -222,6 +223,27 @@ const resources = {
           "SEARCH": "Search",
           "RESET": "Reset",
           "CLOSE": "Close",
+
+          "DELETE_USER_SUCCESS": "Deltete user sucess!",
+          "DELETE_USER_FAIL": "Delete user fail!",
+          "UPDATE_USER_SUCCESS": "Update user sucess!",
+          "UPDATE_USER_FAIL": "Update user fail!",
+
+          "ADD_SUCCESS": "Add product success!",
+          "ADD_FAIL": "Add product fail",
+          "DELETE_SUCCESS": "Deltete product sucess!",
+          "DELETE_FAIL": "Delete product fail!",
+          "UPDATE_SUCCESS": "Update product sucess!",
+          "UPDATE_FAIL": "Update product fail!",
+
+         "DELETE_ORDER_SUCCESS": "Deltete order sucess!",
+          "DELETE_ORDER_FAIL": "Delete order fail!",
+          "UPDATE_ORDER_SUCCESS": "Update order sucess!",
+          "UPDATE_ORDER_FAIL": "Update order fail!",
+
+          
+          "DELETE_MANY_SUCCESS": "Delete many success!",
+          "DELETE_MANY_FAIL": "Delete many fail!",
         },
         PAYMENT: {
           "TITLE": "Payment",
@@ -438,6 +460,7 @@ const resources = {
           "UPDATE_PAY_SUCC": "Cập nhật phương thức thanh toán thành công",
           "UPDATE_PAY_FAIL": "cập nhật phương thức thanh toán thất bại",
           "DELETE_TOAST": "xóa đơn hàng thành công",
+          "DELETE_TOAST_FAIL": "xóa đơn hàng thất bại",
           "DELIVERED": "Đã giao hàng",
           "NOT_SHIPPED": "Chưa vận chuyển",
           "UPDATE_DELIVERY": "Cập nhật giao hàng",
@@ -502,6 +525,27 @@ const resources = {
           "SEARCH": "Tìm kím",
           "RESET": "Làm mới",
           "CLOSE": "Đóng",
+
+          "DELETE_USER_SUCCESS": "Xóa người dùng thành công!",
+          "DELETE_USER_FAIL": "Xóa người dùng thất bại!",
+          "UPDATE_USER_SUCCESS": "Cập nhật thông tin thành công!",
+          "UPDATE_USER_FAIL": "Cập nhật thông tin người dùng thất bại!",
+
+
+          "ADD_SUCCESS": "Thêm sản phẩm thành công!",
+          "ADD_FAIL": "Thêm sản phẩm thất bại!",
+          "DELETE_SUCCESS": "xóa sản phẩm thành công!",
+          "DELETE_FAIL": "xóa sản phẩm thất bại!",
+          "UPDATE_SUCCESS": "cập nhật sản phẩm thành công!",
+          "UPDATE_FAIL": "cập nhật sản phẩm thất bại!",
+
+         "DELETE_ORDER_SUCCESS": "xóa đơn hàng thành công!",
+          "DELETE_ORDER_FAIL": "xóa đơn hàng thất bại!",
+          "UPDATE_ORDER_SUCCESS": "cập nhật đơn hàng thành công!",
+          "UPDATE_ORDER_FAIL": "cập nhật đơn hàng thất bại!",
+
+          "DELETE_MANY_SUCCESS": "Xóa nhiều thành công!",
+          "DELETE_MANY_FAIL": "Xóa nhiều thất bại!",
         },
          PAYMENT: {
           "TITLE": "Thanh toán",

@@ -163,15 +163,15 @@ const DetailsOrderPage = () => {
             })}
 
             <WrapperAllPrice>
-              <WrapperItemLabel>Subtotal</WrapperItemLabel>
+              <WrapperItemLabel>{t('ORDER_DETAIL.SUBTOTAL')}</WrapperItemLabel>
               <WrapperItem>{convertPrice(priceMemo)}</WrapperItem>
             </WrapperAllPrice>
             <WrapperAllPrice>
-              <WrapperItemLabel>Shipping Cost</WrapperItemLabel>
+              <WrapperItemLabel>{t('ORDER_DETAIL.SHIPPING_COST')}</WrapperItemLabel>
               <WrapperItem>{convertPrice(data?.shippingPrice)}</WrapperItem>
             </WrapperAllPrice>
             <WrapperAllPrice>
-              <WrapperItemLabel>Total</WrapperItemLabel>
+              <WrapperItemLabel>{t('ORDER_DETAIL.TOTAL')}</WrapperItemLabel>
               <WrapperItem>
                 <WrapperItem>{convertPrice(data?.totalPrice)}</WrapperItem>
               </WrapperItem>
