@@ -29,7 +29,6 @@ const HomePage = () => {
   const [branchProducts, setBranchProducts] = useState([]);
   const { t } = useTranslation();
 
-
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1];
     const search = context?.queryKey && context?.queryKey[2];
@@ -63,17 +62,20 @@ const HomePage = () => {
 
   const getImageIconByType = (type) => {
     const imageIcons = {
-      "Phone, Tablet":
+      "HOMEPAGE.PHONE_TABLET":
         "https://cellphones.com.vn/media/icons/menu/icon-cps-3.svg",
-      Laptop:
+      "HOMEPAGE.LAPTOP":
         "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon-cps-380.svg",
-
-      Television:
+      "HOMEPAGE.WATCH":
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
+      "HOMEPAGE.TELEVISION":
         "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
-      Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
-      Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
-      Watch: "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
-      Gear: "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
+      "HOMEPAGE.SOUND":
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
+      "HOMEPAGE.SCREEN":
+        "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+      "HOMEPAGE.ACCESSORY":
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
     };
 
     // Trả về icon hoặc chuỗi rỗng nếu không có icon
@@ -81,13 +83,13 @@ const HomePage = () => {
   };
 
   const desiredOrder = [
-    "Phone, Tablet",
-    "Laptop",
-    "Sound",
-    "Watch",
-    "Gear",
-    "Screen",
-    "Television",
+    "HOMEPAGE.PHONE_TABLET",
+    "HOMEPAGE.LAPTOP",
+    "HOMEPAGE.SOUND",
+    "HOMEPAGE.WATCH",
+    "HOMEPAGE.ACCESSORY",
+    "HOMEPAGE.SCREEN",
+    "HOMEPAGE.TELEVISION",
   ]; // Thứ tự mong muốn
 
   // Sắp xếp typeProducts theo desiredOrder
@@ -119,12 +121,12 @@ const HomePage = () => {
             <div className="type-product">
               <div style={{ flex: "2", marginTop: "20px" }}>
                 <WrapperTypeProduct>
-                  {sortedTypeProducts.map((item) => {
-                    const imageIcon = getImageIconByType(item);
+                  {desiredOrder.map((itemKey) => {
+                    const imageIcon = getImageIconByType(itemKey); // Truyền vào khóa dịch để lấy icon
                     return (
                       <TypeProduct
-                        name={item}
-                        key={item}
+                        name={t(itemKey)} // Sử dụng bản dịch của mục
+                        key={itemKey}
                         imageIcon={imageIcon}
                       />
                     );

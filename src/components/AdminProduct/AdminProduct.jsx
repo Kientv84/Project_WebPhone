@@ -19,10 +19,9 @@ import { useSelector } from "react-redux";
 import ModalComponent from "../ModalComponent/ModalComponent";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../ultis/firebase";
-import { getBase64, renderOptionsType, renderOptionsBranch } from '../../utils'
-import FooterComponent from '../FooterComponent/FooterComponent'
+import { getBase64, renderOptionsType, renderOptionsBranch } from "../../utils";
+import FooterComponent from "../FooterComponent/FooterComponent";
 import { useTranslation } from "react-i18next";
-
 
 const AdminProduct = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,7 +30,7 @@ const AdminProduct = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const product = useSelector((state) => state?.product);
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
   // const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
@@ -149,8 +148,6 @@ const AdminProduct = () => {
   }, [form, stateProductDetails, isModalOpen]);
 
   useEffect(() => {
-    // console.log('rowSelected', rowSelected)
-    // console.log('isOpenDrawer', isOpenDrawer)
     if (rowSelected && isOpenDrawer) {
       setIsLoadingUpdate(true);
       fetchGetDetailsProduct(rowSelected);
@@ -178,7 +175,13 @@ const AdminProduct = () => {
       ...stateProduct,
       type: value,
     });
-    console.log("value", value);
+  };
+
+  const handleChangeNewSelect = (value) => {
+    setStateProductDetails({
+      ...stateProductDetails,
+      type: value,
+    });
   };
 
   const handleChangeSelectBranch = (valueBranch) => {
@@ -186,7 +189,13 @@ const AdminProduct = () => {
       ...stateProduct,
       branch: valueBranch,
     });
-    console.log("value", valueBranch);
+  };
+
+  const handleChangeNewSelectBranch = (valueBranch) => {
+    setStateProductDetails({
+      ...stateProductDetails,
+      type: valueBranch,
+    });
   };
 
   const fetchAllTypeProduct = async () => {
@@ -338,59 +347,59 @@ const AdminProduct = () => {
   );
 
   // Memoize some values to avoid unnecessary recalculations
-    const columns = [
-      {
-        title: t('ADMIN.PRODUCT_NAME'),
-        dataIndex: "name",
-        sorter: (a, b) => a.name.length - b.name.length,
-        ...getColumnSearchProps("name"), // search name
+  const columns = [
+    {
+      title: t("ADMIN.PRODUCT_NAME"),
+      dataIndex: "name",
+      sorter: (a, b) => a.name.length - b.name.length,
+      ...getColumnSearchProps("name"), // search name
+    },
+    {
+      title: t("ADMIN.PRODUCT_PRICE"),
+      dataIndex: "price",
+      sorter: (a, b) => a.price - b.price,
+      filters: [
+        { text: ">= 10000000", value: ">=" },
+        { text: "<= 10000000", value: "<=" },
+      ],
+      onFilter: (value, record) => {
+        if (value === ">=") {
+          return record.price >= 10000000;
+        }
+        return record.price <= 10000000;
       },
-      {
-        title: t('ADMIN.PRODUCT_PRICE'),
-        dataIndex: "price",
-        sorter: (a, b) => a.price - b.price,
-        filters: [
-          { text: ">= 10000000", value: ">=" },
-          { text: "<= 10000000", value: "<=" },
-        ],
-        onFilter: (value, record) => {
-          if (value === ">=") {
-            return record.price >= 10000000;
-          }
-          return record.price <= 10000000;
-        },
+    },
+    {
+      title: t("ADMIN.PRODUCT_RATING"),
+      dataIndex: "rating",
+      sorter: (a, b) => a.rating - b.rating,
+      filters: [
+        { text: ">= 3.5", value: ">=" },
+        { text: "<= 3.5", value: "<=" },
+      ],
+      onFilter: (value, record) => {
+        if (value === ">=") {
+          return record.rating >= 3.5;
+        }
+        return record.rating <= 3.5;
       },
-      {
-        title: t('ADMIN.PRODUCT_RATING'),
-        dataIndex: "rating",
-        sorter: (a, b) => a.rating - b.rating,
-        filters: [
-          { text: ">= 3.5", value: ">=" },
-          { text: "<= 3.5", value: "<=" },
-        ],
-        onFilter: (value, record) => {
-          if (value === ">=") {
-            return record.rating >= 3.5;
-          }
-          return record.rating <= 3.5;
-        },
-      },
-      {
-        title: t('ADMIN.PRODUCT_TYPE'),
-        dataIndex: "type",
-        ...getColumnSearchProps("type"), // search type
-      },
-      {
-        title: t('ADMIN.PRODUCT_BRANCH'),
-        dataIndex: 'branch',
-        ...getColumnSearchProps('branch'), // search branch
-      },
-      {
-        title: t('ADMIN.ACTION'),
-        dataIndex: 'action',
-        render: renderAction,
-      },
-    ];
+    },
+    {
+      title: t("ADMIN.PRODUCT_TYPE"),
+      dataIndex: "type",
+      ...getColumnSearchProps("type"), // search type
+    },
+    {
+      title: t("ADMIN.PRODUCT_BRANCH"),
+      dataIndex: "branch",
+      ...getColumnSearchProps("branch"), // search branch
+    },
+    {
+      title: t("ADMIN.ACTION"),
+      dataIndex: "action",
+      render: renderAction,
+    },
+  ];
   const dataTable =
     products?.data?.length &&
     products?.data?.map((product) => {
@@ -420,10 +429,10 @@ const AdminProduct = () => {
   //Thêm mới sp
   useEffect(() => {
     if (isSuccess && statuss === "OK") {
-      message.success(t('ADMIN.ADD_SUCCESS'));
+      message.success(t("ADMIN.ADD_SUCCESS"));
       handleCancel();
     } else if (isError) {
-      message.error(t('ADMIN.ADD_FAIL)'));
+      message.error(t("ADMIN.ADD_FAIL)"));
     }
   }, [isSuccess, statuss, handleCancel, isError]);
 
@@ -431,9 +440,9 @@ const AdminProduct = () => {
   //Xoá nhiều sp
   useEffect(() => {
     if (isSuccessDeletedMany && statusDeletedMany === "OK") {
-      message.success(t('ADMIN.DELETE_MANY_SUCCESS'));
+      message.success(t("ADMIN.DELETE_MANY_SUCCESS"));
     } else if (isErrorDeletedMany) {
-      message.error(t('ADMIN.DELETE_MANY_FAIL'));
+      message.error(t("ADMIN.DELETE_MANY_FAIL"));
     }
   }, [isSuccessDeletedMany, statusDeletedMany, isErrorDeletedMany]);
 
@@ -446,10 +455,10 @@ const AdminProduct = () => {
   //Xoá 1 sp
   useEffect(() => {
     if (isSuccessDeleted && statusDeleted === "OK") {
-      message.success(t('ADMIN.DELETE_SUCCESS'));
+      message.success(t("ADMIN.DELETE_SUCCESS"));
       handleCancelDelete();
     } else if (isErrorDeleted) {
-      message.error(t('ADMIN.DELETE_FAIL'));
+      message.error(t("ADMIN.DELETE_FAIL"));
     }
   }, [isSuccessDeleted, statusDeleted, handleCancelDelete, isErrorDeleted]);
 
@@ -476,10 +485,10 @@ const AdminProduct = () => {
   //Cập nhật sp
   useEffect(() => {
     if (isSuccessUpdated && statusUpdated === "OK") {
-      message.success(t('ADMIN.UPDATE_SUCCESS'));
+      message.success(t("ADMIN.UPDATE_SUCCESS"));
       handleCancelDrawer();
     } else if (isErrorUpdated) {
-      message.error(t('ADMIN.UPDATE_FAIL'));
+      message.error(t("ADMIN.UPDATE_FAIL"));
     }
   }, [isSuccessUpdated, statusUpdated, handleCancelDrawer, isErrorUpdated]);
 
@@ -494,7 +503,7 @@ const AdminProduct = () => {
     );
   };
 
-  const onFinish = () => {
+  const onFinish = async () => {
     const params = {
       name: stateProduct.name,
       price: stateProduct.price,
@@ -515,6 +524,7 @@ const AdminProduct = () => {
       countInStock: stateProduct.countInStock,
       discount: stateProduct.discount,
     };
+
     mutation.mutate(params, {
       onSettled: () => {
         queryProduct.refetch();
@@ -530,9 +540,10 @@ const AdminProduct = () => {
   };
 
   const handleOnchangeDetails = (e) => {
+    const { name, value } = e.target;
     setStateProductDetails({
       ...stateProductDetails,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
@@ -769,7 +780,7 @@ const AdminProduct = () => {
 
   return (
     <div>
-      <WrapperHeader>{t('ADMIN.MANAGE_PRODUCT')}</WrapperHeader>
+      <WrapperHeader>{t("ADMIN.MANAGE_PRODUCT")}</WrapperHeader>
       <div style={{ marginTop: "10px" }}>
         <Button
           style={{
@@ -798,15 +809,15 @@ const AdminProduct = () => {
           }}
         />
       </div>
-      <ModalComponent 
+      <ModalComponent
         forceRender
-        title={t('ADMIN.ADD_NEW_PRODUCT')}
+        title={t("ADMIN.ADD_NEW_PRODUCT")}
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
-        bodyStyle={{ padding: '24px' }} 
-        centered 
-        width={800} 
+        bodyStyle={{ padding: "24px" }}
+        centered
+        width={800}
       >
         <Loading isLoading={isLoading}>
           <Form
@@ -818,9 +829,14 @@ const AdminProduct = () => {
             form={form}
           >
             <Form.Item
-              label={t('ADMIN.NEW_PRODCUT_NAME')}
+              label={t("ADMIN.NEW_PRODCUT_NAME")}
               name="name"
-              rules={[{ required: true, message: t('ADMIN.PLACEHOODER_PRODCUT_NAME') }]}
+              rules={[
+                {
+                  required: true,
+                  message: t("ADMIN.PLACEHOODER_PRODCUT_NAME"),
+                },
+              ]}
             >
               <InputComponent
                 value={stateProduct["name"]}
@@ -830,14 +846,12 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.ADD_TYPE')}
+              label={t("ADMIN.ADD_TYPE")}
               name="type"
-              rules={[{ required: true, message: t('ADMIN.PLACEHOODER_TYPE') }]}
+              rules={[{ required: true, message: t("ADMIN.PLACEHOODER_TYPE") }]}
             >
               <Select
                 name="type"
-                // ="lucy"
-                // style={{ defaultValuewidth: 120 }}
                 value={stateProduct.type}
                 onChange={handleChangeSelect}
                 options={renderOptionsType(typeProduct?.data?.data)}
@@ -845,9 +859,11 @@ const AdminProduct = () => {
             </Form.Item>
             {stateProduct.type === "add_type" && (
               <Form.Item
-                label={t('ADMIN.ADD_NEW_TYPE')}
+                label={t("ADMIN.ADD_NEW_TYPE")}
                 name="newType"
-                rules={[{ required: true, message: t('ADMIN.PLACEHOODER_TYPE') }]}
+                rules={[
+                  { required: true, message: t("ADMIN.PLACEHOODER_TYPE") },
+                ]}
               >
                 <InputComponent
                   value={stateProduct.newType}
@@ -858,14 +874,14 @@ const AdminProduct = () => {
             )}
 
             <Form.Item
-              label={t('ADMIN.ADD_BRANCH')}
+              label={t("ADMIN.ADD_BRANCH")}
               name="branch"
-              rules={[{ required: true, message: t('ADMIN.PLACEHOODER_BRANCH') }]}
+              rules={[
+                { required: true, message: t("ADMIN.PLACEHOODER_BRANCH") },
+              ]}
             >
               <Select
                 name="branch"
-                // defaultValue="lucy"
-                // style={{ width: 120 }}
                 valueBranch={stateProduct.branch}
                 onChange={handleChangeSelectBranch}
                 options={renderOptionsBranch(branchProduct?.data?.data)}
@@ -873,9 +889,11 @@ const AdminProduct = () => {
             </Form.Item>
             {stateProduct.branch === "add_branch" && (
               <Form.Item
-                label={t('ADMIN.ADD_NEW_BRANCH')}
+                label={t("ADMIN.ADD_NEW_BRANCH")}
                 name="newBranch"
-                rules={[{ required: true, message: t('ADMIN.PLACEHOODER_BRANCH') }]}
+                rules={[
+                  { required: true, message: t("ADMIN.PLACEHOODER_BRANCH") },
+                ]}
               >
                 <InputComponent
                   value={stateProduct.newBranch}
@@ -886,10 +904,13 @@ const AdminProduct = () => {
             )}
 
             <Form.Item
-              label={t('ADMIN.COUNT_IN_STOCK')}
+              label={t("ADMIN.COUNT_IN_STOCK")}
               name="countInStock"
               rules={[
-                { required: true, message: t('ADMIN.PLACEHOODER_COUNT_IN_STOCK') },
+                {
+                  required: true,
+                  message: t("ADMIN.PLACEHOODER_COUNT_IN_STOCK"),
+                },
               ]}
             >
               <InputComponent
@@ -900,10 +921,10 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.PRICE')}
+              label={t("ADMIN.PRICE")}
               name="price"
               rules={[
-                { required: true, message: t('ADMIN.PLACEHOODER_PRICE') },
+                { required: true, message: t("ADMIN.PLACEHOODER_PRICE") },
               ]}
             >
               <InputComponent
@@ -914,12 +935,12 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.NEW_DESCRIPTION')}
+              label={t("ADMIN.NEW_DESCRIPTION")}
               name="description"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_DESCRIPTION'),
+                  message: t("ADMIN.PLACEHOODER_DESCRIPTION"),
                 },
               ]}
             >
@@ -927,16 +948,17 @@ const AdminProduct = () => {
                 value={stateProduct.description}
                 onChange={handleOnchange}
                 name="description"
+                style={{ minHeight: "150px", width: "100%" }}
               />
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.NEW_PROMOTION')}
+              label={t("ADMIN.NEW_PROMOTION")}
               name="promotion"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_PROMOTION'),
+                  message: t("ADMIN.PLACEHOODER_PROMOTION"),
                 },
               ]}
             >
@@ -948,10 +970,10 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.NEW_RAING')}
+              label={t("ADMIN.NEW_RAING")}
               name="rating"
               rules={[
-                { required: true, message: t('ADMIN.PLACEHOODER_RAING') },
+                { required: true, message: t("ADMIN.PLACEHOODER_RAING") },
               ]}
             >
               <InputComponent
@@ -962,12 +984,12 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.NEW_DISCOUNT')}
+              label={t("ADMIN.NEW_DISCOUNT")}
               name="discount"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_DISCOUNT'),
+                  message: t("ADMIN.PLACEHOODER_DISCOUNT"),
                 },
               ]}
             >
@@ -979,18 +1001,18 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.NEW_IMG')}
+              label={t("ADMIN.NEW_IMG")}
               name="image"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_IMG'),
+                  message: t("ADMIN.PLACEHOODER_IMG"),
                 },
               ]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button>{t('ADMIN.SELECT_IMG_PRODUCT')}</Button>
+                  <Button>{t("ADMIN.SELECT_IMG_PRODUCT")}</Button>
                   {stateProduct?.image && (
                     <img
                       src={stateProduct?.image}
@@ -1009,18 +1031,18 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.NEW_IMG_1')}
+              label={t("ADMIN.NEW_IMG_1")}
               name="image1"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_IMG'),
+                  message: t("ADMIN.PLACEHOODER_IMG"),
                 },
               ]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatar1} maxCount={1}>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button>{t('ADMIN.SELECT_IMG_PRODUCT')}</Button>
+                  <Button>{t("ADMIN.SELECT_IMG_PRODUCT")}</Button>
                   {stateProduct?.image1 && (
                     <img
                       src={stateProduct?.image1}
@@ -1039,18 +1061,18 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.NEW_IMG_2')}
+              label={t("ADMIN.NEW_IMG_2")}
               name="image2"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_IMG'),
+                  message: t("ADMIN.PLACEHOODER_IMG"),
                 },
               ]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatar2} maxCount={1}>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button>{t('ADMIN.SELECT_IMG_PRODUCT')}</Button>
+                  <Button>{t("ADMIN.SELECT_IMG_PRODUCT")}</Button>
                   {stateProduct?.image2 && (
                     <img
                       src={stateProduct?.image2}
@@ -1069,7 +1091,7 @@ const AdminProduct = () => {
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
               <Button type="primary" htmlType="submit">
-               {t('ADMIN.BUTTON_SUBMID_ADD_PRODUCT')}
+                {t("ADMIN.BUTTON_SUBMID_ADD_PRODUCT")}
               </Button>
             </Form.Item>
             {data?.status === "ERR" && (
@@ -1079,7 +1101,7 @@ const AdminProduct = () => {
         </Loading>
       </ModalComponent>
       <DrawerComponent
-        title={t('ADMIN.PRODUCT_DETAIL')}
+        title={t("ADMIN.PRODUCT_DETAIL")}
         isOpen={isOpenDrawer}
         onCancel={() => setIsOpenDrawer(false)}
         footer={null}
@@ -1094,9 +1116,9 @@ const AdminProduct = () => {
             form={form}
           >
             <Form.Item
-              label={t('ADMIN.NEW_PRODCUT_NAME')}
+              label={t("ADMIN.NEW_PRODCUT_NAME")}
               name="name"
-              rules={[{ required: true, message: t('ADMIN.NEW_PRODCUT_NAME') }]}
+              rules={[{ required: true, message: t("ADMIN.NEW_PRODCUT_NAME") }]}
             >
               <InputComponent
                 value={stateProductDetails["name"]}
@@ -1106,32 +1128,40 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.NEW_TYPE')}
+              label={t("ADMIN.NEW_TYPE")}
               name="type"
-              rules={[{ required: true, message: t('ADMIN.NEW_TYPE')}]}
+              rules={[{ required: true, message: t("ADMIN.NEW_TYPE") }]}
             >
-              <InputComponent
-                value={stateProductDetails["type"]}
-                onChange={handleOnchangeDetails}
+              <Select
                 name="type"
+                value={stateProductDetails.type}
+                onChange={handleChangeNewSelect}
+                options={renderOptionsType(typeProduct?.data?.data)}
               />
             </Form.Item>
-             <Form.Item
-              label={t('ADMIN.NEW_BRANCH')}
+
+            <Form.Item
+              label={t("ADMIN.NEW_BRANCH")}
               name="branch"
-              rules={[{ required: true, message: t('ADMIN.PLACEHOODER_BRANCH')}]}
+              rules={[
+                { required: true, message: t("ADMIN.PLACEHOODER_BRANCH") },
+              ]}
             >
-              <InputComponent
+              <Select
                 value={stateProductDetails["branch"]}
-                onChange={handleOnchangeDetails}
+                onChange={handleChangeNewSelectBranch}
                 name="branch"
+                options={renderOptionsBranch(branchProduct?.data?.data)}
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.COUNT_IN_STOCK')}
+              label={t("ADMIN.COUNT_IN_STOCK")}
               name="countInStock"
               rules={[
-                { required: true, message: t('ADMIN.PLACEHOODER_COUNT_IN_STOCK') },
+                {
+                  required: true,
+                  message: t("ADMIN.PLACEHOODER_COUNT_IN_STOCK"),
+                },
               ]}
             >
               <InputComponent
@@ -1141,10 +1171,10 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.PRICE')}
+              label={t("ADMIN.PRICE")}
               name="price"
               rules={[
-                { required: true, message: t('ADMIN.PLACEHOODER_PRICE') },
+                { required: true, message: t("ADMIN.PLACEHOODER_PRICE") },
               ]}
             >
               <InputComponent
@@ -1154,12 +1184,12 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.NEW_DESCRIPTION')}
+              label={t("ADMIN.NEW_DESCRIPTION")}
               name="description"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_DESCRIPTION') ,
+                  message: t("ADMIN.PLACEHOODER_DESCRIPTION"),
                 },
               ]}
             >
@@ -1167,15 +1197,16 @@ const AdminProduct = () => {
                 value={stateProductDetails.description}
                 onChange={handleOnchangeDetails}
                 name="description"
+                style={{ minHeight: "150px", width: "100%" }}
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.NEW_PROMOTION')}
+              label={t("ADMIN.NEW_PROMOTION")}
               name="promotion"
               rules={[
                 {
                   required: true,
-                  message:t('ADMIN.PLACEHOODER_PROMOTION') ,
+                  message: t("ADMIN.PLACEHOODER_PROMOTION"),
                 },
               ]}
             >
@@ -1186,10 +1217,10 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.NEW_RAING')}
+              label={t("ADMIN.NEW_RAING")}
               name="rating"
               rules={[
-                { required: true, message: t('ADMIN.PLACEHOODER_RAING') },
+                { required: true, message: t("ADMIN.PLACEHOODER_RAING") },
               ]}
             >
               <InputComponent
@@ -1199,12 +1230,12 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.NEW_DISCOUNT')}
+              label={t("ADMIN.NEW_DISCOUNT")}
               name="discount"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_DISCOUNT') ,
+                  message: t("ADMIN.PLACEHOODER_DISCOUNT"),
                 },
               ]}
             >
@@ -1215,18 +1246,16 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.NEW_IMG')}
+              label={t("ADMIN.NEW_IMG")}
               name="image"
-              rules={[
-                { required: true, message: t('ADMIN.PLACEHOODER_IMG') },
-              ]}
+              rules={[{ required: true, message: t("ADMIN.PLACEHOODER_IMG") }]}
             >
               <WrapperUploadFile
                 onChange={handleOnchangeAvatarDetails}
                 maxCount={1}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button>{t('ADMIN.SELECT_IMG_PRODUCT')}</Button>
+                  <Button>{t("ADMIN.SELECT_IMG_PRODUCT")}</Button>
                   {stateProductDetails?.image && (
                     <img
                       src={stateProductDetails?.image}
@@ -1244,12 +1273,12 @@ const AdminProduct = () => {
               </WrapperUploadFile>
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.NEW_IMG_1')}
+              label={t("ADMIN.NEW_IMG_1")}
               name="image1"
               rules={[
                 {
                   required: true,
-                  message:t('ADMIN.PLACEHOODER_IMG') ,
+                  message: t("ADMIN.PLACEHOODER_IMG"),
                 },
               ]}
             >
@@ -1258,7 +1287,7 @@ const AdminProduct = () => {
                 maxCount={1}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button>{t('ADMIN.SELECT_IMG_PRODUCT')}</Button>
+                  <Button>{t("ADMIN.SELECT_IMG_PRODUCT")}</Button>
                   {stateProductDetails?.image1 && (
                     <img
                       src={stateProductDetails?.image1}
@@ -1276,12 +1305,12 @@ const AdminProduct = () => {
               </WrapperUploadFile>
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.NEW_IMG_2')}
+              label={t("ADMIN.NEW_IMG_2")}
               name="image2"
               rules={[
                 {
                   required: true,
-                  message: t('ADMIN.PLACEHOODER_IMG'),
+                  message: t("ADMIN.PLACEHOODER_IMG"),
                 },
               ]}
             >
@@ -1290,7 +1319,7 @@ const AdminProduct = () => {
                 maxCount={1}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button>{t('ADMIN.SELECT_IMG_PRODUCT')}</Button>
+                  <Button>{t("ADMIN.SELECT_IMG_PRODUCT")}</Button>
                   {stateProductDetails?.image2 && (
                     <img
                       src={stateProductDetails?.image2}
@@ -1309,20 +1338,20 @@ const AdminProduct = () => {
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                {t('ADMIN.DETAIL_USER_APPLY')}
+                {t("ADMIN.DETAIL_USER_APPLY")}
               </Button>
             </Form.Item>
           </Form>
         </Loading>
       </DrawerComponent>
       <ModalComponent
-        title={t('ADMIN.DELETE_PRODUCT')}
+        title={t("ADMIN.DELETE_PRODUCT")}
         open={isModalOpenDelete}
         onCancel={handleCancelDelete}
         onOk={handleDeleteProduct}
       >
         <Loading isLoading={isLoadingDeleted}>
-          <div>{t('ADMIN.MESS_DELETE_PRODUCT')}</div>
+          <div>{t("ADMIN.MESS_DELETE_PRODUCT")}</div>
         </Loading>
       </ModalComponent>
     </div>

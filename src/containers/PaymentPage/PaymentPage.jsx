@@ -186,8 +186,6 @@ const PaymentPage = () => {
     setPaymentInterval(interval); // Lưu ID interval
   };
 
-
-
   const mutationUpdate = useMutationHook((data) => {
     const { id, token, ...rests } = data;
     const res = UserService.updateUser(id, { ...rests }, token);
@@ -215,7 +213,7 @@ const PaymentPage = () => {
         arrayOrdered.push(element.product);
       });
       dispatch(removeAllOrderProduct({ listChecked: arrayOrdered }));
-      message.success(t('PAYMENT.ORDER_SUCCESS'));
+      message.success(t("PAYMENT.ORDER_SUCCESS"));
       navigate("/order-success", {
         state: {
           delivery,
@@ -225,7 +223,7 @@ const PaymentPage = () => {
         },
       });
     } else if (isError) {
-      message.error(t('PAYMENT.MESS_ERR_ORDER'));
+      message.error(t("PAYMENT.MESS_ERR_ORDER"));
     }
   }, [isSuccess, isError]);
 
@@ -377,35 +375,35 @@ const PaymentPage = () => {
     >
       <Loading isLoading={isLoadingAddOrder}>
         <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
-          <h3 style={{ fontWeight: "bold" }}>{t('PAYMENT.TITLE')}</h3>
+          <h3 style={{ fontWeight: "bold" }}>{t("PAYMENT.TITLE")}</h3>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <WrapperLeft>
               <WrapperInfo2>
                 <div>
-                  <Label>{t('PAYMENT.CHOOSE_DELIVERED_METHOD')}</Label>
+                  <Label>{t("PAYMENT.CHOOSE_DELIVERED_METHOD")}</Label>
                   <WrapperRadio onChange={handleDelivery} value={delivery}>
                     <Radio value="fast">
                       <span style={{ color: "#ea8500", fontWeight: "bold" }}>
                         FAST
                       </span>{" "}
-                      {t('PAYMENT.FAST_GO_JECT')}
+                      {t("PAYMENT.FAST_GO_JECT")}
                     </Radio>
                     <Radio value="gojek">
                       <span style={{ color: "#ea8500", fontWeight: "bold" }}>
                         GO_JEK
                       </span>{" "}
-                      {t('PAYMENT.FAST_GO_JECT')}
+                      {t("PAYMENT.FAST_GO_JECT")}
                     </Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo2>
               <WrapperInfo3>
                 <div>
-                  <Label>{t('PAYMENT.CHOOSE_PAYMENT_METHOD')}</Label>
+                  <Label>{t("PAYMENT.CHOOSE_PAYMENT_METHOD")}</Label>
                   <WrapperRadio onChange={handlePayment} value={payment}>
-                    <Radio value="later_money">{t('PAYMENT.COD')}</Radio>
-                    <Radio value="paypal">{t('PAYMENT.PAYPAL')}</Radio>
-                    <Radio value="qr_code">{t('PAYMENT.QR_CODE')}</Radio>
+                    <Radio value="later_money">{t("PAYMENT.COD")}</Radio>
+                    <Radio value="paypal">{t("PAYMENT.PAYPAL")}</Radio>
+                    <Radio value="qr_code">{t("PAYMENT.QR_CODE")}</Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo3>
@@ -415,7 +413,7 @@ const PaymentPage = () => {
               <div style={{ width: "100%" }}>
                 <WrapperInfo1>
                   <div>
-                    <span>{t('PAYMENT.ADDRESS')}: </span>
+                    <span>{t("PAYMENT.ADDRESS")}: </span>
                     <span style={{ fontWeight: "bold" }}>
                       {`${user?.address} ${user?.city}`}{" "}
                     </span>
@@ -423,7 +421,7 @@ const PaymentPage = () => {
                       onClick={handleChangeAddress}
                       style={{ color: "#9255FD", cursor: "pointer" }}
                     >
-                      {t('PAYMENT.CHANGE')}
+                      {t("PAYMENT.CHANGE")}
                     </span>
                   </div>
                 </WrapperInfo1>
@@ -435,7 +433,7 @@ const PaymentPage = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span>{t('PAYMENT.SUBTOTAL')}</span>
+                    <span>{t("PAYMENT.SUBTOTAL")}</span>
                     <span
                       style={{
                         color: "#000",
@@ -453,7 +451,7 @@ const PaymentPage = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span>{t('PAYMENT.DISCOUNT')}</span>
+                    <span>{t("PAYMENT.DISCOUNT")}</span>
                     <span
                       style={{
                         color: "#000",
@@ -471,7 +469,7 @@ const PaymentPage = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span>{t('PAYMENT.DELIVERY_COST')}</span>
+                    <span>{t("PAYMENT.DELIVERY_COST")}</span>
                     <span
                       style={{
                         color: "#000",
@@ -484,7 +482,7 @@ const PaymentPage = () => {
                   </div>
                 </WrapperInfo>
                 <WrapperTotal>
-                  <span>{t('PAYMENT.TOTAL')}</span>
+                  <span>{t("PAYMENT.TOTAL")}</span>
                   <span style={{ display: "flex", flexDirection: "column" }}>
                     <span
                       style={{
@@ -496,7 +494,7 @@ const PaymentPage = () => {
                       {convertPrice(totalPriceMemo)}
                     </span>
                     <span style={{ color: "#000", fontSize: "11px" }}>
-                      {t('PAYMENT.VAT')}
+                      {t("PAYMENT.VAT")}
                     </span>
                   </span>
                 </WrapperTotal>
@@ -523,7 +521,7 @@ const PaymentPage = () => {
                     border: "none",
                     borderRadius: "4px",
                   }}
-                  textbutton= {t('PAYMENT.PAY_WITH_QR')}
+                  textbutton={t("PAYMENT.PAY_WITH_QR")}
                   styletextbutton={{
                     color: "#fff",
                     fontSize: "15px",
@@ -541,7 +539,7 @@ const PaymentPage = () => {
                     border: "none",
                     borderRadius: "4px",
                   }}
-                  textbutton={t('PAYMENT.ORDER_NOW')}
+                  textbutton={t("PAYMENT.ORDER_NOW")}
                   styletextbutton={{
                     color: "#fff",
                     fontSize: "15px",
@@ -553,7 +551,7 @@ const PaymentPage = () => {
           </div>
         </div>
         <ModalQRcode
-          title={t('PAYMENT.TILE_QR_CODE')}
+          title={t("PAYMENT.TILE_QR_CODE")}
           open={isOpenModalQRcode}
           amount={totalPriceMemo} // Số tiền là 100,000 VND
           productName={content}
@@ -564,7 +562,7 @@ const PaymentPage = () => {
         </ModalQRcode>
 
         <ModalComponent
-          title={t('PAYMENT.UPDATE_SHIPPING_ADDRESS')}
+          title={t("PAYMENT.UPDATE_SHIPPING_ADDRESS")}
           open={isOpenModalUpdateInfo}
           onCancel={handleCancelUpdate}
           onOk={handleUpdateInfoUser}
@@ -579,9 +577,11 @@ const PaymentPage = () => {
               form={form}
             >
               <Form.Item
-                label={t('PAYMENT.NAME')}
+                label={t("PAYMENT.NAME")}
                 name="name"
-                rules={[{ required: true, message: t('PAYMENT.PLACEHOODER_NAME') }]}
+                rules={[
+                  { required: true, message: t("PAYMENT.PLACEHOODER_NAME") },
+                ]}
               >
                 <InputComponent
                   value={stateUserDetails["name"]}
@@ -590,9 +590,11 @@ const PaymentPage = () => {
                 />
               </Form.Item>
               <Form.Item
-                label={t('PAYMENT.CITY')}
+                label={t("PAYMENT.CITY")}
                 name="city"
-                rules={[{ required: true, message: t('PAYMENT.PLACEHOODER_CITY')}]}
+                rules={[
+                  { required: true, message: t("PAYMENT.PLACEHOODER_CITY") },
+                ]}
               >
                 <InputComponent
                   value={stateUserDetails["city"]}
@@ -601,10 +603,10 @@ const PaymentPage = () => {
                 />
               </Form.Item>
               <Form.Item
-                label={t('PAYMENT.PHONE')}
+                label={t("PAYMENT.PHONE")}
                 name="phone"
                 rules={[
-                  { required: true, message: t('PAYMENT.PLACEHOODER_PHONE')},
+                  { required: true, message: t("PAYMENT.PLACEHOODER_PHONE") },
                 ]}
               >
                 <InputComponent
@@ -615,15 +617,16 @@ const PaymentPage = () => {
               </Form.Item>
 
               <Form.Item
-                label={t('PAYMENT.ADDRESS')}
+                label={t("PAYMENT.ADDRESS")}
                 name="address"
                 rules={[
-                  { required: true, message: t('PAYMENT.PLACEHOODER_ADDRESS')},
+                  { required: true, message: t("PAYMENT.PLACEHOODER_ADDRESS") },
                 ]}
               >
                 <InputComponent
                   value={stateUserDetails.address}
-                  onChange={handleOnchangeDetails}MESS_PLS
+                  onChange={handleOnchangeDetails}
+                  MESS_PLS
                   name="address"
                 />
               </Form.Item>

@@ -66,13 +66,7 @@ const BranchProductPage = () => {
               height: "calc(100% - 20px)",
             }}
           >
-            {/* <WrapperNavbar span={4} >
-                            {/* <NavBarComponent /> */}
-            {/* <BranchProduct /> */}
-            {/* </WrapperNavbar> */}
-
             <Col
-              span={20}
               style={{
                 display: "flex",
                 flexDirection: "column",

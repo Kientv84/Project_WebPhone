@@ -1,0 +1,10 @@
+.fb-comments {
+  width: 100% !important; /* Hoặc chiều rộng bạn mong muốn */
+  max-width: 1640px !important; /* Chiều rộng tối đa */
+}
+
+@media only screen and (max-width: 1370px) {
+  .fb-comments {
+    width: 1270px !important;
+  }
+}

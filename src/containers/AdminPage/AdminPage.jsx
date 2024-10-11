@@ -1,5 +1,5 @@
 import { Menu } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getItem } from "../../utils";
 import {
   UserOutlined,
@@ -14,17 +14,20 @@ import OrderAdmin from "../../components/OrderAdmin/OrderAdmin";
 import { useTranslation } from "react-i18next";
 
 const AdminPage = () => {
-
+  const [keySelected, setKeySelected] = useState(
+    localStorage.getItem("adminPageKey") || "user"
+  );
   const { t } = useTranslation();
 
-
   const items = [
-    getItem(t('ADMIN.USER'), "user", <UserOutlined />),
-    getItem(t('ADMIN.PRODUCT'), "product", <AppstoreOutlined />),
-    getItem(t('ADMIN.ORDER'), "order", <ShoppingCartOutlined />),
+    getItem(t("ADMIN.USER"), "user", <UserOutlined />),
+    getItem(t("ADMIN.PRODUCT"), "product", <AppstoreOutlined />),
+    getItem(t("ADMIN.ORDER"), "order", <ShoppingCartOutlined />),
   ];
 
-  const [keySelected, setKeySelected] = useState("user");
+  useEffect(() => {
+    localStorage.setItem("adminPageKey", keySelected);
+  }, [keySelected]);
 
   const renderPage = (key) => {
     switch (key) {
@@ -42,6 +45,7 @@ const AdminPage = () => {
   const handleOnClick = ({ key }) => {
     setKeySelected(key);
   };
+
   return (
     <>
       <HeaderComponent isHiddenSearch isHiddenCart isHiddenCategory />
@@ -55,6 +59,7 @@ const AdminPage = () => {
           }}
           items={items}
           onClick={handleOnClick}
+          selectedKeys={[keySelected]}
         />
         <div style={{ flex: 1, padding: "15px" }}>
           {renderPage(keySelected)}
