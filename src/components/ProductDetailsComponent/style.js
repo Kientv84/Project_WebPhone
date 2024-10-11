@@ -1,5 +1,6 @@
 import { Col, Image, InputNumber } from "antd";
 import styled from "styled-components";
+import CommentComponent from "../CommentComponent/CommentComponent";
 
 export const WrapperStyleImageSmall = styled(Image)`
   height: 64px;
@@ -158,3 +159,11 @@ export const BoxDecriptionContent = styled.div`
   width: 100%;
   margin-top: 10px;
 `;
+
+// export const StyledCommentComponent = styled(CommentComponent)`
+//   width: 1640px;
+
+//   @media only screen and (max-width: 1270px) {
+//     width: 1270px;
+//   }
+// `;

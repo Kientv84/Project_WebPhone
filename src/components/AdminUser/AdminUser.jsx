@@ -293,18 +293,18 @@ const AdminUser = () => {
 
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success();
+      message.success(t('ADMIN.DELETE_USER_SUCCESS'));
       handleCancelDelete();
     } else if (isErrorDeleted) {
-      message.error();
+      message.error(t('ADMIN.DELETE_USER_FAIL'));
     }
   }, [isSuccessDeleted, isErrorDeleted, dataDeleted]);
 
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
-      message.success();
+      message.success(t('ADMIN.DELETE_MANY_SUCCESS'));
     } else if (isErrorDeletedMany) {
-      message.error();
+      message.error(t('ADMIN.DELETE_MANY_FAIL'));
     }
   }, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany]);
 
@@ -321,10 +321,10 @@ const AdminUser = () => {
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success();
+      message.success(t('ADMIN.UPDATE_USER_SUCCESS'));
       handleCancelDrawer();
     } else if (isErrorUpdated) {
-      message.error();
+      message.error(t('ADMIN.UPDATE_USER_FAIL'));
     }
   }, [isSuccessUpdated, isErrorUpdated, dataUpdated, handleCancelDrawer]);
 

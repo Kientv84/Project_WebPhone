@@ -14,7 +14,7 @@ const ModalQRcode = ({
 }) => {
   const { Countdown } = Statistic;
 
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const MY_BANK = {
     BANK_ID: 970422,
@@ -43,7 +43,7 @@ const ModalQRcode = ({
 
         {/* Hiển thị đồng hồ đếm ngược */}
         <Countdown
-          title={t('PAYMENT.MESS_PLS')}
+          title={t("PAYMENT.MESS_PLS")}
           value={deadline}
           onFinish={onCountdownFinish} // Gọi khi hết thời gian
           format="mm:ss" // Hiển thị phút:giây

@@ -19,7 +19,6 @@ const LoginSuccessComponent = () => {
   const handleGetDetailsUser = useCallback(
     async (id, token) => {
       const res = await UserService.getDetailsUser(id, token);
-      console.log("res", res.data);
       dispatch(updateUser({ ...res?.data, access_token: token }));
     },
     [dispatch]
@@ -40,7 +39,7 @@ const LoginSuccessComponent = () => {
           if (location?.state) {
             navigate(location.state);
           } else {
-            message.success(t('LOGIN_TOAST.TOAST_SUCCESS'));
+            message.success(t("LOGIN_TOAST.TOAST_SUCCESS"));
             navigate("/");
           }
 
@@ -51,10 +50,9 @@ const LoginSuccessComponent = () => {
             }
           }
         } else {
-          message.error(t('LOGIN_TOAST.TOAST_SUCCESS'));
+          message.error(t("LOGIN_TOAST.TOAST_SUCCESS"));
         }
       } catch (error) {
-        console.error("Error fetching token:", error);
         message.error("An error occurred during login.");
       }
     };

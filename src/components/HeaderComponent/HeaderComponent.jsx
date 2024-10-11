@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Col, Popover, Button  } from "antd";
+import { Badge, Col, Popover, Button } from "antd";
 import {
   WrapperHeaderAccount,
   WrapperHeader,
@@ -8,7 +8,7 @@ import {
   WrapperContentPopup,
   WrapperTextHeaderSmall1,
   WrapperTypeProduct,
-  WrapperLanguages
+  WrapperLanguages,
 } from "./style";
 import {
   UserOutlined,
@@ -31,7 +31,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 import TypeProduct from "../TypeProduct/TypeProduct";
 import "./HeaderCoponent.css";
 import { useTranslation } from "react-i18next";
-import i18next from 'i18next';
+import i18next from "i18next";
 
 const HeaderComponent = ({
   isHiddenSearch = false,
@@ -54,20 +54,19 @@ const HeaderComponent = ({
   const location = useLocation();
 
   const { t } = useTranslation();
-  const [language, setLanguage] = useState('en'); // Mặc định là tiếng Việt
+  const [language, setLanguage] = useState(i18next.language); // Mặc định là tiếng Việt
 
   const toggleLanguage = (lang) => {
-    i18next.changeLanguage(lang);
-    setLanguage(lang);
+    i18next.changeLanguage(lang).then(() => {
+      setLanguage(lang); // Cập nhật trạng thái ngôn ngữ
+    });
   };
-  
 
   const handleNavigateLogin = () => {
     setShowTypeProduct(false);
     navigate("/sign-in");
 
     const storedCartItems = localStorage.getItem("cartItems");
-    console.log("storedCartItems", storedCartItems);
     if (storedCartItems) {
       dispatch(setOrderItems(JSON.parse(storedCartItems)));
     }
@@ -95,18 +94,18 @@ const HeaderComponent = ({
   const content = (
     <div>
       <WrapperContentPopup onClick={() => handleClickNavigate("profile")}>
-        {t('HEADER.MY_INFOR')}
+        {t("HEADER.MY_INFOR")}
       </WrapperContentPopup>
       {user?.isAdmin && (
         <WrapperContentPopup onClick={() => handleClickNavigate("admin")}>
-          {t('HEADER.MANAGE')}
+          {t("HEADER.MANAGE")}
         </WrapperContentPopup>
       )}
       <WrapperContentPopup onClick={() => handleClickNavigate("my-order")}>
-        {t('HEADER.MY_ORDER')}
+        {t("HEADER.MY_ORDER")}
       </WrapperContentPopup>
       <WrapperContentPopup onClick={() => handleClickNavigate()}>
-        {t('HEADER.LOG_OUT')}
+        {t("HEADER.LOG_OUT")}
       </WrapperContentPopup>
     </div>
   );
@@ -186,17 +185,20 @@ const HeaderComponent = ({
 
   const getImageIconByType = (type) => {
     const imageIcons = {
-      "Phone, Tablet":
+      "HEADER.PHONE_TABLET":
         "https://cellphones.com.vn/media/icons/menu/icon-cps-3.svg",
-      Laptop:
+      "HEADER.LAPTOP":
         "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon-cps-380.svg",
-      Watch: "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
-
-      Television:
+      "HEADER.WATCH":
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
+      "HEADER.TELEVISION":
         "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
-      Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
-      Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
-      Gear: "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
+      "HEADER.SOUND":
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
+      "HEADER.SCREEN":
+        "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+      "HEADER.ACCESSORY":
+        "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
     };
 
     // Trả về icon hoặc chuỗi rỗng nếu không có icon
@@ -204,13 +206,13 @@ const HeaderComponent = ({
   };
 
   const desiredOrder = [
-    "Phone, Tablet",
-    "Laptop",
-    "Sound",
-    "Watch",
-    "Gear",
-    "Screen",
-    "Television",
+    "HEADER.PHONE_TABLET",
+    "HEADER.LAPTOP",
+    "HEADER.SOUND",
+    "HEADER.WATCH",
+    "HEADER.ACCESSORY",
+    "HEADER.SCREEN",
+    "HEADER.TELEVISION",
   ]; // Thứ tự mong muốn
 
   // Sắp xếp typeProducts theo desiredOrder
@@ -233,13 +235,19 @@ const HeaderComponent = ({
     setShowTypeProduct(false);
   };
 
-   // Hàm renderLanguages
+  // Hàm renderLanguages
   const renderLanguages = () => (
     <div>
-      <Button onClick={() => toggleLanguage('en')} style={{ margin: '8px', cursor:'pointer' , color: '#333'}}>
+      <Button
+        onClick={() => toggleLanguage("en")}
+        style={{ margin: "8px", cursor: "pointer", color: "#333" }}
+      >
         English
       </Button>
-      <Button onClick={() => toggleLanguage('vi')} style={{ margin: '8px', cursor:'pointer' , color: '#333'}}>
+      <Button
+        onClick={() => toggleLanguage("vi")}
+        style={{ margin: "8px", cursor: "pointer", color: "#333" }}
+      >
         Vietnamese
       </Button>
     </div>
@@ -327,7 +335,7 @@ const HeaderComponent = ({
                       </g>
                     </g>
                   </svg>
-                  <p>{t('HEADER.CATEGORY')}</p>
+                  <p>{t("HEADER.CATEGORY")}</p>
                 </div>
               </div>
             )}
@@ -338,14 +346,14 @@ const HeaderComponent = ({
             >
               <div style={{ flex: "2", marginTop: "20px" }}>
                 <WrapperTypeProduct>
-                  {sortedTypeProducts.map((item) => {
-                    const imageIcon = getImageIconByType(item);
+                  {desiredOrder.map((itemKey) => {
+                    const imageIcon = getImageIconByType(itemKey); // Truyền vào khóa dịch để lấy icon
                     return (
                       <TypeProduct
-                        name={item}
-                        key={item}
+                        name={t(itemKey)} // Sử dụng bản dịch của mục
+                        key={itemKey}
                         imageIcon={imageIcon}
-                        onClick={() => handleTypeProductClick(item)}
+                        onClick={() => handleTypeProductClick(t(itemKey))}
                       />
                     );
                   })}
@@ -357,8 +365,8 @@ const HeaderComponent = ({
             <Col span={13} style={{ position: "relative" }}>
               <ButtonInputSearch
                 size="large"
-                placeholder={t('HEADER.SEARCH_PLACEHODER')}
-                textbutton={t('HEADER.BUTTON_SEARCH')}
+                placeholder={t("HEADER.SEARCH_PLACEHODER")}
+                textbutton={t("HEADER.BUTTON_SEARCH")}
                 onChange={handleOnChangeInput}
                 value={search}
               />
@@ -371,7 +379,9 @@ const HeaderComponent = ({
                     productNameLower.includes(searchTerm) &&
                     productNameLower !== searchTerm
                   );
-                }).length > 0 && <p className="title-box">{t('HEADER.PRODUCT_SUGGET')}</p>}
+                }).length > 0 && (
+                  <p className="title-box">{t("HEADER.PRODUCT_SUGGET")}</p>
+                )}
 
                 {products?.data
                   ?.filter((product) => {
@@ -409,7 +419,7 @@ const HeaderComponent = ({
                             fontWeight: "600",
                           }}
                         >
-                          {convertPrice(product.price)}VND
+                          {convertPrice(product.price)}
                         </span>
                       </div>
                     </div>
@@ -454,10 +464,12 @@ const HeaderComponent = ({
                     style={{ cursor: "pointer" }}
                   >
                     <WrapperTextHeaderSmall>
-                      {t('HEADER.SIGN_IN_UP')}
+                      {t("HEADER.SIGN_IN_UP")}
                     </WrapperTextHeaderSmall>
                     <div>
-                      <WrapperTextHeaderSmall>{t('HEADER.ACCOUNT')}</WrapperTextHeaderSmall>
+                      <WrapperTextHeaderSmall>
+                        {t("HEADER.ACCOUNT")}
+                      </WrapperTextHeaderSmall>
                       <CaretDownOutlined />
                     </div>
                   </div>
@@ -478,15 +490,17 @@ const HeaderComponent = ({
                     style={{ fontSize: "30px", color: "#fff" }}
                   />
                 </Badge>
-                <WrapperTextHeaderSmall1>{t('HEADER.CART')}</WrapperTextHeaderSmall1>
+                <WrapperTextHeaderSmall1>
+                  {t("HEADER.CART")}
+                </WrapperTextHeaderSmall1>
               </div>
             )}
           </Col>
         </WrapperHeader>
         <WrapperLanguages>
           <Popover content={renderLanguages()} trigger="click">
-            <Button style={{cursor: 'pointer' , color: '#333'}}>
-              {language === 'vi' ? 'VI' : 'EN'}
+            <Button style={{ cursor: "pointer", color: "#333" }}>
+              {language === "vi" ? "VI" : language === "en" ? "EN" : ""}
             </Button>
           </Popover>
         </WrapperLanguages>

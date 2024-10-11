@@ -25,17 +25,29 @@ const MyOrderPage = () => {
   const { t } = useTranslation();
 
   const fetchMyOrder = async () => {
-    const res = await OrderService.getOrderByUserId(state?.id, state?.token);
-    return res.data;
+    if (!state?.id || !state?.token) {
+      throw new Error("Invalid state");
+    }
+
+    try {
+      const res = await OrderService.getOrderByUserId(state.id, state.token);
+      return res.data;
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      throw error;
+    }
   };
 
   const queryOrder = useQuery(
     { queryKey: ["orders"], queryFn: fetchMyOrder },
     {
-      enabled: state?.id && state?.token,
+      enabled: !!state?.id && !!state?.token,
+      refetchOnWindowFocus: false,
     }
   );
+
   const { isLoading, data } = queryOrder;
+  console.log("Order Data:", data);
 
   const handleDetailsOrder = (id) => {
     navigate(`/details-order/${id}`, {
@@ -56,7 +68,7 @@ const MyOrderPage = () => {
       { id: order._id, token: state?.token, orderItems: order?.orderItems },
       {
         onSuccess: () => {
-          message.success(t('MY_ODER.TOAST_SUCCESS'));
+          message.success(t("MY_ODER.TOAST_SUCCESS"));
 
           // Cập nhật lại danh sách đơn hàng mà không cần refetch
           queryClient.setQueryData(["orders"], (oldData) => {
@@ -64,7 +76,7 @@ const MyOrderPage = () => {
           });
         },
         onError: () => {
-          message.error(t('MY_ODER.TOAST_FAILED'));
+          message.error(t("MY_ODER.TOAST_FAILED"));
         },
       }
     );
@@ -130,7 +142,7 @@ const MyOrderPage = () => {
             margin: "70px auto 0",
           }}
         >
-          <h3 style={{ marginTop: "5px" }}>{t('MY_ODER.TITLE')}</h3>
+          <h3 style={{ marginTop: "5px" }}>{t("MY_ODER.TITLE")}</h3>
           <WrapperListOrder>
             {data?.map((order) => {
               return (
@@ -138,25 +150,33 @@ const MyOrderPage = () => {
                   <WrapperStatus>
                     <span style={{ fontSize: "14px", fontWeight: "bold" }}>
                       {" "}
-                      {t('MY_ODER.STATUS')}{" "}
+                      {t("MY_ODER.STATUS")}{" "}
                     </span>
                     <div>
                       <span style={{ color: "rgb(255, 66, 78)" }}>
-                        {t('MY_ODER.IS_DELIVERRED')}{" "}
+                        {t("MY_ODER.IS_DELIVERRED")}{" "}
                       </span>
-                      {`${order.isDelivered ? t('MY_ODER.DELIVERRED') : t('MY_ODER.UN_DELIVERRED')}`}
+                      {`${
+                        order.isDelivered
+                          ? t("MY_ODER.DELIVERRED")
+                          : t("MY_ODER.UN_DELIVERRED")
+                      }`}
                     </div>
                     <div>
                       <span style={{ color: "rgb(255, 66, 78)" }}>
-                        {t('MY_ODER.IS_PAID')}{" "}
+                        {t("MY_ODER.IS_PAID")}{" "}
                       </span>
-                      {`${order.isPaid ? t('MY_ODER.PAID') : t('MY_ODER.UN_PAID')}`}
+                      {`${
+                        order.isPaid ? t("MY_ODER.PAID") : t("MY_ODER.UN_PAID")
+                      }`}
                     </div>
                   </WrapperStatus>
                   {renderProduct(order?.orderItems)}
                   <WrapperFooterItem>
                     <div>
-                      <span style={{ color: "rgb(255, 66, 78)" }}>{t('MY_ODER.TOTAL')}: </span>
+                      <span style={{ color: "rgb(255, 66, 78)" }}>
+                        {t("MY_ODER.TOTAL")}:{" "}
+                      </span>
                       <span
                         style={{
                           fontSize: "13px",
@@ -177,7 +197,7 @@ const MyOrderPage = () => {
                             border: "1px solid rgb(11, 116, 229)",
                             borderRadius: "4px",
                           }}
-                          textbutton={t('MY_ODER.DELETE_ORDER')}
+                          textbutton={t("MY_ODER.DELETE_ORDER")}
                           styletextbutton={{
                             color: "rgb(11, 116, 229)",
                             fontSize: "14px",
@@ -194,7 +214,7 @@ const MyOrderPage = () => {
                           border: "1px solid rgb(11, 116, 229)",
                           borderRadius: "4px",
                         }}
-                        textbutton={t('MY_ODER.MORE_DETAILS')}
+                        textbutton={t("MY_ODER.MORE_DETAILS")}
                         styletextbutton={{
                           color: "rgb(11, 116, 229)",
                           fontSize: "14px",

@@ -15,6 +15,7 @@ import {
   IconGift,
   BoxDecriptionContent,
   PromotionHeaderDecription,
+  StyledCommentComponent,
 } from "./style";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
@@ -57,10 +58,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  // const handleChangeAddress = () => {
-  //   setIsOpenModalUpdateInfo(true);
-  // };
-
   const onChange = (value) => {
     setNumProduct(Number(value));
   };
@@ -77,19 +74,9 @@ const ProductDetailsComponent = ({ idProduct }) => {
     initFacebookSDK();
   }, []);
 
-  // useEffect(() => {
-  //     const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id)
-  //     console.log('orderReduxx', orderRedux)
-  //     if ((orderRedux?.amount + numProduct) <= orderRedux?.countInstock || (!orderRedux && productDetails?.countInStock > 0)) {
-  //         setErrorLimitOrder(false)
-  //     } else if (productDetails?.countInStock === 0) {
-  //         setErrorLimitOrder(true)
-  //     }
-  // }, [numProduct])
-
   useEffect(() => {
     if (order.isSuccessOrder) {
-      message.success(t('PRODUCT_DETAILS.MESSAGE_SUCCESS'));
+      message.success(t("PRODUCT_DETAILS.MESSAGE_SUCCESS"));
     }
     return () => {
       dispatch(resetOrder());
@@ -180,48 +167,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
     }
   };
 
-  const mutationUpdate = useMutationHook((data) => {
-    const { id, token, ...rests } = data;
-    const res = UserService.updateUser(id, { ...rests }, token);
-    return res;
-  });
-
-  // const { isLoading1, data } = mutationUpdate;
-
-  const handleCancelUpdate = () => {
-    setStateUserDetails({
-      name: "",
-      email: "",
-      phone: "",
-      isAdmin: false,
-    });
-    form.resetFields();
-    setIsOpenModalUpdateInfo(false);
-  };
-
-  const handleUpdateInfoUser = () => {
-    // console.log('stateUserDetails', stateUserDetails)
-    const { name, address, city, phone } = stateUserDetails;
-    if (name && address && city && phone) {
-      mutationUpdate.mutate(
-        { id: user?.id, token: user?.access_token, ...stateUserDetails },
-        {
-          onSuccess: () => {
-            dispatch(updateAddress({ name, address, city, phone }));
-            setIsOpenModalUpdateInfo(false);
-          },
-        }
-      );
-    }
-  };
-
-  const handleOnchangeDetails = (e) => {
-    setStateUserDetails({
-      ...stateUserDetails,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleThumbnailClick = (Image) => {
@@ -245,7 +190,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
             span={10}
             style={{
               borderRight: "1px solid #e5e5e5",
-              paddingRight: "5px",
+              paddingRight: "25px",
               paddingLeft: "inherit",
             }}
           >
@@ -257,7 +202,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 width: "400px",
                 height: "400px",
                 // maxHeight: "400px",
-                marginLeft: "50px",
+                marginLeft: "80px",
                 marginTop: "30px",
                 objectFit: "cover",
                 display: "flex",
@@ -269,7 +214,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
             <Row
               style={{
                 paddingTop: "10px",
-                marginLeft: "100px",
+                marginLeft: "180px",
                 cursor: "pointer",
               }}
             >
@@ -325,13 +270,13 @@ const ProductDetailsComponent = ({ idProduct }) => {
             >
               <PromotionHeaderDecription
                 style={{
-                  marginBottom: "5px",
+                  marginBottom: "-20px",
                   fontSize: "20px",
                   textAlign: "center",
                   fontWeight: "bold",
                 }}
               >
-                {t('PRODUCT_DETAILS.DESCRIPTION')}
+                {t("PRODUCT_DETAILS.DESCRIPTION")}
               </PromotionHeaderDecription>
               <WrapperDecriptionTextProduct>
                 {productDetails?.description}
@@ -353,7 +298,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
               />
               <WrapperStyleTextSell>
                 {" "}
-                | {t('PRODUCT_DETAILS.STAR')} {productDetails?.selled}
+                | {t("PRODUCT_DETAILS.STAR")} {productDetails?.selled}
               </WrapperStyleTextSell>
             </div>
             <WrapperPriceProduct>
@@ -399,7 +344,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                       marginLeft: "-10px",
                     }}
                   >
-                    {t('PRODUCT_DETAILS.PROMOTION')}
+                    {t("PRODUCT_DETAILS.PROMOTION")}
                   </div>
                 </div>
               </PromotionHeader>
@@ -416,7 +361,9 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 borderBottom: "1px solid #e5e5e5",
               }}
             >
-              <div style={{ marginBottom: "10px" }}>{t('PRODUCT_DETAILS.QUANTITY')}</div>
+              <div style={{ marginBottom: "10px" }}>
+                {t("PRODUCT_DETAILS.QUANTITY")}
+              </div>
               <WrapperQualityProduct>
                 <button
                   style={{
@@ -467,7 +414,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   opacity: ErrorLimitOrder ? 0.5 : 1,
                 }}
                 onClick={handleBuyOrderProduct}
-                textbutton={t('PRODUCT_DETAILS.PURCHASE')}
+                textbutton={t("PRODUCT_DETAILS.PURCHASE")}
                 styletextbutton={{
                   color: "#fff",
                   fontSize: "15px",
@@ -483,7 +430,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 }}
               >
                 <img src={addToCart} alt="cart-icon" />
-                <span>{t('PRODUCT_DETAILS.ADD_CART')}</span>
+                <span>{t("PRODUCT_DETAILS.ADD_CART")}</span>
               </button>
             </div>
             {ErrorLimitOrder && (
@@ -494,18 +441,17 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   alignItems: "center",
                 }}
               >
-                {t('PRODUCT_DETAILS.SOLD_OUT')}
+                {t("PRODUCT_DETAILS.SOLD_OUT")}
               </span>
             )}
           </Col>
-
           <CommentComponent
             datahref={
               process.env.REACT_APP_IS_LOCAL
                 ? "https://developers.facebook.com/docs/plugins/comments#configurator"
                 : window.location.href
             }
-            width="1640"
+            // width="1640"
           />
         </Row>
       </Loading>
