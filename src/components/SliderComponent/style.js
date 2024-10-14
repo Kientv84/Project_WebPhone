@@ -6,6 +6,7 @@ export const WrapperSliderStyle = styled(Slider)`
     left: 12px;
     top: 50%;
     z-index: 10;
+
     &::before {
       font-size: 40px;
       color: #fff;
@@ -16,6 +17,7 @@ export const WrapperSliderStyle = styled(Slider)`
     right: 28px;
     top: 50%;
     z-index: 10;
+    margin-right: 22px;
     &::before {
       font-size: 40px;
       color: #fff;

@@ -16,6 +16,7 @@ import SignInPage from "../containers/SignInPage/SignInPage";
 import SignUpPage from "../containers/SignUpPage/SignUpPage";
 import TypeProductPage from "../containers/TypeProductPage/TypeProductPage";
 import BranchProductPage from "../containers/BranchProductPage/BranchProductPage";
+import SearchProductPage from "../containers/SearchProductPage/SearchProductPage.jsx";
 
 export const routes = [
   {
@@ -109,6 +110,11 @@ export const routes = [
   {
     path: "/login-success/:userId",
     page: LoginSuccessComponent,
+  },
+  {
+    path: "/catalogsearch/result",
+    page: SearchProductPage,
+    isShowHeader: true,
   },
   {
     path: "*",

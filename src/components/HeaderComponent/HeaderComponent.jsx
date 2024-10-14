@@ -32,6 +32,8 @@ import TypeProduct from "../TypeProduct/TypeProduct";
 import "./HeaderCoponent.css";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
+import IconVN from "../../assets/images/Flag_of_Vietnam.svg";
+import IconUS from "../../assets/images/Flag_of_the_United_States.svg";
 
 const HeaderComponent = ({
   isHiddenSearch = false,
@@ -152,15 +154,17 @@ const HeaderComponent = ({
   };
 
   useEffect(() => {
-    if (location.pathname.startsWith("/product-details")) {
+    if (
+      location.pathname.startsWith("/product-details") ||
+      location.pathname.startsWith("/catalogsearch/result")
+    ) {
       setSearch(""); // Xóa thanh tìm kiếm khi vào trang product-details
     }
   }, [location.pathname]);
 
   const fetchProductAll = async (context) => {
-    const limit = context?.queryKey && context?.queryKey[1];
     const search = context?.queryKey && context?.queryKey[2];
-    const res = await ProductService.getAllProduct(search, limit);
+    const res = await ProductService.getAllProduct(search);
     return res;
   };
 
@@ -237,17 +241,40 @@ const HeaderComponent = ({
 
   // Hàm renderLanguages
   const renderLanguages = () => (
-    <div>
+    <div
+      className="btn_change"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+      }}
+    >
       <Button
         onClick={() => toggleLanguage("en")}
-        style={{ margin: "8px", cursor: "pointer", color: "#333" }}
+        style={{
+          color: "#333",
+        }}
       >
+        <div
+          className="img_flags"
+          style={{
+            backgroundImage: `url(${IconUS})`,
+          }}
+        />
         English
       </Button>
       <Button
         onClick={() => toggleLanguage("vi")}
-        style={{ margin: "8px", cursor: "pointer", color: "#333" }}
+        style={{
+          color: "#333",
+        }}
       >
+        <div
+          className="img_flags"
+          style={{
+            backgroundImage: `url(${IconVN})`,
+          }}
+        />
         Vietnamese
       </Button>
     </div>
@@ -497,13 +524,51 @@ const HeaderComponent = ({
             )}
           </Col>
         </WrapperHeader>
-        <WrapperLanguages>
-          <Popover content={renderLanguages()} trigger="click">
-            <Button style={{ cursor: "pointer", color: "#333" }}>
-              {language === "vi" ? "VI" : language === "en" ? "EN" : ""}
-            </Button>
-          </Popover>
-        </WrapperLanguages>
+        <div className="container_WrapperLanguages">
+          <WrapperLanguages>
+            <Popover content={renderLanguages()} trigger="click">
+              <Button
+                className="btn_language"
+                style={{
+                  cursor: "pointer",
+                  color: "#333",
+                  border: "2px solid transparent",
+                  transition: "border-color 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = "#42c8b7"; // Thêm viền màu khi hover
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = "transparent"; // Trả về viền trong suốt khi không hover
+                }}
+              >
+                {language === "vi" ? (
+                  <>
+                    <div
+                      className="img_flags"
+                      style={{
+                        backgroundImage: `url(${IconVN})`,
+                      }}
+                    />
+                    Vietnamese
+                  </>
+                ) : language === "en" ? (
+                  <>
+                    <div
+                      className="img_flags"
+                      style={{
+                        backgroundImage: `url(${IconUS})`,
+                      }}
+                    />
+                    English
+                  </>
+                ) : (
+                  ""
+                )}
+              </Button>
+            </Popover>
+          </WrapperLanguages>
+        </div>
       </div>
     </div>
   );

@@ -114,7 +114,7 @@ const HomePage = () => {
               display: "flex",
               width: "100%",
               maxWidth: "1270px",
-              margin: "60px auto 0",
+              margin: "65px auto 0",
               gap: "20px",
             }}
           >
@@ -137,7 +137,12 @@ const HomePage = () => {
 
             <div
               className="slider"
-              style={{ flex: "1", maxWidth: "80%", marginTop: "20px" }}
+              style={{
+                flex: "1",
+                maxWidth: "80%",
+                marginTop: "20px",
+                paddingLeft: "20px",
+              }}
             >
               <SliderComponent arrImages={[slider1, slider2, slider3]} />
             </div>

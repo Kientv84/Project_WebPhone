@@ -1,26 +1,33 @@
-import { Image } from 'antd';
-import React from 'react'
-import { WrapperSliderStyle } from './style';
+import { Image } from "antd";
+import React from "react";
+import { WrapperSliderStyle } from "./style";
 
 const SliderComponent = ({ arrImages }) => {
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 5000
-    };
-    return (
-        <WrapperSliderStyle {...settings}>
-            {arrImages.map((image) => {
-                return (
-                    <Image key={image} src={image} alt="slider" preview={false} width="996px" height="274px" />
-                )
-            })}
-        </WrapperSliderStyle>
-    )
-}
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 5000,
+  };
+  return (
+    <WrapperSliderStyle {...settings}>
+      {arrImages.map((image) => {
+        return (
+          <Image
+            key={image}
+            src={image}
+            alt="slider"
+            preview={false}
+            width="996px"
+            height="274px"
+          />
+        );
+      })}
+    </WrapperSliderStyle>
+  );
+};
 
-export default SliderComponent
+export default SliderComponent;
