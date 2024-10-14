@@ -16,6 +16,7 @@ import SignInPage from "../containers/SignInPage/SignInPage";
 import SignUpPage from "../containers/SignUpPage/SignUpPage";
 import TypeProductPage from "../containers/TypeProductPage/TypeProductPage";
 import BranchProductPage from "../containers/BranchProductPage/BranchProductPage";
+import NotCompletePage from "../components/NotCompletePage/NotCompletePage.js"; 
 
 export const routes = [
   {
@@ -114,6 +115,12 @@ export const routes = [
     path: "*",
     page: NotFoundPage,
     isShowHeader: true,
+    isShowFooter: true,
+  },
+    {
+    path: "/notcomplete",
+    page: NotCompletePage,
+    isShowHeader: false,
     isShowFooter: true,
   },
 ];
