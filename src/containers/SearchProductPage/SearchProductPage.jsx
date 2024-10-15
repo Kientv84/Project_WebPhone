@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDebounce } from "../../hooks/useDebounce";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import * as ProductService from "../../services/ProductService";
 import Loading from "../../components/LoadingComponent/Loading";
 import { WrapperProducts } from "./style";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { Col, Pagination, Row } from "antd";
+import "./SearchProductPage.css";
 
 const SearchProductPage = () => {
   const [searchParams] = useSearchParams(); // Lấy giá trị từ query string
@@ -44,7 +43,6 @@ const SearchProductPage = () => {
   const onChange = (current, pageSize) => {
     setPanigate({ ...panigate, page: current - 1, limit: pageSize });
   };
-
   return (
     <Loading isLoading={loading}>
       <div
@@ -54,53 +52,69 @@ const SearchProductPage = () => {
           //   height: "calc(100vh - 64px)",
           height: "100vh",
           marginTop: "60px",
+          paddingBottom: "20px",
         }}
       >
-        <div style={{ width: "1270px", margin: "0 auto", height: "100%" }}>
-          <Row
-            style={{
-              flexWrap: "nowrap",
-              paddingTop: "10px",
-              height: "calc(100% - 20px)",
-            }}
-          >
-            <Col
+        <div
+          style={{
+            width: "1270px",
+            margin: "0 auto",
+            height: "auto",
+            minHeight: "calc(100vh - 20px)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <h1 className="search-result">
+              Tìm thấy <strong>{products?.length}</strong> sản phẩm cho từ khoá
+              <strong> '{query}' </strong>
+            </h1>
+            <Row
               style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                gap: "10px",
+                flexWrap: "nowrap",
               }}
             >
-              <WrapperProducts
-                style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}
-              >
-                {products?.map((product) => {
-                  return (
-                    <CardComponent
-                      key={product._id}
-                      countInStock={product.countInStock}
-                      description={product.description}
-                      image={product.image}
-                      name={product.name}
-                      price={product.price}
-                      rating={product.rating}
-                      type={product.type}
-                      selled={product.selled}
-                      discount={product.discount}
-                      id={product._id}
-                    />
-                  );
-                })}
-              </WrapperProducts>
-              <Pagination
-                defaultCurrent={panigate.page + 1}
-                total={panigate?.total}
-                onChange={onChange}
-                style={{ textAlign: "center", marginTop: "10px" }}
-              />
-            </Col>
-          </Row>
+              <Col>
+                <WrapperProducts
+                  style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}
+                >
+                  {products?.map((product) => {
+                    return (
+                      <CardComponent
+                        key={product._id}
+                        countInStock={product.countInStock}
+                        description={product.description}
+                        image={product.image}
+                        name={product.name}
+                        price={product.price}
+                        rating={product.rating}
+                        type={product.type}
+                        selled={product.selled}
+                        discount={product.discount}
+                        id={product._id}
+                      />
+                    );
+                  })}
+                </WrapperProducts>
+              </Col>
+            </Row>
+          </div>
+          <div
+            style={{
+              marginTop: "30px",
+            }}
+          >
+            <Pagination
+              defaultCurrent={panigate.page + 1}
+              total={panigate?.total}
+              onChange={onChange}
+              style={{
+                textAlign: "center",
+              }}
+            />
+          </div>
         </div>
       </div>
     </Loading>

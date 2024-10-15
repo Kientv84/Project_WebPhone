@@ -62,20 +62,17 @@ const HomePage = () => {
 
   const getImageIconByType = (type) => {
     const imageIcons = {
-      "HOMEPAGE.PHONE_TABLET":
+      "Phone, Tablet":
         "https://cellphones.com.vn/media/icons/menu/icon-cps-3.svg",
-      "HOMEPAGE.LAPTOP":
+      Laptop:
         "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon-cps-380.svg",
-      "HOMEPAGE.WATCH":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
-      "HOMEPAGE.TELEVISION":
+      Watch: "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
+
+      Television:
         "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
-      "HOMEPAGE.SOUND":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
-      "HOMEPAGE.SCREEN":
-        "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
-      "HOMEPAGE.ACCESSORY":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
+      Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
+      Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+      Accessory: "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
     };
 
     // Trả về icon hoặc chuỗi rỗng nếu không có icon
@@ -83,13 +80,13 @@ const HomePage = () => {
   };
 
   const desiredOrder = [
-    "HOMEPAGE.PHONE_TABLET",
-    "HOMEPAGE.LAPTOP",
-    "HOMEPAGE.SOUND",
-    "HOMEPAGE.WATCH",
-    "HOMEPAGE.ACCESSORY",
-    "HOMEPAGE.SCREEN",
-    "HOMEPAGE.TELEVISION",
+    "Phone, Tablet",
+    "Laptop",
+    "Sound",
+    "Watch",
+    "Accessory",
+    "Screen",
+    "Television",
   ]; // Thứ tự mong muốn
 
   // Sắp xếp typeProducts theo desiredOrder
@@ -121,12 +118,12 @@ const HomePage = () => {
             <div className="type-product">
               <div style={{ flex: "2", marginTop: "20px" }}>
                 <WrapperTypeProduct>
-                  {desiredOrder.map((itemKey) => {
-                    const imageIcon = getImageIconByType(itemKey); // Truyền vào khóa dịch để lấy icon
+                  {sortedTypeProducts.map((item) => {
+                    const imageIcon = getImageIconByType(item);
                     return (
                       <TypeProduct
-                        name={t(itemKey)} // Sử dụng bản dịch của mục
-                        key={itemKey}
+                        name={item}
+                        key={item}
                         imageIcon={imageIcon}
                       />
                     );

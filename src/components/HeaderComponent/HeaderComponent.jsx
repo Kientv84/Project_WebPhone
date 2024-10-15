@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Badge, Col, Popover, Button } from "antd";
 import {
   WrapperHeaderAccount,
@@ -34,6 +34,8 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import IconVN from "../../assets/images/Flag_of_Vietnam.svg";
 import IconUS from "../../assets/images/Flag_of_the_United_States.svg";
+import { SearchOutlined } from "@ant-design/icons";
+import ButtonComponent from "../ButtonComponent/ButtonComponent";
 
 const HeaderComponent = ({
   isHiddenSearch = false,
@@ -54,6 +56,7 @@ const HeaderComponent = ({
   const searchDebounce = useDebounce(searchProduct, 1000);
   const [showTypeProduct, setShowTypeProduct] = useState(false);
   const location = useLocation();
+  const searchInputRef = useRef(null);
 
   const { t } = useTranslation();
   const [language, setLanguage] = useState(i18next.language); // Mặc định là tiếng Việt
@@ -145,13 +148,29 @@ const HeaderComponent = ({
   };
 
   const handleOnChangeInput = (event) => {
-    setSearch(event.target.value);
+    const value = event.target.value;
+    setSearch(value);
   };
 
   const handleDetailProduct = (id) => {
     navigate(`/product-details/${id}`);
     setSearch("");
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(e.target)
+      ) {
+        setSearch(""); // Clear search input
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (
@@ -189,20 +208,17 @@ const HeaderComponent = ({
 
   const getImageIconByType = (type) => {
     const imageIcons = {
-      "HEADER.PHONE_TABLET":
+      "Phone, Tablet":
         "https://cellphones.com.vn/media/icons/menu/icon-cps-3.svg",
-      "HEADER.LAPTOP":
+      Laptop:
         "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon-cps-380.svg",
-      "HEADER.WATCH":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
-      "HEADER.TELEVISION":
+      Watch: "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
+
+      Television:
         "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
-      "HEADER.SOUND":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
-      "HEADER.SCREEN":
-        "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
-      "HEADER.ACCESSORY":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
+      Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
+      Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+      Accessory: "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
     };
 
     // Trả về icon hoặc chuỗi rỗng nếu không có icon
@@ -210,13 +226,13 @@ const HeaderComponent = ({
   };
 
   const desiredOrder = [
-    "HEADER.PHONE_TABLET",
-    "HEADER.LAPTOP",
-    "HEADER.SOUND",
-    "HEADER.WATCH",
-    "HEADER.ACCESSORY",
-    "HEADER.SCREEN",
-    "HEADER.TELEVISION",
+    "Phone, Tablet",
+    "Laptop",
+    "Sound",
+    "Watch",
+    "Accessory",
+    "Screen",
+    "Television",
   ]; // Thứ tự mong muốn
 
   // Sắp xếp typeProducts theo desiredOrder
@@ -373,14 +389,14 @@ const HeaderComponent = ({
             >
               <div style={{ flex: "2", marginTop: "20px" }}>
                 <WrapperTypeProduct>
-                  {desiredOrder.map((itemKey) => {
-                    const imageIcon = getImageIconByType(itemKey); // Truyền vào khóa dịch để lấy icon
+                  {sortedTypeProducts.map((item) => {
+                    const imageIcon = getImageIconByType(item);
                     return (
                       <TypeProduct
-                        name={t(itemKey)} // Sử dụng bản dịch của mục
-                        key={itemKey}
+                        name={item}
+                        key={item}
                         imageIcon={imageIcon}
-                        onClick={() => handleTypeProductClick(t(itemKey))}
+                        onClick={() => handleTypeProductClick(item)}
                       />
                     );
                   })}
@@ -390,13 +406,16 @@ const HeaderComponent = ({
           </Col>
           {!isHiddenSearch && (
             <Col span={13} style={{ position: "relative" }}>
-              <ButtonInputSearch
-                size="large"
-                placeholder={t("HEADER.SEARCH_PLACEHODER")}
-                textbutton={t("HEADER.BUTTON_SEARCH")}
-                onChange={handleOnChangeInput}
-                value={search}
-              />
+              <div ref={searchInputRef}>
+                <ButtonInputSearch
+                  size="large"
+                  placeholder={t("HEADER.SEARCH_PLACEHODER")}
+                  textbutton={t("HEADER.BUTTON_SEARCH")}
+                  onChange={handleOnChangeInput}
+                  value={search}
+                  setSearch={setSearch}
+                />
+              </div>
               <div className="dropdown">
                 {products?.data?.filter((product) => {
                   const searchTerm = search.toLowerCase();
@@ -409,7 +428,6 @@ const HeaderComponent = ({
                 }).length > 0 && (
                   <p className="title-box">{t("HEADER.PRODUCT_SUGGET")}</p>
                 )}
-
                 {products?.data
                   ?.filter((product) => {
                     const searchTerm = search.toLowerCase();
@@ -477,14 +495,16 @@ const HeaderComponent = ({
                   <UserOutlined style={{ fontSize: "30px" }} />
                 )}
                 {user?.access_token ? (
-                  <Popover content={content} trigger="click" open={isOpenPopup}>
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setIsOpenPopup((prev) => !prev)}
-                    >
-                      {userName?.length ? userName : user?.email}
-                    </div>
-                  </Popover>
+                  <div>
+                    <Popover content={content} trigger="click">
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setIsOpenPopup((prev) => !prev)}
+                      >
+                        {userName?.length ? userName : user?.email}
+                      </div>
+                    </Popover>
+                  </div>
                 ) : (
                   <div
                     onClick={handleNavigateLogin}

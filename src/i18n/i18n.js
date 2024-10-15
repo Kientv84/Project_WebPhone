@@ -22,13 +22,6 @@ const resources = {
         MANAGE: "Management",
         MY_ORDER: "My Order",
         LOG_OUT: "Log Out",
-        PHONE_TABLET: "Phone, Tablet",
-        LAPTOP: "Laptop",
-        SOUND: "Sound",
-        WATCH: "Watch",
-        ACCESSORY: "Accessory",
-        SCREEN: "Screen",
-        TELEVISION: "Television",
       },
       MY_ODER: {
         TITLE: "My Oder",
@@ -150,7 +143,7 @@ const resources = {
         PRODUCT_PRICE: "Price",
         PRODUCT_RATING: "Rating",
         PRODUCT_TYPE: "Type",
-        PRODUCT_BRANCH: "Branch",
+        PRODUCT_BRANCH: "Brand",
 
         ORDER_USER: "User name",
         ORDER_PHONE: "Phone",
@@ -190,8 +183,8 @@ const resources = {
         ADD_TYPE: "Add Type",
         ADD_NEW_TYPE: "New Type",
         NEW_BRANCH: "Branch",
-        ADD_BRANCH: "Add Branch",
-        ADD_NEW_BRANCH: "New Branch",
+        ADD_BRANCH: "Add Brand",
+        ADD_NEW_BRANCH: "New Brand",
         COUNT_IN_STOCK: "Count in Stock",
         PRICE: "Price",
         NEW_DESCRIPTION: "Description",
@@ -326,6 +319,36 @@ const resources = {
         SCREEN: "Screen",
         TELEVISION: "Television",
       },
+
+      FOOTER: {
+        ADDRESS_CONTACT: "Address & contact",
+        TEXT_1_COL_1:
+          "Address: 1 Vo Van Ngan, Linh Chieu Ward, Thu Duc City, Ho Chi Minh City.",
+        TEXT_2_COL_1:
+          "Phone: (+84 - 028) 38968641 - (+84 -028) 38961333 - (+84 -028) 37221223",
+        TEXT_3_COL_1: "Hotline: (+84 - 028) 37222764",
+        TEXT_4_COL_1: "Fax: (+84 - 028) 38964922",
+
+        INFO_POLICY: "Information & policies",
+        TEXT_1_COL2: "Buy and pay online",
+        TEXT_2_COL2: "Buy in installments with a credit card",
+        TEXT_3_COL2: "Delivery policy",
+        TEXT_4_COL2: "Check Smember points",
+        TEXT_5_COL2: "Look up warranty information",
+        TEXT_6_COL2: "Look up electronic invoices",
+        TEXT_7_COL2: "Apple product unboxing policy",
+
+        FOLLOW_US: "Follow us:",
+
+        ADDRESS_GGMAP: "Address on Google Map:",
+      },
+
+      NOTCOMPLELTE: {
+        SORRY_CLIENT: "Sorry customers!",
+        BACK_HOMEPAGE: "Return to homepage!",
+        TEXT_SORRY:
+          "Our website is in the process of being completed, sorry for the inconvenience.",
+      },
     },
   },
   vi: {
@@ -345,13 +368,6 @@ const resources = {
         MANAGE: "Quản lý sản phẩm",
         MY_ORDER: "Đơn hàng của tôi",
         LOG_OUT: "Đăng xuất",
-        PHONE_TABLET: "Điện thoại, Tablet",
-        LAPTOP: "Laptop",
-        SOUND: "Âm thanh",
-        WATCH: "Đồng hồ",
-        ACCESSORY: "Phụ kiện",
-        SCREEN: "Màn hình",
-        TELEVISION: "Tivi",
       },
       MY_ODER: {
         TITLE: "Đơn hàng của tôi",
@@ -676,6 +692,36 @@ const resources = {
         ACCESSORY: "Phụ kiện",
         SCREEN: "Màn hình",
         TELEVISION: "Tivi",
+      },
+
+      FOOTER: {
+        ADDRESS_CONTACT: "Địa chỉ & liên hệ",
+        TEXT_1_COL_1:
+          "Địa chỉ: 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh.",
+        TEXT_2_COL_1:
+          "Điện thoại: (+84 - 028) 38968641 - (+84 -028) 38961333 - (+84 -028) 37221223",
+        TEXT_3_COL_1: "Hotline Tư vấn : (+84 - 028) 37222764",
+        TEXT_4_COL_1: "Fax: (+84 - 028) 38964922",
+
+        INFO_POLICY: "Thông tin & chính sách",
+        TEXT_1_COL2: "Mua hàng và thanh toán Online",
+        TEXT_2_COL2: "Mua hàng trả góp bằng thẻ tín dụng",
+        TEXT_3_COL2: "Chính sách giao hàng",
+        TEXT_4_COL2: "Tra điểm Smember",
+        TEXT_5_COL2: "Tra thông tin bảo hành",
+        TEXT_6_COL2: "Tra cứu hoá đơn điện tử",
+        TEXT_7_COL2: "Chính sách khui hộp sản phẩm Apple",
+
+        FOLLOW_US: "Theo dõi chúng tôi:",
+
+        ADDRESS_GGMAP: "Địa chỉ trên Google Map:",
+      },
+
+      NOTCOMPLELTE: {
+        SORRY_CLIENT: "Xin lỗi quý khách!",
+        BACK_HOMEPAGE: "Quay về trang chủ!",
+        TEXT_SORRY:
+          "Trang web chúng tôi đang trong quá trình hoàn thiện, xin lỗi quý khách vì sự bất tiện này.",
       },
     },
   },

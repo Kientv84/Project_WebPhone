@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const ButtonInputSearch = (props) => {
   const navigate = useNavigate();
+
   const {
     size,
     placeholder,
@@ -15,15 +16,17 @@ const ButtonInputSearch = (props) => {
     backgroundColorButton = "rgba(13, 129, 115, 0.82)",
     colorButton = "#fff",
     value, // Nhận giá trị của ô tìm kiếm từ props
-    // onSearch,
+    setSearch,
   } = props;
 
   const handleSearch = () => {
     if (value) {
       // Điều hướng sang trang SearchProductPage với từ khóa tìm kiếm
       navigate(`/catalogsearch/result?q=${value}`);
+      setSearch("");
     }
   };
+
   return (
     <div style={{ display: "flex", backgroundColor: "#fff" }}>
       <InputComponent
@@ -31,6 +34,8 @@ const ButtonInputSearch = (props) => {
         bordered={bordered}
         placeholder={placeholder}
         style={{ backgroundColor: backgroundColorInput, borderRadius: "0px" }}
+        value={value}
+        onChange={(e) => setSearch(e.target.value)}
         {...props}
       />
       <ButtonComponent

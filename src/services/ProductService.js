@@ -112,7 +112,7 @@ export const getAllsearchProducts = async (query) => {
 export const getProductSearch = async (query, page, limit) => {
   if (query) {
     const res = await axios.get(
-      `${process.env.REACT_APP_URL_BACKEND}/product/get-all?q=${query}&limit=${limit}&page=${page}`
+      `${process.env.REACT_APP_URL_BACKEND}/product/get-all?filter=name&filter=${query}&limit=${limit}&page=${page}`
     );
     return res.data;
   }

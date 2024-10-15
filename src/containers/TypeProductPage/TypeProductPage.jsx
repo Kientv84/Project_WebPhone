@@ -58,64 +58,70 @@ const TypeProductPage = () => {
           marginTop: "60px",
         }}
       >
-        <div style={{ width: "1270px", margin: "0 auto", height: "100%" }}>
-          <Row
-            style={{
-              flexWrap: "nowrap",
-              paddingTop: "10px",
-              height: "calc(100% - 20px)",
-            }}
-          >
-            <Col
+        <div
+          style={{
+            width: "1270px",
+            margin: "0 auto",
+            height: "auto",
+            minHeight: "calc(100vh - 20px)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <Row
               style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                gap: "10px",
+                flexWrap: "nowrap",
+                paddingTop: "10px",
               }}
             >
-              <WrapperProducts
-                style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}
-              >
-                {products
-                  ?.filter((pro) => {
-                    if (searchDebounce === "") {
-                      return true; // Trả về true để giữ lại tất cả các sản phẩm
-                    } else if (
-                      pro?.name
-                        ?.toLowerCase()
-                        ?.includes(searchDebounce?.toLowerCase())
-                    ) {
-                      return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
-                    }
-                    return false;
-                  })
-                  ?.map((product) => {
-                    return (
-                      <CardComponent
-                        key={product._id}
-                        countInStock={product.countInStock}
-                        description={product.description}
-                        image={product.image}
-                        name={product.name}
-                        price={product.price}
-                        rating={product.rating}
-                        type={product.type}
-                        selled={product.selled}
-                        discount={product.discount}
-                        id={product._id}
-                      />
-                    );
-                  })}
-              </WrapperProducts>
-              <Pagination
-                defaultCurrent={panigate.page + 1}
-                total={panigate?.total}
-                onChange={onChange}
-                style={{ textAlign: "center", marginTop: "10px" }}
-              />
-            </Col>
-          </Row>
+              <Col>
+                <WrapperProducts
+                  style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}
+                >
+                  {products
+                    ?.filter((pro) => {
+                      if (searchDebounce === "") {
+                        return true; // Trả về true để giữ lại tất cả các sản phẩm
+                      } else if (
+                        pro?.name
+                          ?.toLowerCase()
+                          ?.includes(searchDebounce?.toLowerCase())
+                      ) {
+                        return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
+                      }
+                      return false;
+                    })
+                    ?.map((product) => {
+                      return (
+                        <CardComponent
+                          key={product._id}
+                          countInStock={product.countInStock}
+                          description={product.description}
+                          image={product.image}
+                          name={product.name}
+                          price={product.price}
+                          rating={product.rating}
+                          type={product.type}
+                          selled={product.selled}
+                          discount={product.discount}
+                          id={product._id}
+                        />
+                      );
+                    })}
+                </WrapperProducts>
+              </Col>
+            </Row>
+          </div>
+          <Pagination
+            defaultCurrent={panigate.page + 1}
+            total={panigate?.total}
+            onChange={onChange}
+            style={{
+              textAlign: "center",
+            }}
+          />
         </div>
       </div>
     </Loading>
