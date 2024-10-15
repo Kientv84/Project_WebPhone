@@ -34,8 +34,6 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import IconVN from "../../assets/images/Flag_of_Vietnam.svg";
 import IconUS from "../../assets/images/Flag_of_the_United_States.svg";
-import { SearchOutlined } from "@ant-design/icons";
-import ButtonComponent from "../ButtonComponent/ButtonComponent";
 
 const HeaderComponent = ({
   isHiddenSearch = false,
@@ -134,6 +132,16 @@ const HeaderComponent = ({
     setIsOpenPopup(false);
   };
 
+  const removeVietnameseTones = (str) => {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D")
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .trim();
+  };
+
   const onSearch = (searchTerm) => {
     setSearch(searchTerm);
   };
@@ -154,14 +162,14 @@ const HeaderComponent = ({
 
   const handleDetailProduct = (id) => {
     navigate(`/product-details/${id}`);
-    setSearch("");
   };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
         searchInputRef.current &&
-        !searchInputRef.current.contains(e.target)
+        !searchInputRef.current.contains(e.target) &&
+        !e.target.closest(".dropdown-row")
       ) {
         setSearch(""); // Clear search input
       }
@@ -418,8 +426,12 @@ const HeaderComponent = ({
               </div>
               <div className="dropdown">
                 {products?.data?.filter((product) => {
-                  const searchTerm = search.toLowerCase();
-                  const productNameLower = product.name.toLowerCase();
+                  const searchTerm = removeVietnameseTones(
+                    search.toLowerCase()
+                  );
+                  const productNameLower = removeVietnameseTones(
+                    product.name.toLowerCase()
+                  );
                   return (
                     searchTerm &&
                     productNameLower.includes(searchTerm) &&
@@ -428,10 +440,15 @@ const HeaderComponent = ({
                 }).length > 0 && (
                   <p className="title-box">{t("HEADER.PRODUCT_SUGGET")}</p>
                 )}
+
                 {products?.data
                   ?.filter((product) => {
-                    const searchTerm = search.toLowerCase();
-                    const productNameLower = product.name.toLowerCase();
+                    const searchTerm = removeVietnameseTones(
+                      search.toLowerCase()
+                    );
+                    const productNameLower = removeVietnameseTones(
+                      product.name.toLowerCase()
+                    );
                     return (
                       searchTerm &&
                       productNameLower.includes(searchTerm) &&

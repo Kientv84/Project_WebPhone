@@ -20,10 +20,21 @@ const ButtonInputSearch = (props) => {
   } = props;
 
   const handleSearch = () => {
-    if (value) {
-      // Điều hướng sang trang SearchProductPage với từ khóa tìm kiếm
-      navigate(`/catalogsearch/result?q=${value}`);
-      setSearch("");
+    if (value && value.trim()) {
+      // Kiểm tra giá trị hợp lệ trước khi tìm kiếm
+      navigate(`/catalogsearch/result?q=${encodeURIComponent(value.trim())}`);
+      if (setSearch && value.trim() !== "") {
+        setSearch(""); // Kiểm tra setSearch trước khi reset ô tìm kiếm
+      }
+    } else {
+      // Nếu không có giá trị trong ô tìm kiếm, điều hướng đến trang kết quả trống
+      navigate(`/catalogsearch/result?q=`);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(); // Kích hoạt tìm kiếm khi nhấn Enter
     }
   };
 
@@ -36,6 +47,7 @@ const ButtonInputSearch = (props) => {
         style={{ backgroundColor: backgroundColorInput, borderRadius: "0px" }}
         value={value}
         onChange={(e) => setSearch(e.target.value)}
+        onKeyDown={handleKeyDown}
         {...props}
       />
       <ButtonComponent
