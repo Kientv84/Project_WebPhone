@@ -83,17 +83,56 @@
 }
 
 .new-wrapper-type-products {
-  margin-left: 0;
   display: none;
   position: absolute;
   top: 100%; /* Đặt phía dưới header */
   left: 0;
   transition: all 0.3s ease;
   box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 40px;
+  margin-left: 70px;
 }
 
 .new-wrapper-type-products.show {
   z-index: 999;
   display: flex;
+}
+
+.img_flags {
+  width: 1.33333em;
+  height: 1em;
+  background-position: center;
+  background-size: cover;
+  margin-right: 4px;
+  border: 1px solid #dadfe5;
+  border-radius: 4px;
+}
+
+.btn_change button {
+  width: 100%;
+  cursor: pointer;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+}
+
+.btn_change button:hover {
+  background-color: #cccccc;
+}
+
+.container_WrapperLanguages button span {
+  display: flex;
+  align-items: center;
+}
+.container_WrapperLanguages button:hover {
+  border-color: #42c8b7;
+}
+
+.container_WrapperLanguages button {
+  width: 110px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

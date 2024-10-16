@@ -16,7 +16,8 @@ import SignInPage from "../containers/SignInPage/SignInPage";
 import SignUpPage from "../containers/SignUpPage/SignUpPage";
 import TypeProductPage from "../containers/TypeProductPage/TypeProductPage";
 import BranchProductPage from "../containers/BranchProductPage/BranchProductPage";
-import NotCompletePage from "../components/NotCompletePage/NotCompletePage.js"; 
+import SearchProductPage from "../containers/SearchProductPage/SearchProductPage.jsx";
+import NotCompletePage from "../components/NotCompletePage/NotCompletePage.js";
 
 export const routes = [
   {
@@ -112,12 +113,18 @@ export const routes = [
     page: LoginSuccessComponent,
   },
   {
+    path: "/catalogsearch/result",
+    page: SearchProductPage,
+    isShowHeader: true,
+    isShowFooter: true,
+  },
+  {
     path: "*",
     page: NotFoundPage,
     isShowHeader: true,
     isShowFooter: true,
   },
-    {
+  {
     path: "/notcomplete",
     page: NotCompletePage,
     isShowHeader: false,

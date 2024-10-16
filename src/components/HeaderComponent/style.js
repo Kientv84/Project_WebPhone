@@ -62,8 +62,8 @@ export const WrapperTypeProduct = styled.div`
 export const WrapperLanguages = styled.div`
   display: flex;
   justify-content: center; /* Căng giữa */
-  padding: 20px; 
-   border-radius: 5px;
+  padding: 20px;
+  border-radius: 5px;
 `;
 
 //  border-radius: 5px; /* Bo góc */

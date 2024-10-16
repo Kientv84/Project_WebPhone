@@ -21,7 +21,7 @@ import { useMutationHook } from "../../hooks/useMutationHook";
 import Loading from "../LoadingComponent/Loading";
 import { useTranslation } from "react-i18next";
 
-const OrderAdmin = () => {
+const AdminOrder = () => {
   const user = useSelector((state) => state?.user);
 
   const { t } = useTranslation();
@@ -99,7 +99,13 @@ const OrderAdmin = () => {
     isError: isErrorDeletedMany,
   } = mutationDeletedMany;
 
-  const queryOrder = useQuery({ queryKey: ["orders"], queryFn: getAllOrder });
+  const queryOrder = useQuery(
+    { queryKey: ["orders"], queryFn: getAllOrder },
+    {
+      refetchOnMount: true, // Dữ liệu sẽ được fetch lại khi component được mount
+      refetchOnWindowFocus: false, // Không fetch lại khi chuyển giữa các tab
+    }
+  );
   const { isLoading: isLoadingOrders, data: orders } = queryOrder;
 
   const renderAction = () => {
@@ -260,6 +266,14 @@ const OrderAdmin = () => {
     }
   }, [isSuccessDeleted, statusDataDeleted, isErrorDeleted]);
 
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+  };
+
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -280,7 +294,7 @@ const OrderAdmin = () => {
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          // onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
             display: "block",
@@ -289,7 +303,7 @@ const OrderAdmin = () => {
         <Space>
           <Button
             type="primary"
-            // onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size="small"
             style={{
@@ -299,7 +313,7 @@ const OrderAdmin = () => {
             Search
           </Button>
           <Button
-            // onClick={() => clearFilters && handleReset(clearFilters)}
+            onClick={() => clearFilters && handleReset(clearFilters)}
             size="small"
             style={{
               width: 90,
@@ -318,26 +332,17 @@ const OrderAdmin = () => {
       />
     ),
     onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+      record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : "",
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         // setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     // <Highlighter
-    //     //   highlightStyle={{
-    //     //     backgroundColor: '#ffc069',
-    //     //     padding: 0,
-    //     //   }}
-    //     //   searchWords={[searchText]}
-    //     //   autoEscape
-    //     //   textToHighlight={text ? text.toString() : ''}
-    //     // />
-    //   ) : (
-    //     text
-    //   ),
   });
 
   const columns = [
@@ -362,40 +367,31 @@ const OrderAdmin = () => {
     {
       title: t("ADMIN.ORDER_PAYMENT_METHOD"),
       dataIndex: "paymentMethod",
-      sorter: (a, b) => a.paymentMethod.length - b.paymentMethod.length,
-      ...getColumnSearchProps("paymentMethod"),
     },
     {
       title: t("ADMIN.ORDER_TOTAL_PRICE"),
       dataIndex: "totalPrice",
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
-      ...getColumnSearchProps("totalPrice"),
     },
     {
       title: t("ADMIN.ORDER_PAID"),
       dataIndex: "isPaid",
       sorter: (a, b) => a.isPaid.length - b.isPaid.length,
-      ...getColumnSearchProps("isPaid"),
     },
     {
       title: t("ADMIN.ORDER_UPDATE_PAY"),
       dataIndex: "isPaid",
       render: renderActionPay,
-      sorter: (a, b) => a.isPaid.length - b.isPaid.length,
-      ...getColumnSearchProps("isPaid"),
     },
     {
       title: t("ADMIN.ORDER_SHIPPED"),
       dataIndex: "isDelivered",
       sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
-      ...getColumnSearchProps("isDelivered"),
     },
     {
       title: t("ADMIN.ORDER_UPDATE_DELIVERED"),
       dataIndex: "isDelivered",
       render: renderAction,
-      sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
-      ...getColumnSearchProps("isDelivered"),
     },
   ];
 
@@ -575,4 +571,4 @@ const OrderAdmin = () => {
   );
 };
 
-export default OrderAdmin;
+export default AdminOrder;

@@ -54,66 +54,84 @@ const BranchProductPage = () => {
           width: "100%",
           background: "#efefef",
           //   height: "calc(100vh - 64px)",
-          height: "100vh",
+          minHeight: "100vh",
           marginTop: "60px",
+          paddingBottom: "20px",
         }}
       >
-        <div style={{ width: "1270px", margin: "0 auto", height: "100%" }}>
-          <Row
-            style={{
-              flexWrap: "nowrap",
-              paddingTop: "10px",
-              height: "calc(100% - 20px)",
-            }}
-          >
-            <Col
+        <div
+          style={{
+            width: "1270px",
+            margin: "0 auto",
+            height: "auto",
+            minHeight: "calc(100vh - 20px)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            flexGrow: 1,
+          }}
+        >
+          <div>
+            <Row
               style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
+                flexWrap: "nowrap",
+                paddingTop: "10px",
               }}
             >
-              <WrapperProducts>
-                {products
-                  ?.filter((pro) => {
-                    if (searchDebounce === "") {
-                      return true; // Trả về true để giữ lại tất cả các sản phẩm
-                    } else if (
-                      pro?.name
-                        ?.toLowerCase()
-                        ?.includes(searchDebounce?.toLowerCase())
-                    ) {
-                      return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
-                    }
-                    return false;
-                  })
-                  ?.map((product) => {
-                    return (
-                      <CardComponent
-                        key={product._id}
-                        countInStock={product.countInStock}
-                        description={product.description}
-                        image={product.image}
-                        name={product.name}
-                        price={product.price}
-                        rating={product.rating}
-                        type={product.type}
-                        branch={product.branch}
-                        selled={product.selled}
-                        discount={product.discount}
-                        id={product._id}
-                      />
-                    );
-                  })}
-              </WrapperProducts>
+              <Col>
+                <WrapperProducts>
+                  {products
+                    ?.filter((pro) => {
+                      if (searchDebounce === "") {
+                        return true; // Trả về true để giữ lại tất cả các sản phẩm
+                      } else if (
+                        pro?.name
+                          ?.toLowerCase()
+                          ?.includes(searchDebounce?.toLowerCase())
+                      ) {
+                        return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
+                      }
+                      return false;
+                    })
+                    ?.map((product) => {
+                      return (
+                        <CardComponent
+                          key={product._id}
+                          countInStock={product.countInStock}
+                          description={product.description}
+                          image={product.image}
+                          name={product.name}
+                          price={product.price}
+                          rating={product.rating}
+                          type={product.type}
+                          branch={product.branch}
+                          selled={product.selled}
+                          discount={product.discount}
+                          id={product._id}
+                        />
+                      );
+                    })}
+                </WrapperProducts>
+              </Col>
+            </Row>
+          </div>
+          <div>
+            <div
+              style={{
+                marginTop: "30px",
+              }}
+            >
               <Pagination
                 defaultCurrent={panigate.page + 1}
-                total={panigate?.total}
+                total={panigate?.total * panigate.limit}
+                pageSize={panigate.limit}
                 onChange={onChange}
-                style={{ textAlign: "center", marginTop: "10px" }}
+                style={{
+                  textAlign: "center",
+                }}
               />
-            </Col>
-          </Row>
+            </div>
+          </div>
         </div>
       </div>
     </Loading>

@@ -128,7 +128,10 @@ const AdminUser = () => {
     isError: isErrorDeletedMany,
   } = mutationDeletedMany;
 
-  const queryUser = useQuery({ queryKey: ["user"], queryFn: getAllUsers });
+  const queryUser = useQuery({
+    queryKey: ["user"],
+    queryFn: getAllUsers,
+  });
   const { isLoading: isLoadingUsers, data: users } = queryUser;
 
   const renderAction = () => {
@@ -149,6 +152,7 @@ const AdminUser = () => {
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
   };
+
   const handleReset = (clearFilters) => {
     clearFilters();
   };
@@ -190,7 +194,7 @@ const AdminUser = () => {
               width: 90,
             }}
           >
-           {t('ADMIN.SEARCH')}
+            {t("ADMIN.SEARCH")}
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -199,7 +203,7 @@ const AdminUser = () => {
               width: 90,
             }}
           >
-            {t('ADMIN.RESET')}
+            {t("ADMIN.RESET")}
           </Button>
           <Button
             type="link"
@@ -208,7 +212,7 @@ const AdminUser = () => {
               close();
             }}
           >
-            {t('ADMIN.CLOSE')}
+            {t("ADMIN.CLOSE")}
           </Button>
         </Space>
       </div>
@@ -221,48 +225,47 @@ const AdminUser = () => {
       />
     ),
     onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+      record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : "",
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{
-    //         backgroundColor: '#ffc069',
-    //         padding: 0,
-    //       }}
-    //       searchWords={[searchText]}
-    //       autoEscape
-    //       textToHighlight={text ? text.toString() : ''}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
   });
 
   const columns = [
     {
-      title: t('ADMIN.USER_NAME'),
+      title: t("ADMIN.USER_NAME"),
       dataIndex: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
       ...getColumnSearchProps("name"), //search name
     },
     {
-      title: t('ADMIN.USER_EMAIL'),
+      title: t("ADMIN.USER_EMAIL"),
       dataIndex: "email",
       sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
-      title: t('ADMIN.USER_ADDRESS'),
+      title: t("ADMIN.USER_ADDRESS"),
       dataIndex: "address",
-      sorter: (a, b) => a.address.localeCompare(b.address),
-      ...getColumnSearchProps("address"), //search name
+      sorter: (a, b) => {
+        const addressA = a.address || ""; // Tránh null/undefined
+        const addressB = b.address || ""; // Tránh null/undefined
+        return addressA.localeCompare(addressB);
+      },
+      ...getColumnSearchProps("address"), // search address
+      onFilter: (value, record) => {
+        const address = record.address || ""; // Đảm bảo address không null hoặc undefined
+        return address.toLowerCase().includes(value.toLowerCase());
+      },
     },
     {
-      title: t('ADMIN.ADMIN'),
+      title: t("ADMIN.ADMIN"),
       dataIndex: "isAdmin",
       filters: [
         { text: "True", value: true },
@@ -270,41 +273,46 @@ const AdminUser = () => {
       ],
     },
     {
-      title: t('ADMIN.USER_PHONE'),
+      title: t("ADMIN.USER_PHONE"),
       dataIndex: "phone",
       sorter: (a, b) => a.phone - b.phone,
       ...getColumnSearchProps("phone"), //search phone
+      onFilter: (value, record) => {
+        const phone = record.phone ? record.phone.toString() : ""; // Chuyển về string nếu cần
+        return phone.toLowerCase().includes(value.toLowerCase());
+      },
     },
     {
-      title: t('ADMIN.ACTION'),
+      title: t("ADMIN.ACTION"),
       dataIndex: "action",
       render: renderAction,
     },
   ];
+
   const dataTable =
     users?.data?.length &&
     users?.data?.map((user) => {
       return {
         ...user,
         key: user._id,
-        isAdmin: user.isAdmin ? t('ADMIN.TRUE') : t('ADMIN.FALSE'),
+        isAdmin: user.isAdmin ? t("ADMIN.TRUE") : t("ADMIN.FALSE"),
       };
     });
 
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success(t('ADMIN.DELETE_USER_SUCCESS'));
+      message.success(t("ADMIN.DELETE_USER_SUCCESS"));
       handleCancelDelete();
     } else if (isErrorDeleted) {
-      message.error(t('ADMIN.DELETE_USER_FAIL'));
+      message.error(t("ADMIN.DELETE_USER_FAIL"));
     }
   }, [isSuccessDeleted, isErrorDeleted, dataDeleted]);
 
   useEffect(() => {
     if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
-      message.success(t('ADMIN.DELETE_MANY_SUCCESS'));
+      message.success(t("ADMIN.DELETE_MANY_SUCCESS"));
     } else if (isErrorDeletedMany) {
-      message.error(t('ADMIN.DELETE_MANY_FAIL'));
+      message.error(t("ADMIN.DELETE_MANY_FAIL"));
     }
   }, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany]);
 
@@ -321,10 +329,10 @@ const AdminUser = () => {
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success(t('ADMIN.UPDATE_USER_SUCCESS'));
+      message.success(t("ADMIN.UPDATE_USER_SUCCESS"));
       handleCancelDrawer();
     } else if (isErrorUpdated) {
-      message.error(t('ADMIN.UPDATE_USER_FAIL'));
+      message.error(t("ADMIN.UPDATE_USER_FAIL"));
     }
   }, [isSuccessUpdated, isErrorUpdated, dataUpdated, handleCancelDrawer]);
 
@@ -370,7 +378,7 @@ const AdminUser = () => {
     setIsLoadingUpdate(true); // Đặt trạng thái loading
 
     if (!file.url && !file.preview) {
-      message.error(t('ADMIN.WARNING'), t('ADMIN.REQUIRE_UPLOAD_IMG'));
+      message.error(t("ADMIN.WARNING"), t("ADMIN.REQUIRE_UPLOAD_IMG"));
       setIsLoadingUpdate(false); // Nếu không có file thì kết thúc loading
       return;
     }
@@ -411,7 +419,7 @@ const AdminUser = () => {
 
   return (
     <div>
-      <WrapperHeader>{t('ADMIN.MANAGE_USER')}</WrapperHeader>
+      <WrapperHeader>{t("ADMIN.MANAGE_USER")}</WrapperHeader>
       <div style={{ marginTop: "20px" }}>
         <TableComponent
           handleDeleteMany={handleDeleteManyUsers}
@@ -428,7 +436,7 @@ const AdminUser = () => {
         />
       </div>
       <DrawerComponent
-        title={t('ADMIN.USER_DETAIL')}
+        title={t("ADMIN.USER_DETAIL")}
         isOpen={isOpenDrawer}
         onCancel={() => setIsOpenDrawer(false)}
         footer={null}
@@ -443,9 +451,11 @@ const AdminUser = () => {
             form={form}
           >
             <Form.Item
-              label={t('ADMIN.USER_NAME')}
+              label={t("ADMIN.USER_NAME")}
               name="name"
-              rules={[{ required: true, message: t('ADMIN.DETAIL_NAME_PLACEHOODER') }]}
+              rules={[
+                { required: true, message: t("ADMIN.DETAIL_NAME_PLACEHOODER") },
+              ]}
             >
               <InputComponent
                 value={stateUserDetails.name}
@@ -455,9 +465,14 @@ const AdminUser = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ADMIN.USER_EMAIL')}
+              label={t("ADMIN.USER_EMAIL")}
               name="email"
-              rules={[{ required: true, message: t('ADMIN.DETAIL_EMAIL_PLACEHOODER') }]}
+              rules={[
+                {
+                  required: true,
+                  message: t("ADMIN.DETAIL_EMAIL_PLACEHOODER"),
+                },
+              ]}
             >
               <InputComponent
                 value={stateUserDetails.email}
@@ -466,9 +481,14 @@ const AdminUser = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.USER_PHONE')}
+              label={t("ADMIN.USER_PHONE")}
               name="phone"
-              rules={[{ required: true, message: t('ADMIN.DETAIL_PHONE_PLACEHOODER') }]}
+              rules={[
+                {
+                  required: true,
+                  message: t("ADMIN.DETAIL_PHONE_PLACEHOODER"),
+                },
+              ]}
             >
               <InputComponent
                 value={stateUserDetails.phone}
@@ -477,10 +497,13 @@ const AdminUser = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.USER_ADDRESS')}
+              label={t("ADMIN.USER_ADDRESS")}
               name="address"
               rules={[
-                { required: true, message: t('ADMIN.DETAIL_ADDRESS_PLACEHOODER') },
+                {
+                  required: true,
+                  message: t("ADMIN.DETAIL_ADDRESS_PLACEHOODER"),
+                },
               ]}
             >
               <InputComponent
@@ -490,16 +513,21 @@ const AdminUser = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ADMIN.AVATAR')}
+              label={t("ADMIN.AVATAR")}
               name="avatar"
-              rules={[{ required: true, message: t('ADMIN.DETAIL_AVARTA_PLACEHOODER') }]}
+              rules={[
+                {
+                  required: true,
+                  message: t("ADMIN.DETAIL_AVARTA_PLACEHOODER"),
+                },
+              ]}
             >
               <WrapperUploadFile
                 onChange={handleOnChangeAvatarDetails}
                 maxCount={1}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Button>{t('ADMIN.DETAIL_SELECT_PLACEHOODER')}</Button>
+                  <Button>{t("ADMIN.DETAIL_SELECT_PLACEHOODER")}</Button>
                   {stateUserDetails?.avatar && (
                     <img
                       src={stateUserDetails?.avatar}
@@ -518,7 +546,7 @@ const AdminUser = () => {
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 19, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                {t('ADMIN.DETAIL_USER_APPLY')}
+                {t("ADMIN.DETAIL_USER_APPLY")}
               </Button>
             </Form.Item>
           </Form>
@@ -526,13 +554,13 @@ const AdminUser = () => {
       </DrawerComponent>
       <ModalComponent
         forceRender
-        title={t('ADMIN.DELETE_USER')}
+        title={t("ADMIN.DELETE_USER")}
         open={isModalOpenDelete}
         onCancel={handleCancelDelete}
         onOk={handleDeleteUser}
       >
         <Loading isLoading={isLoadingDeleted}>
-          <div>{t('ADMIN.MESS_DELETE_USER')}</div>
+          <div>{t("ADMIN.MESS_DELETE_USER")}</div>
         </Loading>
       </ModalComponent>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Badge, Col, Popover, Button } from "antd";
 import {
   WrapperHeaderAccount,
@@ -32,6 +32,8 @@ import TypeProduct from "../TypeProduct/TypeProduct";
 import "./HeaderCoponent.css";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
+import IconVN from "../../assets/images/Flag_of_Vietnam.svg";
+import IconUS from "../../assets/images/Flag_of_the_United_States.svg";
 
 const HeaderComponent = ({
   isHiddenSearch = false,
@@ -52,6 +54,7 @@ const HeaderComponent = ({
   const searchDebounce = useDebounce(searchProduct, 1000);
   const [showTypeProduct, setShowTypeProduct] = useState(false);
   const location = useLocation();
+  const searchInputRef = useRef(null);
 
   const { t } = useTranslation();
   const [language, setLanguage] = useState(i18next.language); // Mặc định là tiếng Việt
@@ -129,6 +132,16 @@ const HeaderComponent = ({
     setIsOpenPopup(false);
   };
 
+  const removeVietnameseTones = (str) => {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D")
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .trim();
+  };
+
   const onSearch = (searchTerm) => {
     setSearch(searchTerm);
   };
@@ -143,24 +156,42 @@ const HeaderComponent = ({
   };
 
   const handleOnChangeInput = (event) => {
-    setSearch(event.target.value);
+    const value = event.target.value;
+    setSearch(value);
   };
 
   const handleDetailProduct = (id) => {
     navigate(`/product-details/${id}`);
-    setSearch("");
   };
 
   useEffect(() => {
-    if (location.pathname.startsWith("/product-details")) {
+    const handleClickOutside = (e) => {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(e.target) &&
+        !e.target.closest(".dropdown-row")
+      ) {
+        setSearch(""); // Clear search input
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      location.pathname.startsWith("/product-details") ||
+      location.pathname.startsWith("/catalogsearch/result")
+    ) {
       setSearch(""); // Xóa thanh tìm kiếm khi vào trang product-details
     }
   }, [location.pathname]);
 
   const fetchProductAll = async (context) => {
-    const limit = context?.queryKey && context?.queryKey[1];
     const search = context?.queryKey && context?.queryKey[2];
-    const res = await ProductService.getAllProduct(search, limit);
+    const res = await ProductService.getAllProduct(search);
     return res;
   };
 
@@ -185,20 +216,17 @@ const HeaderComponent = ({
 
   const getImageIconByType = (type) => {
     const imageIcons = {
-      "HEADER.PHONE_TABLET":
+      "Phone, Tablet":
         "https://cellphones.com.vn/media/icons/menu/icon-cps-3.svg",
-      "HEADER.LAPTOP":
+      Laptop:
         "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon-cps-380.svg",
-      "HEADER.WATCH":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
-      "HEADER.TELEVISION":
+      Watch: "https://cellphones.com.vn/media/icons/menu/icon-cps-610.svg",
+
+      Television:
         "https://cellphones.com.vn/media/icons/menu/icon-cps-1124.svg",
-      "HEADER.SOUND":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
-      "HEADER.SCREEN":
-        "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
-      "HEADER.ACCESSORY":
-        "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
+      Sound: "https://cellphones.com.vn/media/icons/menu/icon-cps-220.svg",
+      Screen: "https://cdn2.cellphones.com.vn/x/media/icons/menu/icon_cpu.svg",
+      Accessory: "https://cellphones.com.vn/media/icons/menu/icon-cps-30.svg",
     };
 
     // Trả về icon hoặc chuỗi rỗng nếu không có icon
@@ -206,13 +234,13 @@ const HeaderComponent = ({
   };
 
   const desiredOrder = [
-    "HEADER.PHONE_TABLET",
-    "HEADER.LAPTOP",
-    "HEADER.SOUND",
-    "HEADER.WATCH",
-    "HEADER.ACCESSORY",
-    "HEADER.SCREEN",
-    "HEADER.TELEVISION",
+    "Phone, Tablet",
+    "Laptop",
+    "Sound",
+    "Watch",
+    "Accessory",
+    "Screen",
+    "Television",
   ]; // Thứ tự mong muốn
 
   // Sắp xếp typeProducts theo desiredOrder
@@ -237,17 +265,40 @@ const HeaderComponent = ({
 
   // Hàm renderLanguages
   const renderLanguages = () => (
-    <div>
+    <div
+      className="btn_change"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+      }}
+    >
       <Button
         onClick={() => toggleLanguage("en")}
-        style={{ margin: "8px", cursor: "pointer", color: "#333" }}
+        style={{
+          color: "#333",
+        }}
       >
+        <div
+          className="img_flags"
+          style={{
+            backgroundImage: `url(${IconUS})`,
+          }}
+        />
         English
       </Button>
       <Button
         onClick={() => toggleLanguage("vi")}
-        style={{ margin: "8px", cursor: "pointer", color: "#333" }}
+        style={{
+          color: "#333",
+        }}
       >
+        <div
+          className="img_flags"
+          style={{
+            backgroundImage: `url(${IconVN})`,
+          }}
+        />
         Vietnamese
       </Button>
     </div>
@@ -346,14 +397,14 @@ const HeaderComponent = ({
             >
               <div style={{ flex: "2", marginTop: "20px" }}>
                 <WrapperTypeProduct>
-                  {desiredOrder.map((itemKey) => {
-                    const imageIcon = getImageIconByType(itemKey); // Truyền vào khóa dịch để lấy icon
+                  {sortedTypeProducts.map((item) => {
+                    const imageIcon = getImageIconByType(item);
                     return (
                       <TypeProduct
-                        name={t(itemKey)} // Sử dụng bản dịch của mục
-                        key={itemKey}
+                        name={item}
+                        key={item}
                         imageIcon={imageIcon}
-                        onClick={() => handleTypeProductClick(t(itemKey))}
+                        onClick={() => handleTypeProductClick(item)}
                       />
                     );
                   })}
@@ -363,17 +414,24 @@ const HeaderComponent = ({
           </Col>
           {!isHiddenSearch && (
             <Col span={13} style={{ position: "relative" }}>
-              <ButtonInputSearch
-                size="large"
-                placeholder={t("HEADER.SEARCH_PLACEHODER")}
-                textbutton={t("HEADER.BUTTON_SEARCH")}
-                onChange={handleOnChangeInput}
-                value={search}
-              />
+              <div ref={searchInputRef}>
+                <ButtonInputSearch
+                  size="large"
+                  placeholder={t("HEADER.SEARCH_PLACEHODER")}
+                  textbutton={t("HEADER.BUTTON_SEARCH")}
+                  onChange={handleOnChangeInput}
+                  value={search}
+                  setSearch={setSearch}
+                />
+              </div>
               <div className="dropdown">
                 {products?.data?.filter((product) => {
-                  const searchTerm = search.toLowerCase();
-                  const productNameLower = product.name.toLowerCase();
+                  const searchTerm = removeVietnameseTones(
+                    search.toLowerCase()
+                  );
+                  const productNameLower = removeVietnameseTones(
+                    product.name.toLowerCase()
+                  );
                   return (
                     searchTerm &&
                     productNameLower.includes(searchTerm) &&
@@ -385,8 +443,12 @@ const HeaderComponent = ({
 
                 {products?.data
                   ?.filter((product) => {
-                    const searchTerm = search.toLowerCase();
-                    const productNameLower = product.name.toLowerCase();
+                    const searchTerm = removeVietnameseTones(
+                      search.toLowerCase()
+                    );
+                    const productNameLower = removeVietnameseTones(
+                      product.name.toLowerCase()
+                    );
                     return (
                       searchTerm &&
                       productNameLower.includes(searchTerm) &&
@@ -450,14 +512,16 @@ const HeaderComponent = ({
                   <UserOutlined style={{ fontSize: "30px" }} />
                 )}
                 {user?.access_token ? (
-                  <Popover content={content} trigger="click" open={isOpenPopup}>
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setIsOpenPopup((prev) => !prev)}
-                    >
-                      {userName?.length ? userName : user?.email}
-                    </div>
-                  </Popover>
+                  <div>
+                    <Popover content={content} trigger="click">
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setIsOpenPopup((prev) => !prev)}
+                      >
+                        {userName?.length ? userName : user?.email}
+                      </div>
+                    </Popover>
+                  </div>
                 ) : (
                   <div
                     onClick={handleNavigateLogin}
@@ -497,13 +561,51 @@ const HeaderComponent = ({
             )}
           </Col>
         </WrapperHeader>
-        <WrapperLanguages>
-          <Popover content={renderLanguages()} trigger="click">
-            <Button style={{ cursor: "pointer", color: "#333" }}>
-              {language === "vi" ? "VI" : language === "en" ? "EN" : ""}
-            </Button>
-          </Popover>
-        </WrapperLanguages>
+        <div className="container_WrapperLanguages">
+          <WrapperLanguages>
+            <Popover content={renderLanguages()} trigger="click">
+              <Button
+                className="btn_language"
+                style={{
+                  cursor: "pointer",
+                  color: "#333",
+                  border: "2px solid transparent",
+                  transition: "border-color 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = "#42c8b7"; // Thêm viền màu khi hover
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = "transparent"; // Trả về viền trong suốt khi không hover
+                }}
+              >
+                {language === "vi" ? (
+                  <>
+                    <div
+                      className="img_flags"
+                      style={{
+                        backgroundImage: `url(${IconVN})`,
+                      }}
+                    />
+                    Vietnamese
+                  </>
+                ) : language === "en" ? (
+                  <>
+                    <div
+                      className="img_flags"
+                      style={{
+                        backgroundImage: `url(${IconUS})`,
+                      }}
+                    />
+                    English
+                  </>
+                ) : (
+                  ""
+                )}
+              </Button>
+            </Popover>
+          </WrapperLanguages>
+        </div>
       </div>
     </div>
   );
