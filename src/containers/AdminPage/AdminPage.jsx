@@ -9,7 +9,7 @@ import {
 import HeaderComponent from "../../components/HeaderComponent/HeaderComponent";
 import AdminUser from "../../components/AdminUser/AdminUser";
 import AdminProduct from "../../components/AdminProduct/AdminProduct";
-import OrderAdmin from "../../components/OrderAdmin/OrderAdmin";
+import OrderAdmin from "../../components/AdminOrder/AdminOrder";
 
 import { useTranslation } from "react-i18next";
 

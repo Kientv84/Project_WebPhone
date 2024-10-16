@@ -54,8 +54,9 @@ const BranchProductPage = () => {
           width: "100%",
           background: "#efefef",
           //   height: "calc(100vh - 64px)",
-          height: "100vh",
+          minHeight: "100vh",
           marginTop: "60px",
+          paddingBottom: "20px",
         }}
       >
         <div
@@ -67,6 +68,7 @@ const BranchProductPage = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
+            flexGrow: 1,
           }}
         >
           <div>
@@ -116,10 +118,12 @@ const BranchProductPage = () => {
           <div>
             <Pagination
               defaultCurrent={panigate.page + 1}
-              total={panigate?.total}
+              total={panigate?.total * panigate.limit}
+              pageSize={panigate.limit}
               onChange={onChange}
               style={{
                 textAlign: "center",
+                marginBottom: "20px",
               }}
             />
           </div>

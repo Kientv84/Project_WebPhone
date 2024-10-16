@@ -15,7 +15,7 @@ const ButtonInputSearch = (props) => {
     backgroundColorInput = "#fff",
     backgroundColorButton = "rgba(13, 129, 115, 0.82)",
     colorButton = "#fff",
-    value, // Nhận giá trị của ô tìm kiếm từ props
+    value,
     setSearch,
   } = props;
 
@@ -27,7 +27,6 @@ const ButtonInputSearch = (props) => {
         setSearch(""); // Kiểm tra setSearch trước khi reset ô tìm kiếm
       }
     } else {
-      // Nếu không có giá trị trong ô tìm kiếm, điều hướng đến trang kết quả trống
       navigate(`/catalogsearch/result?q=`);
     }
   };

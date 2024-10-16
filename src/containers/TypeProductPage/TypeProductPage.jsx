@@ -9,6 +9,7 @@ import { useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
+import "./TypeProductPage.css";
 
 const TypeProductPage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -19,7 +20,7 @@ const TypeProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [panigate, setPanigate] = useState({
     page: 0,
-    limit: 10,
+    limit: 12,
     total: 1,
   });
 
@@ -49,79 +50,84 @@ const TypeProductPage = () => {
   };
   return (
     <Loading isLoading={loading}>
-      <div
-        style={{
-          width: "100vw",
-          background: "#efefef",
-          //   height: "calc(100vh - 64px)",
-          height: "100vh",
-          marginTop: "60px",
-        }}
-      >
+      <div className="wrapper-page">
         <div
           style={{
-            width: "1270px",
-            margin: "0 auto",
-            height: "auto",
-            minHeight: "calc(100vh - 20px)",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
+            width: "100vw",
+            background: "#efefef",
+            //   height: "calc(100vh - 64px)",
+            minHeight: "100vh",
+            marginTop: "60px",
           }}
         >
-          <div>
-            <Row
-              style={{
-                flexWrap: "nowrap",
-                paddingTop: "10px",
-              }}
-            >
-              <Col>
-                <WrapperProducts
-                  style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}
-                >
-                  {products
-                    ?.filter((pro) => {
-                      if (searchDebounce === "") {
-                        return true; // Trả về true để giữ lại tất cả các sản phẩm
-                      } else if (
-                        pro?.name
-                          ?.toLowerCase()
-                          ?.includes(searchDebounce?.toLowerCase())
-                      ) {
-                        return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
-                      }
-                      return false;
-                    })
-                    ?.map((product) => {
-                      return (
-                        <CardComponent
-                          key={product._id}
-                          countInStock={product.countInStock}
-                          description={product.description}
-                          image={product.image}
-                          name={product.name}
-                          price={product.price}
-                          rating={product.rating}
-                          type={product.type}
-                          selled={product.selled}
-                          discount={product.discount}
-                          id={product._id}
-                        />
-                      );
-                    })}
-                </WrapperProducts>
-              </Col>
-            </Row>
-          </div>
-          <Pagination
-            defaultCurrent={panigate.page + 1}
-            total={panigate?.total}
-            onChange={onChange}
+          <div
             style={{
-              textAlign: "center",
+              width: "1270px",
+              margin: "0 auto",
+              height: "auto",
+              minHeight: "calc(100vh - 20px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              flexGrow: 1,
             }}
-          />
+          >
+            <div>
+              <Row
+                style={{
+                  flexWrap: "nowrap",
+                  paddingTop: "10px",
+                }}
+              >
+                <Col>
+                  <WrapperProducts
+                    style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}
+                  >
+                    {products
+                      ?.filter((pro) => {
+                        if (searchDebounce === "") {
+                          return true; // Trả về true để giữ lại tất cả các sản phẩm
+                        } else if (
+                          pro?.name
+                            ?.toLowerCase()
+                            ?.includes(searchDebounce?.toLowerCase())
+                        ) {
+                          return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
+                        }
+                        return false;
+                      })
+                      ?.map((product) => {
+                        return (
+                          <CardComponent
+                            key={product._id}
+                            countInStock={product.countInStock}
+                            description={product.description}
+                            image={product.image}
+                            name={product.name}
+                            price={product.price}
+                            rating={product.rating}
+                            type={product.type}
+                            selled={product.selled}
+                            discount={product.discount}
+                            id={product._id}
+                          />
+                        );
+                      })}
+                  </WrapperProducts>
+                </Col>
+              </Row>
+            </div>
+            <Pagination
+              defaultCurrent={panigate.page + 1}
+              total={panigate?.total * panigate.limit}
+              pageSize={panigate.limit}
+              onChange={onChange}
+              style={{
+                textAlign: "center",
+                marginBottom: "20px",
+              }}
+            />
+          </div>
         </div>
       </div>
     </Loading>

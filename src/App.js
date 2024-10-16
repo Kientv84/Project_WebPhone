@@ -61,7 +61,12 @@ function App() {
   );
 
   return (
-    <div style={{ height: "100vh", width: "100%" }}>
+    <div
+      style={{
+        height: "100vh",
+        width: "100%",
+      }}
+    >
       <Loading isLoading={isLoading}>
         <Router>
           <Routes>
@@ -78,8 +83,10 @@ function App() {
                   path={route.path}
                   element={
                     <Layout>
-                      <Page />
-                      {isShowChatbox && <Chatbot />}
+                      <div style={{ flex: 1 }}>
+                        <Page />
+                        {isShowChatbox && <Chatbot />}
+                      </div>
                       <LayoutFooter />
                     </Layout>
                   }

@@ -334,9 +334,11 @@ const AdminProduct = () => {
       ),
       onFilter: (value, record) =>
         record[dataIndex]
-          .toString()
-          .toLowerCase()
-          .includes(value.toLowerCase()),
+          ? record[dataIndex]
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase())
+          : "",
       onFilterDropdownOpenChange: (visible) => {
         if (visible) {
           setTimeout(() => searchInput.current?.select(), 100);
@@ -432,7 +434,7 @@ const AdminProduct = () => {
       message.success(t("ADMIN.ADD_SUCCESS"));
       handleCancel();
     } else if (isError) {
-      message.error(t("ADMIN.ADD_FAIL)"));
+      message.error(t("ADMIN.ADD_FAIL"));
     }
   }, [isSuccess, statuss, handleCancel, isError]);
 

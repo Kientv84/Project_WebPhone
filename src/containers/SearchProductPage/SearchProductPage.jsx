@@ -13,51 +13,35 @@ const SearchProductPage = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [panigate, setPanigate] = useState({
     page: 0,
-    limit: 10,
+    limit: 12,
     total: 1,
   });
-
-  const removeVietnameseTones = (str) => {
-    return str
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/đ/g, "d")
-      .replace(/Đ/g, "D")
-      .replace(/[^a-zA-Z0-9 ]/g, "")
-      .trim();
-  };
 
   const fetchProductType = useCallback(
     async (query, page, limit) => {
       setLoading(true);
       try {
-        // Thử tìm kiếm với từ khóa gốc trước
         const res = await ProductService.getProductSearch(query, page, limit);
-        if (res?.status === "OK" && res?.data.length === 0) {
-          // Nếu không có kết quả, tìm kiếm với từ khóa đã chuẩn hóa
-          const normalizedQuery = removeVietnameseTones(query.toLowerCase());
-          const resNormalized = await ProductService.getProductSearch(
-            normalizedQuery,
-            page,
-            limit
-          );
-          if (resNormalized?.status === "OK") {
-            setProducts(resNormalized?.data);
-            setPanigate({ ...panigate, total: resNormalized?.totalPage });
-          } else {
-            setProducts([]);
-          }
+        if (res?.status === "OK") {
+          setLoading(true);
+          setProducts(res.data);
+          setTotalProducts(res.total);
+          setPanigate({
+            ...panigate,
+            total: res.totalPage,
+          });
         } else {
-          setProducts(res?.data || []);
-          setPanigate({ ...panigate, total: res?.totalPage });
+          setProducts([]);
+          setTotalProducts(0);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
-        setProducts([]); // Đảm bảo đặt lại sản phẩm khi gặp lỗi
+        setProducts([]);
+        setTotalProducts(0);
       }
-
       setLoading(false);
     },
     [panigate]
@@ -65,17 +49,10 @@ const SearchProductPage = () => {
 
   useEffect(() => {
     if (query.trim()) {
-      // Thực hiện tìm kiếm với từ khóa gốc (có dấu) trước
-      fetchProductType(query, panigate.page, panigate.limit).then((res) => {
-        if (res?.status === "OK" && res?.data.length === 0) {
-          // Nếu không có kết quả, tìm kiếm với từ khóa đã chuẩn hóa (không dấu)
-          const normalizedQuery = removeVietnameseTones(query.toLowerCase());
-          fetchProductType(normalizedQuery, panigate.page, panigate.limit);
-        }
-      });
+      fetchProductType(query, panigate.page, panigate.limit);
     } else {
-      // Nếu query rỗng, chỉ hiển thị thông báo
       setProducts([]);
+      setTotalProducts(0);
     }
   }, [query, panigate.page, panigate.limit]);
 
@@ -88,7 +65,7 @@ const SearchProductPage = () => {
         style={{
           width: "100vw",
           background: "#efefef",
-          height: "100vh",
+          minHeight: "100vh",
           marginTop: "60px",
           paddingBottom: "20px",
         }}
@@ -102,26 +79,27 @@ const SearchProductPage = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
+            flexGrow: 1,
           }}
         >
           <div>
-            {query.trim() === "" ? (
-              // Hiển thị khi không có từ khóa tìm kiếm
+            {loading ? (
+              <div></div>
+            ) : query.trim() === "" || products?.length === 0 ? (
               <div className="container_searchnotfound">
                 <h1 className="search-result">
-                  Tìm thấy <strong>{products?.length}</strong> sản phẩm cho từ
-                  khoá ''
+                  Tìm thấy <strong>0</strong> sản phẩm cho từ khoá
+                  <strong> '{query}' </strong>
                 </h1>
                 <p>Không có kết quả bạn cần tìm</p>
               </div>
             ) : (
-              // Hiển thị kết quả tìm kiếm khi có từ khóa
               <>
                 <h1 className="search-result">
-                  Tìm thấy <strong>{products?.length}</strong> sản phẩm cho từ
-                  khoá
+                  Tìm thấy <strong>{totalProducts}</strong> sản phẩm cho từ khoá
                   <strong> '{query}' </strong>
                 </h1>
+
                 <Row
                   style={{
                     flexWrap: "nowrap",
@@ -162,7 +140,8 @@ const SearchProductPage = () => {
             >
               <Pagination
                 defaultCurrent={panigate.page + 1}
-                total={panigate?.total}
+                total={panigate?.total * panigate.limit}
+                pageSize={panigate.limit}
                 onChange={onChange}
                 style={{
                   textAlign: "center",

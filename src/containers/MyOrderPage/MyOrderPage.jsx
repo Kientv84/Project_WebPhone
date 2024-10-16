@@ -42,12 +42,12 @@ const MyOrderPage = () => {
     { queryKey: ["orders"], queryFn: fetchMyOrder },
     {
       enabled: !!state?.id && !!state?.token,
+      refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
 
   const { isLoading, data } = queryOrder;
-  console.log("Order Data:", data);
 
   const handleDetailsOrder = (id) => {
     navigate(`/details-order/${id}`, {
