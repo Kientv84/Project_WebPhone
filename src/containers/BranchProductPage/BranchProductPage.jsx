@@ -116,16 +116,21 @@ const BranchProductPage = () => {
             </Row>
           </div>
           <div>
-            <Pagination
-              defaultCurrent={panigate.page + 1}
-              total={panigate?.total * panigate.limit}
-              pageSize={panigate.limit}
-              onChange={onChange}
+            <div
               style={{
-                textAlign: "center",
-                marginBottom: "20px",
+                marginTop: "30px",
               }}
-            />
+            >
+              <Pagination
+                defaultCurrent={panigate.page + 1}
+                total={panigate?.total * panigate.limit}
+                pageSize={panigate.limit}
+                onChange={onChange}
+                style={{
+                  textAlign: "center",
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

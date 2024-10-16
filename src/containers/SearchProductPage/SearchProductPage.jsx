@@ -59,6 +59,7 @@ const SearchProductPage = () => {
   const onChange = (current, pageSize) => {
     setPanigate({ ...panigate, page: current - 1, limit: pageSize });
   };
+
   return (
     <Loading isLoading={loading}>
       <div

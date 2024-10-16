@@ -58,6 +58,7 @@ const TypeProductPage = () => {
             //   height: "calc(100vh - 64px)",
             minHeight: "100vh",
             marginTop: "60px",
+            paddingBottom: "20px",
           }}
         >
           <div
@@ -117,16 +118,21 @@ const TypeProductPage = () => {
                 </Col>
               </Row>
             </div>
-            <Pagination
-              defaultCurrent={panigate.page + 1}
-              total={panigate?.total * panigate.limit}
-              pageSize={panigate.limit}
-              onChange={onChange}
+            <div
               style={{
-                textAlign: "center",
-                marginBottom: "20px",
+                marginTop: "30px",
               }}
-            />
+            >
+              <Pagination
+                defaultCurrent={panigate.page + 1}
+                total={panigate?.total * panigate.limit}
+                pageSize={panigate.limit}
+                onChange={onChange}
+                style={{
+                  textAlign: "center",
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
