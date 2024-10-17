@@ -139,10 +139,58 @@ const MyOrderPage = () => {
           style={{
             height: "100%",
             width: "1270px",
-            margin: "70px auto 0",
+            margin: "80px auto 0",
           }}
         >
-          <h3 style={{ marginTop: "5px" }}>{t("MY_ODER.TITLE")}</h3>
+          <div
+            style={{
+              fontWeight: "normal",
+              marginTop: "5px",
+              fontSize: "15px",
+              marginTop: "20px",
+            }}
+          >
+            {" "}
+            <span
+              style={{
+                cursor: "pointer",
+                fontWeight: "bold",
+                fontSize: "14px",
+                color: "#707070",
+              }}
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              {t("MY_ODER.BACK_HOMEPAGE")}
+            </span>{" "}
+            <svg
+              style={{
+                margin: "0 10px 0 6px",
+                width: "14px",
+                color: "#707070",
+                height: "14px",
+                verticalAlign: "middle",
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+            >
+              <path
+                fill="currentColor"
+                d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+              ></path>
+            </svg>
+            <span
+              style={{
+                fontSize: "14px", // Kích thước chữ
+                fontWeight: "bold", // Kiểu chữ đậm
+                color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+              }}
+            >
+              {t("MY_ODER.TITLE")}
+            </span>
+          </div>
+          {/* <h3 style={{ marginTop: "5px" }}>{t("MY_ODER.TITLE")}</h3> */}
           <WrapperListOrder>
             {data?.map((order) => {
               return (
@@ -156,11 +204,22 @@ const MyOrderPage = () => {
                       <span style={{ color: "rgb(255, 66, 78)" }}>
                         {t("MY_ODER.IS_DELIVERRED")}{" "}
                       </span>
-                      {`${
-                        order.isDelivered
-                          ? t("MY_ODER.DELIVERRED")
-                          : t("MY_ODER.UN_DELIVERRED")
-                      }`}
+                      {(() => {
+                        switch (order.isDelivered) {
+                          case "not shipped":
+                            return t("MY_ODER.NOT_SHIPPED");
+                          case "pending":
+                            return t("MY_ODER.PENDING");
+                          case "shipped":
+                            return t("MY_ODER.SHIPPED");
+                          case "delivered":
+                            return t("MY_ODER.DELIVERED");
+                          case "cancelled":
+                            return t("MY_ODER.CANCELLED");
+                          default:
+                            return t("MY_ODER.UNKNOWN");
+                        }
+                      })()}
                     </div>
                     <div>
                       <span style={{ color: "rgb(255, 66, 78)" }}>
@@ -188,7 +247,7 @@ const MyOrderPage = () => {
                       </span>
                     </div>
                     <div style={{ display: "flex", gap: "10px" }}>
-                      {!order.isDelivered && (
+                      {order.isDelivered === "delivered" && (
                         <ButtonComponent
                           onClick={() => handleCancelOrder(order)}
                           size={40}

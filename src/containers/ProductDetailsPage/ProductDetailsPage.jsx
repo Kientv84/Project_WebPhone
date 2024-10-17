@@ -35,7 +35,7 @@ const ProductDetailsPage = () => {
         marginTop: "60px",
       }}
     >
-      <h5
+      <div
         style={{
           fontWeight: "normal",
           marginTop: "5px",
@@ -48,7 +48,7 @@ const ProductDetailsPage = () => {
           style={{
             cursor: "pointer",
             fontWeight: "bold",
-            fontSize: "12px",
+            fontSize: "14px",
             color: "#707070",
           }}
           onClick={() => {
@@ -60,8 +60,9 @@ const ProductDetailsPage = () => {
         <svg
           style={{
             margin: "0 10px 0 6px",
-            width: "12px",
-            height: "12px",
+            width: "14px",
+            color: "#707070",
+            height: "14px",
             verticalAlign: "middle",
           }}
           xmlns="http://www.w3.org/2000/svg"
@@ -74,14 +75,14 @@ const ProductDetailsPage = () => {
         </svg>
         <span
           style={{
-            fontSize: "12px", // Kích thước chữ
+            fontSize: "14px", // Kích thước chữ
             fontWeight: "bold", // Kiểu chữ đậm
             color: "#707070", // Màu chữ (ví dụ: đỏ cam)
           }}
         >
           {productName}
         </span>
-      </h5>
+      </div>
       <ProductDetailsComponent idProduct={id} />
     </div>
   );

@@ -1,22 +1,25 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import * as ProductService from "../../services/ProductService";
 import Loading from "../../components/LoadingComponent/Loading";
 import { WrapperProducts } from "./style";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { Col, Pagination, Row } from "antd";
 import "./SearchProductPage.css";
+import { useTranslation } from "react-i18next";
 
 const SearchProductPage = () => {
   const [searchParams] = useSearchParams(); // Lấy giá trị từ query string
   const query = searchParams.get("q");
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalProducts, setTotalProducts] = useState(0);
   const [panigate, setPanigate] = useState({
     page: 0,
-    limit: 12,
+    limit: 18,
     total: 1,
   });
 
@@ -71,6 +74,55 @@ const SearchProductPage = () => {
           paddingBottom: "20px",
         }}
       >
+        <div
+          style={{
+            fontWeight: "normal",
+            fontSize: "15px",
+            paddingTop: "15px",
+            width: "1270px",
+            margin: "70px auto 0",
+          }}
+        >
+          {" "}
+          <span
+            style={{
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "14px",
+              color: "#707070",
+            }}
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            {t("SEARCHPRODUCT.BACK_HOMEPAGE")}
+          </span>{" "}
+          <svg
+            style={{
+              margin: "0 10px 0 6px",
+              width: "14px",
+              color: "#707070",
+              height: "14px",
+              verticalAlign: "middle",
+            }}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 320 512"
+          >
+            <path
+              fill="currentColor"
+              d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+            ></path>
+          </svg>
+          <span
+            style={{
+              fontSize: "14px", // Kích thước chữ
+              fontWeight: "bold", // Kiểu chữ đậm
+              color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+            }}
+          >
+            {t("SEARCHPRODUCT.SEARCH_RESULT")} "{query}"
+          </span>
+        </div>
         <div
           style={{
             width: "1270px",
