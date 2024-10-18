@@ -37,14 +37,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import StepComponent from "../../components/StepComponent/StepComponent";
 import { useTranslation } from "react-i18next";
 
-
 const OrderPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
   const location = useLocation();
 
   const { t } = useTranslation();
-
 
   const [listChecked, setListChecked] = useState([]);
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
@@ -162,7 +160,7 @@ const OrderPage = () => {
   const handleAddCard = () => {
     // console.log('orderr', order)
     if (!order?.orderItemsSelected?.length) {
-      message.error(t('ORDER.TOAST_CHOOSE'));
+      message.error(t("ORDER.TOAST_CHOOSE"));
     } else if (!user?.id) {
       navigate("/sign-in", { state: location?.pathname });
     } else if (!user?.phone || !user.address || !user.name || !user.city) {
@@ -216,15 +214,15 @@ const OrderPage = () => {
   const itemsDelivery = [
     {
       title: "30.000 VND",
-      description: t('ORDER.DELIVERRED_DES1'),
+      description: t("ORDER.DELIVERRED_DES1"),
     },
     {
       title: "10.000 VND",
-      description: t('ORDER.DELIVERRED_DES2'),
+      description: t("ORDER.DELIVERRED_DES2"),
     },
     {
-      title: t('ORDER.FREESHIP'),
-      description:  t('ORDER.DELIVERRED_DES3'),
+      title: t("ORDER.FREESHIP"),
+      description: t("ORDER.DELIVERRED_DES3"),
     },
   ];
 
@@ -235,13 +233,60 @@ const OrderPage = () => {
         background: "#f5f5fa",
         with: "100%",
         height: "100vh",
+        marginTop: "65px",
       }}
     >
       <div style={{ width: "1270px", margin: "0 auto" }}>
-        <h3 style={{ fontWeight: "bold" }}>Cart</h3>
+        <div
+          style={{
+            fontWeight: "normal",
+            fontSize: "15px",
+            paddingTop: "15px",
+          }}
+        >
+          {" "}
+          <span
+            style={{
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "14px",
+              color: "#707070",
+            }}
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            {t("ORDER.BACK_HOMEPAGE")}
+          </span>{" "}
+          <svg
+            style={{
+              margin: "0 10px 0 6px",
+              width: "14px",
+              color: "#707070",
+              height: "14px",
+              verticalAlign: "middle",
+            }}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 320 512"
+          >
+            <path
+              fill="currentColor"
+              d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+            ></path>
+          </svg>
+          <span
+            style={{
+              fontSize: "14px", // Kích thước chữ
+              fontWeight: "bold", // Kiểu chữ đậm
+              color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+            }}
+          >
+            {t("ORDER.CART")}
+          </span>
+        </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <WrapperLeft>
-            <h4>{t('ORDER.DELIVERY_FEE')}</h4>
+            <h4>{t("ORDER.DELIVERY_FEE")}</h4>
             <WrapperStyleHeaderDelivery>
               <StepComponent
                 items={itemsDelivery}
@@ -263,7 +308,11 @@ const OrderPage = () => {
                   onChange={handleOnchangeCheckAll}
                   checked={listChecked?.length === order?.orderItems?.length}
                 ></CustomCheckbox>
-                <span> {t('ORDER.TOTAL')} ({order?.orderItems?.length} {t('ORDER.PRODUCT')})</span>
+                <span>
+                  {" "}
+                  {t("ORDER.TOTAL")} ({order?.orderItems?.length}{" "}
+                  {t("ORDER.PRODUCT")})
+                </span>
               </span>
               <div
                 style={{
@@ -273,9 +322,9 @@ const OrderPage = () => {
                   justifyContent: "space-between",
                 }}
               >
-                <span>{t('ORDER.PRICE')}</span>
-                <span>{t('ORDER.QUANTITY')}</span>
-                <span>{t('ORDER.SUBTOTAL')}</span>
+                <span>{t("ORDER.PRICE")}</span>
+                <span>{t("ORDER.QUANTITY")}</span>
+                <span>{t("ORDER.SUBTOTAL")}</span>
                 <DeleteOutlined
                   style={{ cursor: "pointer" }}
                   onClick={handleRemoveAllOrder}
@@ -403,7 +452,7 @@ const OrderPage = () => {
             <div style={{ width: "100%", marginTop: "55px" }}>
               <WrapperInfo1>
                 <div>
-                  <span>{t('ORDER.ADDRESS')}: </span>
+                  <span>{t("ORDER.ADDRESS")}: </span>
                   <span style={{ fontWeight: "bold" }}>
                     {`${user?.address} ${user?.city}`}{" "}
                   </span>
@@ -411,7 +460,7 @@ const OrderPage = () => {
                     onClick={handleChangeAddress}
                     style={{ color: "#9255FD", cursor: "pointer" }}
                   >
-                    {t('ORDER.CHANGE')}
+                    {t("ORDER.CHANGE")}
                   </span>
                 </div>
               </WrapperInfo1>
@@ -423,7 +472,7 @@ const OrderPage = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>{t('ORDER.SUBTOTAL')}</span>
+                  <span>{t("ORDER.SUBTOTAL")}</span>
                   <span
                     style={{
                       color: "#000",
@@ -441,7 +490,7 @@ const OrderPage = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>{t('ORDER.DISCOUNT')}</span>
+                  <span>{t("ORDER.DISCOUNT")}</span>
                   <span
                     style={{
                       color: "#000",
@@ -459,7 +508,7 @@ const OrderPage = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>{t('ORDER.DELIVERY_FEE')}</span>
+                  <span>{t("ORDER.DELIVERY_FEE")}</span>
                   <span
                     style={{
                       color: "#000",
@@ -472,7 +521,7 @@ const OrderPage = () => {
                 </div>
               </WrapperInfo>
               <WrapperTotal>
-                <span>{t('ORDER.TOTAL_TO_PAY')}</span>
+                <span>{t("ORDER.TOTAL_TO_PAY")}</span>
                 <span style={{ display: "flex", flexDirection: "column" }}>
                   <span
                     style={{
@@ -484,7 +533,7 @@ const OrderPage = () => {
                     {convertPrice(totalPriceMemo)}
                   </span>
                   <span style={{ color: "#000", fontSize: "11px" }}>
-                    {t('ORDER.VAT')}
+                    {t("ORDER.VAT")}
                   </span>
                 </span>
               </WrapperTotal>
@@ -499,7 +548,7 @@ const OrderPage = () => {
                 border: "none",
                 borderRadius: "4px",
               }}
-              textbutton={t('ORDER.BUY_BTN')}
+              textbutton={t("ORDER.BUY_BTN")}
               styletextbutton={{
                 color: "#fff",
                 fontSize: "15px",
@@ -510,10 +559,13 @@ const OrderPage = () => {
         </div>
       </div>
       <ModalComponent
-        title={t('ORDER.UPDATE_INFOR')}
+        title={t("ORDER.UPDATE_INFOR")}
         open={isOpenModalUpdateInfo}
         onCancel={handleCancelUpdate}
         onOk={handleUpdateInfoUser}
+        styles={{ body: { padding: "24px" } }}
+        centered
+        width={800}
       >
         <Loading isLoading={isLoading}>
           <Form
@@ -525,9 +577,9 @@ const OrderPage = () => {
             form={form}
           >
             <Form.Item
-              label={t('ORDER.NAME_CHANGE')}
+              label={t("ORDER.NAME_CHANGE")}
               name="name"
-              rules={[{ required: true, message: t('ORDER.NAME_MESSAGE') }]}
+              rules={[{ required: true, message: t("ORDER.NAME_MESSAGE") }]}
             >
               <InputComponent
                 value={stateUserDetails["name"]}
@@ -536,9 +588,9 @@ const OrderPage = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ORDER.CITY_CHANGE')}
+              label={t("ORDER.CITY_CHANGE")}
               name="city"
-              rules={[{ required: true, message: t('ORDER.CITY_MESSAGE') }]}
+              rules={[{ required: true, message: t("ORDER.CITY_MESSAGE") }]}
             >
               <InputComponent
                 value={stateUserDetails["city"]}
@@ -547,9 +599,9 @@ const OrderPage = () => {
               />
             </Form.Item>
             <Form.Item
-              label={t('ORDER.PHONE_CHANGE')}
+              label={t("ORDER.PHONE_CHANGE")}
               name="phone"
-              rules={[{ required: true, message: t('ORDER.PHONE_MESSAGE') }]}
+              rules={[{ required: true, message: t("ORDER.PHONE_MESSAGE") }]}
             >
               <InputComponent
                 value={stateUserDetails.phone}
@@ -559,11 +611,9 @@ const OrderPage = () => {
             </Form.Item>
 
             <Form.Item
-              label={t('ORDER.ADDRESS')}
+              label={t("ORDER.ADDRESS")}
               name="address"
-              rules={[
-                { required: true, message: t('ORDER.MESSAGE') },
-              ]}
+              rules={[{ required: true, message: t("ORDER.MESSAGE") }]}
             >
               <InputComponent
                 value={stateUserDetails.address}

@@ -406,16 +406,43 @@ const AdminOrder = () => {
         address: order?.shippingAddress?.address,
         paymentMethod: orderConstant.payment[order?.paymentMethod],
         isPaid: order?.isPaid ? t("ADMIN.PAID") : t("ADMIN.UN_PAID"),
-        isDelivered: order?.isDelivered
-          ? t("ADMIN.DELIVERED")
-          : t("ADMIN.NOT_SHIPPED"),
+        isDelivered: (() => {
+          switch (order.isDelivered) {
+            case "not shipped":
+              return t("ADMIN.NOT_SHIPPED");
+            case "pending":
+              return t("ADMIN.PENDING");
+            case "shipped":
+              return t("ADMIN.SHIPPED");
+            case "delivered":
+              return t("ADMIN.DELIVERED");
+            case "cancelled":
+              return t("ADMIN.CANCELLED");
+            default:
+              return t("ADMIN.UNKNOWN");
+          }
+        })(),
         totalPrice: convertPrice(order?.totalPrice),
       };
     });
 
+  // const onUpdateDelivery = () => {
+  //   mutationUpdate.mutate(
+  //     { id: rowSelected, token: user?.access_token, ...stateOrderDelivery },
+  //     {
+  //       onSettled: () => {
+  //         queryOrder.refetch();
+  //       },
+  //     }
+  //   );
+  // };
   const onUpdateDelivery = () => {
     mutationUpdate.mutate(
-      { id: rowSelected, token: user?.access_token, ...stateOrderDelivery },
+      {
+        id: rowSelected,
+        token: user?.access_token,
+        isDelivered: stateOrderDelivery.isDelivered,
+      },
       {
         onSettled: () => {
           queryOrder.refetch();
@@ -499,11 +526,20 @@ const AdminOrder = () => {
                   setStateOrderDelivery({ isDelivered: value })
                 }
               >
-                <Select.Option value={true}>
+                <Select.Option value="not shipped">
+                  {t("ADMIN.NOT_SHIPPED")}
+                </Select.Option>
+                <Select.Option value="pending">
+                  {t("ADMIN.PENDING")}
+                </Select.Option>
+                <Select.Option value="shipped">
+                  {t("ADMIN.SHIPPED")}
+                </Select.Option>
+                <Select.Option value="delivered">
                   {t("ADMIN.DELIVERED")}
                 </Select.Option>
-                <Select.Option value={false}>
-                  {t("ADMIN.NOT_SHIPPED")}
+                <Select.Option value="cancelled">
+                  {t("ADMIN.CANCELLED")}
                 </Select.Option>
               </Select>
             </Form.Item>
@@ -522,6 +558,9 @@ const AdminOrder = () => {
         isOpen={isOpenDrawerPayment}
         onCancel={() => setIsOpenDrawerPayment(false)}
         footer={null}
+        styles={{ body: { padding: "24px" } }}
+        centered
+        width={800}
       >
         <Loading isLoading={isLoadingUpdate || isLoadingUpdatedPayment}>
           <Form
@@ -533,7 +572,7 @@ const AdminOrder = () => {
             form={form}
           >
             <Form.Item
-              label="Payment State:"
+              label={t("ADMIN.PAYMENT_STATE")}
               name="isPaid"
               rules={[{ required: true, message: t("ADMIN.SELECT_PAY") }]}
             >

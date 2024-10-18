@@ -9,7 +9,7 @@ import {
 } from "./style";
 import { convertPrice } from "../../utils";
 import Loading from "../../components/LoadingComponent/Loading";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { orderConstant } from "../../constant";
 import { useTranslation } from "react-i18next";
 
@@ -17,6 +17,7 @@ const OrderSuccess = () => {
   const location = useLocation();
   const { state } = location;
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <div
@@ -25,7 +26,7 @@ const OrderSuccess = () => {
         with: "100%",
         height: "auto",
         paddingTop: "0.1px",
-        marginTop: "60px",
+        marginTop: "65px",
       }}
     >
       <Loading isLoading={false}>
@@ -37,8 +38,110 @@ const OrderSuccess = () => {
             padding: "0.1px 0px ",
           }}
         >
-          <h3 style={{ fontWeight: "bold" }}>{t("ORDER_SUCCESS.TITLE")}</h3>
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div
+            style={{
+              fontWeight: "normal",
+              fontSize: "15px",
+              paddingTop: "15px",
+            }}
+          >
+            {" "}
+            <span
+              style={{
+                cursor: "pointer",
+                fontWeight: "bold",
+                fontSize: "14px",
+                color: "#707070",
+              }}
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              {t("ORDER.BACK_HOMEPAGE")}
+            </span>{" "}
+            <svg
+              style={{
+                margin: "0 10px 0 6px",
+                width: "14px",
+                color: "#707070",
+                height: "14px",
+                verticalAlign: "middle",
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+            >
+              <path
+                fill="currentColor"
+                d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+              ></path>
+            </svg>
+            <span
+              style={{
+                fontSize: "14px", // Kích thước chữ
+                fontWeight: "bold", // Kiểu chữ đậm
+                color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+              }}
+            >
+              {t("ORDER.CART")}
+            </span>{" "}
+            <svg
+              style={{
+                margin: "0 10px 0 6px",
+                width: "14px",
+                color: "#707070",
+                height: "14px",
+                verticalAlign: "middle",
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+            >
+              <path
+                fill="currentColor"
+                d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+              ></path>
+            </svg>
+            <span
+              style={{
+                fontSize: "14px",
+                fontWeight: "bold",
+                color: "#707070",
+              }}
+            >
+              {t("PAYMENT.TITLE")}
+            </span>{" "}
+            <svg
+              style={{
+                margin: "0 10px 0 6px",
+                width: "14px",
+                color: "#707070",
+                height: "14px",
+                verticalAlign: "middle",
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+            >
+              <path
+                fill="currentColor"
+                d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+              ></path>
+            </svg>
+            <span
+              style={{
+                fontSize: "14px", // Kích thước chữ
+                fontWeight: "bold", // Kiểu chữ đậm
+                color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+              }}
+            >
+              {t("ORDER_SUCCESS.TITLE")}
+            </span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
             <div>
               <WrapperInfo1>
                 <div>

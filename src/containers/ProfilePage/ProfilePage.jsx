@@ -20,6 +20,7 @@ import { getBase64 } from "../../utils";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../ultis/firebase";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
   const user = useSelector((state) => state.user);
@@ -31,6 +32,7 @@ const ProfilePage = () => {
   const [isLoadings, setIsLoadings] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleGetDetailsUser = useCallback(
     async (id, token) => {
@@ -59,7 +61,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      message.success(t('PROFILE.UPDATE_SUCCESS'));
+      message.success(t("PROFILE.UPDATE_SUCCESS"));
       handleGetDetailsUser(user?.id, user?.access_token);
     } else if (isError) {
       message.error();
@@ -92,7 +94,7 @@ const ProfilePage = () => {
     setAvatar(file.preview);
 
     if (!file.url && !file.preview) {
-      message.error(t('PROFILE.WARNING'), t('PROFILE.REQUIRE_UPLOAD_IMG'));
+      message.error(t("PROFILE.WARNING"), t("PROFILE.REQUIRE_UPLOAD_IMG"));
       setIsLoadings(false); // Nếu không có file thì kết thúc loading
       return;
     }
@@ -128,17 +130,64 @@ const ProfilePage = () => {
 
   return (
     <div style={{ width: "1270px", margin: "75px auto 0px", height: "500px" }}>
-      <WrapperHeader>{t('PROFILE.TITLE')}</WrapperHeader>
+      <div
+        style={{
+          fontWeight: "normal",
+          marginTop: "5px",
+          fontSize: "15px",
+          marginTop: "20px",
+        }}
+      >
+        {" "}
+        <span
+          style={{
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "14px",
+            color: "#707070",
+          }}
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          {t("PRODUCT_DETAILS.BACK_HOMEPAGE")}
+        </span>{" "}
+        <svg
+          style={{
+            margin: "0 10px 0 6px",
+            width: "14px",
+            color: "#707070",
+            height: "14px",
+            verticalAlign: "middle",
+          }}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 320 512"
+        >
+          <path
+            fill="currentColor"
+            d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+          ></path>
+        </svg>
+        <span
+          style={{
+            fontSize: "14px", // Kích thước chữ
+            fontWeight: "bold", // Kiểu chữ đậm
+            color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+          }}
+        >
+          {t("PROFILE.TITLE")}
+        </span>
+      </div>
       <Loading isLoading={isLoading}>
         <WrapperContentProfile>
           <WrapperInput>
-            <WrapperLabel htmlFor="name"> {t('PROFILE.NAME')}</WrapperLabel>
+            <WrapperLabel htmlFor="name"> {t("PROFILE.NAME")}</WrapperLabel>
             <InputForm
               style={{ width: "300px" }}
               id="name"
               value={name}
               onChange={handleOnChangeName}
-              placeholder={t('PROFILE.NAME_PLACEHOODER')}
+              placeholder={t("PROFILE.NAME_PLACEHOODER")}
             />
           </WrapperInput>
           <WrapperInput>
@@ -152,19 +201,21 @@ const ProfilePage = () => {
             />
           </WrapperInput>
           <WrapperInput>
-            <WrapperLabel htmlFor="phone">{t('PROFILE.PHONE')}</WrapperLabel>
+            <WrapperLabel htmlFor="phone">{t("PROFILE.PHONE")}</WrapperLabel>
             <InputForm
               style={{ width: "300px" }}
               id="phone"
               value={phone}
               onChange={handleOnChangePhone}
-              placeholder={t('PROFILE.PHONE_PLACEHOODER')}
+              placeholder={t("PROFILE.PHONE_PLACEHOODER")}
             />
           </WrapperInput>
           <WrapperInput>
-            <WrapperLabel htmlFor="avatar">{t('PROFILE.AVATAR')}</WrapperLabel>
+            <WrapperLabel htmlFor="avatar">{t("PROFILE.AVATAR")}</WrapperLabel>
             <WrapperUploadFile onChange={handleOnChangeAvatar} maxCount={1}>
-              <Button icon={<UploadOutlined />}>{t('PROFILE.SELECT_FILE')}</Button>
+              <Button icon={<UploadOutlined />}>
+                {t("PROFILE.SELECT_FILE")}
+              </Button>
             </WrapperUploadFile>
             {avatar && (
               <img
@@ -180,13 +231,15 @@ const ProfilePage = () => {
             )}
           </WrapperInput>
           <WrapperInput>
-            <WrapperLabel htmlFor="address">{t('PROFILE.ADDRESS')}</WrapperLabel>
+            <WrapperLabel htmlFor="address">
+              {t("PROFILE.ADDRESS")}
+            </WrapperLabel>
             <InputForm
               style={{ width: "300px" }}
               id="address"
               value={address}
               onChange={handleOnChangeAddress}
-              placeholder={t('PROFILE.ADDRESS_PLACEHOODER')}
+              placeholder={t("PROFILE.ADDRESS_PLACEHOODER")}
             />
           </WrapperInput>
 
@@ -200,7 +253,7 @@ const ProfilePage = () => {
               padding: "2px 6px 6px",
               marginLeft: "auto",
             }}
-            textbutton={t('PROFILE.BTN_UPDATE')}
+            textbutton={t("PROFILE.BTN_UPDATE")}
             styletextbutton={{
               color: "#42C8B7",
               fontSize: "15px",

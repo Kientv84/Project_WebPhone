@@ -30,7 +30,7 @@ const HomePage = () => {
   const { t } = useTranslation();
 
   const fetchProductAll = async (context) => {
-    const limit = context?.queryKey && context?.queryKey[1];
+    const limit = (context?.queryKey && context?.queryKey[1]) || 12;
     const search = context?.queryKey && context?.queryKey[2];
     const res = await ProductService.getAllProduct(search, limit);
     return res;
@@ -50,11 +50,12 @@ const HomePage = () => {
     isLoading,
     data: products,
     isPreviousData,
-  } = useQuery(["products", limit, searchDebounce], fetchProductAll, {
+  } = useQuery(["products", limit || 12, searchDebounce], fetchProductAll, {
     retry: 3,
     retryDelay: 1000,
     keepPreviousData: true,
   });
+
   useEffect(() => {
     fetchAllTypeProduct();
     fetchAllBranchProduct();

@@ -370,13 +370,95 @@ const PaymentPage = () => {
         background: "#f5f5fa",
         with: "100%",
         height: "100vh",
-        marginTop: "60px",
+        marginTop: "65px",
       }}
     >
       <Loading isLoading={isLoadingAddOrder}>
         <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
-          <h3 style={{ fontWeight: "bold" }}>{t("PAYMENT.TITLE")}</h3>
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div
+            style={{
+              fontWeight: "normal",
+              fontSize: "15px",
+              paddingTop: "15px",
+            }}
+          >
+            {" "}
+            <span
+              style={{
+                cursor: "pointer",
+                fontWeight: "bold",
+                fontSize: "14px",
+                color: "#707070",
+              }}
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              {t("ORDER.BACK_HOMEPAGE")}
+            </span>{" "}
+            <svg
+              style={{
+                margin: "0 10px 0 6px",
+                width: "14px",
+                color: "#707070",
+                height: "14px",
+                verticalAlign: "middle",
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+            >
+              <path
+                fill="currentColor"
+                d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+              ></path>
+            </svg>
+            <span
+              style={{
+                cursor: "pointer",
+                fontSize: "14px", // Kích thước chữ
+                fontWeight: "bold", // Kiểu chữ đậm
+                color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+              }}
+              onClick={() => {
+                navigate("/order");
+              }}
+            >
+              {t("ORDER.CART")}
+            </span>{" "}
+            <svg
+              style={{
+                margin: "0 10px 0 6px",
+                width: "14px",
+                color: "#707070",
+                height: "14px",
+                verticalAlign: "middle",
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 512"
+            >
+              <path
+                fill="currentColor"
+                d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+              ></path>
+            </svg>
+            <span
+              style={{
+                fontSize: "14px", // Kích thước chữ
+                fontWeight: "bold", // Kiểu chữ đậm
+                color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+              }}
+            >
+              {t("PAYMENT.TITLE")}
+            </span>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
             <WrapperLeft>
               <WrapperInfo2>
                 <div>
@@ -566,6 +648,8 @@ const PaymentPage = () => {
           open={isOpenModalUpdateInfo}
           onCancel={handleCancelUpdate}
           onOk={handleUpdateInfoUser}
+          styles={{ body: { padding: "24px" } }}
+          width={800}
         >
           <Loading isLoading={isLoading}>
             <Form
