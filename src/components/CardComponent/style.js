@@ -10,6 +10,15 @@ export const WrapperCardStyle = styled(Card)`
     position: relative;
     background-color: ${props => props.disable ? '#ccc' : '#fff'};
     cursor: ${props => props.disable ? 'not-allowed' : 'pointer'};
+     
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng chuyển đổi cho transform và box-shadow */
+
+    /* Hiệu ứng khi di chuột vào */
+    &:hover {
+        transform: scale(1.05); /* Tăng kích thước nhẹ khi di chuột vào */
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* Bóng đổ đậm hơn khi di chuột */
+        background-color: rgba(255, 255, 255, 0.9); /* Thay đổi màu nền nhẹ hơn */
+    }
 `
 
 export const StyleNameProduct = styled.div`
