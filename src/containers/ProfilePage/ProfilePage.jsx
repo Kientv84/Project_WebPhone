@@ -129,13 +129,11 @@ const ProfilePage = () => {
   };
 
   return (
-    <div style={{ width: "1270px", margin: "75px auto 0px", height: "500px" }}>
+    <div style={{ width: "1270px", margin: "85px auto 0px", height: "500px" }}>
       <div
         style={{
           fontWeight: "normal",
-          marginTop: "5px",
           fontSize: "15px",
-          marginTop: "20px",
         }}
       >
         {" "}

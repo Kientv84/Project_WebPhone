@@ -7,10 +7,14 @@ import {
   WrapperItem,
   WrapperItemLabel,
   WrapperLabel,
+  WrapperLabelDay,
+  WrapperLabelOrderDetail,
+  WrapperLabelOrderNumber,
   WrapperNameProduct,
   WrapperProduct,
   WrapperStyleContent,
   WrapperStyleHeader,
+  WrapperStyleHeaderDelivery,
 } from "./style";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
@@ -22,6 +26,7 @@ import { useMemo } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { Steps } from "antd";
 
 const DetailsOrderPage = () => {
   const params = useParams();
@@ -59,6 +64,84 @@ const DetailsOrderPage = () => {
   }, [data]);
 
   const user = useSelector((state) => state.user);
+
+  // Cập nhật hàm currentStep
+  const currentStep = () => {
+    if (!data || !data.isDelivered) {
+      return 0; // Mặc định là bước 0 nếu dữ liệu không có
+    }
+
+    switch (data?.isDelivered) {
+      case "successful order":
+        return 0; // Bước đầu tiên
+      case "pending":
+        return 1; // Bước thứ hai
+      case "sended":
+        return 2; // Bước thứ ba
+      case "shipping":
+        return 3; // Bước thứ tư
+      case "delivery success":
+        return 4; // Tick bước giao hàng thành công
+      case "delivery fail":
+        return 4; // Tick bước giao hàng thất bại
+      default:
+        return 0; // Mặc định là bước đầu tiên
+    }
+  };
+
+  const formatTimestamp = (date) => {
+    return date
+      ? `${new Date(date).toLocaleDateString("en-GB")} ${new Date(
+          date
+        ).toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`
+      : "";
+  };
+
+  const itemsDelivery = [
+    {
+      title: t("ORDER.SUCCESSFULL_ORDER"),
+      status: currentStep() >= 0 ? "finish" : "wait",
+      description: formatTimestamp(data?.createdAt),
+    },
+    {
+      title: t("ORDER.PENDING"),
+      status: currentStep() >= 1 ? "finish" : "wait",
+      description: formatTimestamp(data?.pendingAt),
+    },
+    {
+      title: t("ORDER.SENDED"),
+      status: currentStep() >= 2 ? "finish" : "wait",
+      description: formatTimestamp(data?.sendedAt),
+    },
+    {
+      title: t("ORDER.SHIPPING"),
+      status: currentStep() >= 3 ? "finish" : "wait",
+      description: formatTimestamp(data?.shippingAt),
+    },
+    {
+      title:
+        data?.isDelivered === "delivery success"
+          ? t("ORDER.DELIVERY_SUCCESS")
+          : data?.isDelivered === "delivery fail"
+          ? t("ORDER.DELIVERY_FAIL")
+          : t("ORDER.PROCESSING"),
+      status:
+        data?.isDelivered === "delivery fail"
+          ? "error" // Set trạng thái "error" nếu giao hàng thất bại
+          : data?.isDelivered === "delivery success"
+          ? "finish" // Set trạng thái "finish" nếu giao hàng thành công
+          : "wait",
+      description:
+        data?.isDelivered === "delivery success"
+          ? formatTimestamp(data?.deliverySuccessAt) // Sử dụng deliverySuccessAt
+          : data?.isDelivered === "delivery fail"
+          ? formatTimestamp(data?.deliveryFailAt) // Sử dụng deliveryFailAt
+          : "",
+    },
+  ];
 
   return (
     <Loading isLoading={isLoading}>
@@ -154,6 +237,45 @@ const DetailsOrderPage = () => {
             </span>
           </div>
 
+          <div style={{ marginTop: "15px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex" }}>
+                <WrapperLabelOrderDetail style={{ fontWeight: "400" }}>
+                  {t("ORDER_DETAIL.ORDER_NUMBER")}
+                </WrapperLabelOrderDetail>
+                <WrapperLabelOrderNumber>
+                  {data?.orderNumber}
+                </WrapperLabelOrderNumber>
+              </div>
+              <div style={{ display: "flex" }}>
+                <WrapperLabelDay
+                  style={{
+                    fontWeight: "600",
+                    marginRight: "5px",
+                  }}
+                >
+                  {t("ORDER_DETAIL.ORDER_CREATED_AT")}
+                </WrapperLabelDay>
+                <span>
+                  {new Date(data?.createdAt).toLocaleDateString("en-GB")}
+                </span>
+              </div>
+            </div>
+
+            <WrapperLabel style={{ fontWeight: "600" }}>
+              {t("ORDER_DETAIL.SHIPPING_STATUS")}
+            </WrapperLabel>
+
+            <WrapperStyleHeaderDelivery>
+              <Steps current={currentStep()} items={itemsDelivery} />
+            </WrapperStyleHeaderDelivery>
+          </div>
           <WrapperHeaderUser>
             <WrapperInfoUser>
               <WrapperLabel>{t("ORDER_DETAIL.RECEPTION_ADDRESS")}</WrapperLabel>

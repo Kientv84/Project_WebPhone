@@ -1102,6 +1102,7 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </ModalComponent>
+
       <DrawerComponent
         title={t("ADMIN.PRODUCT_DETAIL")}
         isOpen={isOpenDrawer}

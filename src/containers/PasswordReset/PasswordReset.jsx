@@ -3,7 +3,6 @@ import { WrapperContainerLeft } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import * as message from "../../components/Message/Message";
 import { useMutationHook } from "../../hooks/useMutationHook";

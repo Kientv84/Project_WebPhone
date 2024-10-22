@@ -64,7 +64,6 @@ export const WrapperItemOrder = styled.div`
 
 export const WrapperStatus = styled.div`
   display: flex;
-  align-items: flex-start;
   width: 100%;
   margin-bottom: 10px;
   padding-bottom: 10px;
