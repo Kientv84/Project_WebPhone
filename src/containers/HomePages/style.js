@@ -90,6 +90,7 @@ export const PriceInputWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
+  padding-bottom: 20px;
 `;
 
 export const PriceInput = styled.input`
@@ -127,5 +128,24 @@ export const TextBrand = styled.span`
     font-size: 1.2em; /* Tăng kích thước chữ khi di chuột vào */
     color: #ff5722; /* Thay đổi màu khi di chuột vào */
     text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5); /* Tăng bóng chữ khi di chuột */
+  }
+`;
+
+export const WrapperBrandBox = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+export const BrandBox = styled.div`
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: #dfe6e9;
   }
 `;

@@ -15,7 +15,9 @@ import {
   PriceRangeWrapper,
   PriceInputWrapper,
   PriceInput, 
-  TextBrand
+  TextBrand,
+  WrapperBrandBox,
+  BrandBox
 
 } from "./style";
 import slider1 from "../../assets/images/slider1.webp";
@@ -132,15 +134,15 @@ const HomePage = () => {
     <Wrapper>
       <Row>
         <Col span={24}>
-          <PriceLabel>Giá</PriceLabel>
+          <PriceLabel> {t('FILTER.PRICE')}</PriceLabel>
         </Col>
         <Col>
-          <PriceTag onClick={() => handlePriceFilter(0, 5000000)}>Dưới 5 triệu</PriceTag>
-          <PriceTag onClick={() => handlePriceFilter(5000000, 10000000)}>Từ 5tr - 10tr</PriceTag>
-          <PriceTag onClick={() => handlePriceFilter(10000000, 20000000)}>Từ 10tr - 20tr</PriceTag>
-          <PriceTag onClick={() => handlePriceFilter(20000000, 30000000)}>Từ 20tr - 30tr</PriceTag>
-          <PriceTag onClick={() => handlePriceFilter(30000000, 50000000)}>Từ 30tr - 50tr</PriceTag>
-          <PriceTag onClick={() => handlePriceFilter(50000000, 100000000)}>Trên 50tr</PriceTag>
+          <PriceTag onClick={() => handlePriceFilter(0, 5000000)}> {t('FILTER.PRICE_UNDER_5')}</PriceTag>
+          <PriceTag onClick={() => handlePriceFilter(5000000, 10000000)}> {t('FILTER.PRICE_5_TO_10')}</PriceTag>
+          <PriceTag onClick={() => handlePriceFilter(10000000, 20000000)}> {t('FILTER.PRICE_10_TO_20')}</PriceTag>
+          <PriceTag onClick={() => handlePriceFilter(20000000, 30000000)}> {t('FILTER.PRICE_20_TO_30')}</PriceTag>
+          <PriceTag onClick={() => handlePriceFilter(30000000, 50000000)}> {t('FILTER.PRICE_30_TO_50')}</PriceTag>
+          <PriceTag onClick={() => handlePriceFilter(50000000, 100000000)}> {t('FILTER.PRICE_OVER_50')}</PriceTag>
         </Col>
       </Row>
 
@@ -149,7 +151,7 @@ const HomePage = () => {
         <Row>
           <Col span={24}>
             <PriceLabel>
-              Hoặc chọn mức giá phù hợp với bạn
+              {t('FILTER.CHOOSE_PRICE')}
             </PriceLabel>
           </Col>
         </Row>
@@ -176,14 +178,21 @@ const HomePage = () => {
 
 
       <Row>
-        <Col span={24}>
-          <PriceLabel>Thương Hiệu</PriceLabel>
+        <Col span={24}  style={{ paddingBottom: "20px" }} >
+          <PriceLabel>{t('FILTER.CHOOSE_BRAND')}</PriceLabel>
         </Col>
         <Col>
-          {branchProducts.map((item) => {
-            return <BranchProduct name={item} key={item} />;
-          })}
-        </Col>
+          <WrapperBrandBox>
+            {branchProducts.map((item) => {
+              return (
+                <BrandBox key={item} onClick={() => filterProductsByBrand(item)}>
+                  {item}
+                </BrandBox>
+              );
+            })}
+          </WrapperBrandBox>
+
+      </Col>
       </Row>
       
     </Wrapper>
@@ -205,6 +214,16 @@ const filterProductsByPrice = (minPrice, maxPrice) => {
   // Cập nhật danh sách sản phẩm hiển thị với các sản phẩm đã lọc
   setFilteredProducts(filteredProducts);
 };
+
+const filterProductsByBrand = (brand) => {
+  const filteredProducts = products?.data?.filter((product) => {
+    return product.branch === brand;
+  });
+
+  // Cập nhật danh sách sản phẩm hiển thị với các sản phẩm đã lọc
+  setFilteredProducts(filteredProducts);
+};
+
 
 
   const onSliderChange = (value) => {
@@ -276,12 +295,12 @@ const filterProductsByPrice = (minPrice, maxPrice) => {
               onVisibleChange={handlePopoverClick}  
             >
               <WrapperFilter>
-                <FilterOutlined /> {'lọc'}
+                <FilterOutlined /> {t('FILTER.TITLE')}
               </WrapperFilter>
             </Popover>
       
             <WrapperBranchProduct>
-            <TextBrand>THƯƠNG HIỆU NỔI BẬT</TextBrand>
+            <TextBrand>{t('HOMEPAGE.BRAND_TEXT')}</TextBrand>
               {branchProducts.map((item) => {
                 return <BranchProduct name={item} key={item} />;
               })}

@@ -329,6 +329,7 @@ const resources = {
         ACCESSORY: "Accessory",
         SCREEN: "Screen",
         TELEVISION: "Television",
+        BRAND_TEXT: "OUTSTANDING BRAND"
       },
 
       FOOTER: {
@@ -370,6 +371,20 @@ const resources = {
         BACK_HOMEPAGE: "Home page",
         SEARCH_RESULT: "Search results for:",
       },
+
+      FILTER: {
+        TITLE: 'Filter',
+        PRICE: 'Choose Price',
+        PRICE_UNDER_5: 'Under 5tr',
+        PRICE_5_TO_10: 'From 5tr to 10tr',
+        PRICE_10_TO_20: 'From 10tr to 20tr',
+        PRICE_20_TO_30: 'From 20tr to 30tr',
+        PRICE_30_TO_50: 'From 30tr to 50tr',
+        PRICE_OVER_50: 'Over 50tr',
+        CHOOSE_PRICE: 'Choose the price',
+        CHOOSE_BRAND: 'Choose the Brand',
+
+      }
     },
   },
   vi: {
@@ -724,6 +739,7 @@ const resources = {
         ACCESSORY: "Phụ kiện",
         SCREEN: "Màn hình",
         TELEVISION: "Tivi",
+        BRAND_TEXT: "THƯƠNG HIỆU NỔI BẬT"
       },
 
       FOOTER: {
@@ -765,6 +781,20 @@ const resources = {
         BACK_HOMEPAGE: "Trang chủ",
         SEARCH_RESULT: "Kết quả tìm kiếm cho:",
       },
+
+        FILTER: {
+        TITLE: 'Lọc',
+        PRICE: 'Chọn giá',
+        PRICE_UNDER_5: 'Dưới 5tr',
+        PRICE_5_TO_10: 'Từ 5tr đến 10tr',
+        PRICE_10_TO_20: 'Từ 10tr đến 20tr',
+        PRICE_20_TO_30: 'Từ 20tr đến 30tr',
+        PRICE_30_TO_50: 'Từ 30tr đến 50tr',
+        PRICE_OVER_50: 'Trên 50tr',
+        CHOOSE_PRICE: 'Chọn mức giá phù hợp',
+        CHOOSE_BRAND: 'Chọn thương hiệu phù hợp',
+
+      }
     },
   },
 };
