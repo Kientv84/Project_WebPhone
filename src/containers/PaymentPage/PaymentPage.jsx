@@ -326,6 +326,7 @@ const PaymentPage = () => {
         return str
           .normalize("NFD") // Phân tách các ký tự có dấu
           .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
+          .replace(/-/g, "") // Xóa dấu gạch ngang
           .replace(/đ/g, "d")
           .replace(/Đ/g, "D")
           .replace(/[$\\@\\\#%\^\&\*\(\)\[\]\+\_\{\}\`\~\=\|\[/]/g, ""); // Xóa các ký tự đặc biệt
@@ -351,6 +352,12 @@ const PaymentPage = () => {
       const lastPaid = data.data[data.data.length - 1];
       const lastPrice = lastPaid["Giá trị"];
       const lastContent = lastPaid["Mô tả"];
+
+       console.log('LastContent', lastContent)
+              console.log('Content', content)
+
+       console.log('checkContent', lastContent.includes(content))
+        console.log('checkPirce', lastPrice >= price)
 
       if (lastPrice >= price && lastContent.includes(content)) {
         return true;
