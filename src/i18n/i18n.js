@@ -236,7 +236,7 @@ const resources = {
         PLACEHOODER_IMG: "Please input your count image product!",
 
         USER_DETAIL: "User Details",
-        AVATAR: "Avarta",
+        AVATAR: "Avatar",
         DETAIL_NAME_PLACEHOODER: "Please input name!",
         DETAIL_EMAIL_PLACEHOODER: "Please input email!",
         DETAIL_PHONE_PLACEHOODER: "Please input phone!",

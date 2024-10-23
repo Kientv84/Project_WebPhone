@@ -232,11 +232,18 @@ const OrderPage = () => {
         padding: "0.1px 0",
         background: "#f5f5fa",
         with: "100%",
-        height: "100vh",
+        minHeight: "100vh",
         marginTop: "65px",
       }}
     >
-      <div style={{ width: "1270px", margin: "0 auto" }}>
+      <div
+        style={{
+          width: "1270px",
+          margin: "0 auto",
+          height: "100%",
+          paddingBottom: "100px",
+        }}
+      >
         <div
           style={{
             fontWeight: "normal",
