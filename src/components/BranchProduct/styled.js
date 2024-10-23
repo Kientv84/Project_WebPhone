@@ -1,4 +1,4 @@
-import styled,  { keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 const blinkAnimation = keyframes`
   0% { opacity: 1; color: rgb(255, 66, 78); transform: scale(0.5); }
@@ -15,9 +15,9 @@ export const WrapperBranch = styled.div`
   cursor: pointer;
   transition: background-color 0.2s ease;
 
- &:hover {
-        transform: scale(1.05);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        background-color: rgba(255, 255, 255, 0.9);
-    }
-`
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+`;
