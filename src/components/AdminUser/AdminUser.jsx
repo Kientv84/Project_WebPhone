@@ -461,6 +461,7 @@ const AdminUser = () => {
                 value={stateUserDetails.name}
                 onChange={handleOnchangeDetails}
                 name="name"
+                readOnly
               />
             </Form.Item>
 
@@ -478,6 +479,7 @@ const AdminUser = () => {
                 value={stateUserDetails.email}
                 onChange={handleOnchangeDetails}
                 name="email"
+                readOnly
               />
             </Form.Item>
             <Form.Item
@@ -494,6 +496,7 @@ const AdminUser = () => {
                 value={stateUserDetails.phone}
                 onChange={handleOnchangeDetails}
                 name="phone"
+                readOnly
               />
             </Form.Item>
             <Form.Item
@@ -526,7 +529,12 @@ const AdminUser = () => {
                 onChange={handleOnChangeAvatarDetails}
                 maxCount={1}
               >
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <Button>{t("ADMIN.DETAIL_SELECT_PLACEHOODER")}</Button>
                   {stateUserDetails?.avatar && (
                     <img

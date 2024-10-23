@@ -231,7 +231,7 @@ const filterProductsByBrand = (brand) => {
   };
 
   return (
-    <div>
+    <div style={{ minWidth: "100vw" }}>
       <Loading isLoading={isLoading}>
         <div
           className="body"
@@ -239,7 +239,6 @@ const filterProductsByBrand = (brand) => {
             width: "100%",
             backgroundColor: "#efefef",
             margin: "0",
-            overflowX: "hidden",
           }}
         >
           <div

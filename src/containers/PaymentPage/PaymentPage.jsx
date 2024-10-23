@@ -326,6 +326,7 @@ const PaymentPage = () => {
         return str
           .normalize("NFD") // Phân tách các ký tự có dấu
           .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
+          .replace(/-/g, "") // Xóa dấu gạch ngang
           .replace(/đ/g, "d")
           .replace(/Đ/g, "D")
           .replace(/[$\\@\\\#%\^\&\*\(\)\[\]\+\_\{\}\`\~\=\|\[/]/g, ""); // Xóa các ký tự đặc biệt

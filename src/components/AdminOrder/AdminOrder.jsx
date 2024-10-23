@@ -1,4 +1,4 @@
-import { Button, Form, Select, Space, message } from "antd";
+import { Button, Form, Input, Select, Space, message } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { WrapperHeader } from "./style";
 import TableComponent from "../TableComponent/TableComponent";
@@ -28,13 +28,13 @@ const AdminOrder = () => {
 
   const [rowSelected, setRowSelected] = useState("");
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
-  const [isOpenDrawerPayment, setIsOpenDrawerPayment] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
-  const [stateOrderDelivery, setStateOrderDelivery] = useState({
+  const [orderState, setOrderState] = useState({
     isDelivered: null,
+    isPaid: null,
+    productNames: "",
   });
-  const [stateOrderPayment, setStateOrderPayment] = useState({ isPaid: null });
   const [form] = Form.useForm();
 
   const getAllOrder = async () => {
@@ -74,18 +74,8 @@ const AdminOrder = () => {
     return res;
   });
 
-  const {
-    data: dataUpdated,
-    isLoading: isLoadingUpdated,
-    isSuccess: isSuccessUpdated,
-    isError: isErrorUpdated,
-  } = mutationUpdate;
-  const {
-    data: dataUpdatedPayment,
-    isLoading: isLoadingUpdatedPayment,
-    isSuccess: isSuccessUpdatedPayment,
-    isError: isErrorUpdatedPayment,
-  } = mutationUpdatePayment;
+  const { isLoading: isLoadingUpdated } = mutationUpdate;
+  const { isLoading: isLoadingUpdatedPayment } = mutationUpdatePayment;
   const {
     data: dataDeleted,
     isLoading: isLoadingDeleted,
@@ -94,7 +84,7 @@ const AdminOrder = () => {
   } = mutationDeleted;
   const {
     data: dataDeletedMany,
-    // isLoading: isLoadingDeletedMany,
+    isLoading: isLoadingDeletedMany,
     isSuccess: isSuccessDeletedMany,
     isError: isErrorDeletedMany,
   } = mutationDeletedMany;
@@ -110,7 +100,7 @@ const AdminOrder = () => {
 
   const renderAction = () => {
     return (
-      <div>
+      <div style={{ display: "flex", gap: "6px" }}>
         <DeleteOutlined
           style={{ color: "red", fontSize: "28px", cursor: "pointer" }}
           onClick={() => setIsModalOpenDelete(true)}
@@ -118,17 +108,6 @@ const AdminOrder = () => {
         <EditOutlined
           style={{ color: "blue", fontSize: "28px", cursor: "pointer" }}
           onClick={() => setIsOpenDrawer(true)}
-        />
-      </div>
-    );
-  };
-
-  const renderActionPay = () => {
-    return (
-      <div>
-        <MoneyCollectTwoTone
-          style={{ color: "green", fontSize: "28px", cursor: "pointer" }}
-          onClick={() => setIsOpenDrawerPayment(true)}
         />
       </div>
     );
@@ -163,9 +142,16 @@ const AdminOrder = () => {
       const res = await OrderService.getDetailsOrder(rowSelected, accessToken);
 
       if (res?.status === "OK") {
-        setStateOrderDelivery({ isDelivered: res.data.isDelivered });
+        const productNames = res.data.orderItems
+          .map((item) => `- ${item.name}`)
+          .join("\n");
+        setOrderState({
+          isDelivered: res.data.isDelivered,
+          isPaid: res.data.isPaid,
+          productNames: productNames,
+        });
       } else {
-        message.error("Failed to fetch order details");
+        message.error("Không thể lấy chi tiết đơn hàng");
       }
 
       setIsLoadingUpdate(false);
@@ -174,8 +160,8 @@ const AdminOrder = () => {
   );
 
   useEffect(() => {
-    form.setFieldsValue(stateOrderDelivery);
-  }, [form, stateOrderDelivery]);
+    form.setFieldsValue(orderState);
+  }, [form, orderState]);
 
   useEffect(() => {
     if (rowSelected && isOpenDrawer) {
@@ -184,66 +170,20 @@ const AdminOrder = () => {
     }
   }, [rowSelected, isOpenDrawer, fetchGetDetailsOrder]);
 
-  //Show tinh trang thanh toan
-  const fetchGetDetailsOrderPayment = useCallback(
-    async (rowSelected) => {
-      const res = await OrderService.getDetailsOrder(rowSelected, accessToken);
-
-      if (res?.status === "OK") {
-        // Giả sử bạn muốn lấy chi tiết thanh toán và lưu vào state
-        setStateOrderPayment({ isPaid: res?.data?.isPaid });
-      } else {
-        message.error("Failed to fetch payment details");
-      }
-
-      setIsLoadingUpdate(false);
-    },
-    [accessToken]
-  );
-
-  useEffect(() => {
-    form.setFieldsValue(stateOrderPayment);
-  }, [form, stateOrderPayment]);
-
-  useEffect(() => {
-    if (rowSelected && isOpenDrawerPayment) {
-      setIsLoadingUpdate(true);
-      fetchGetDetailsOrderPayment(rowSelected);
-    }
-  }, [rowSelected, isOpenDrawerPayment, fetchGetDetailsOrderPayment]);
-
-  const handleOnchangePayment = (value) => {
-    setStateOrderPayment({
-      ...stateOrderPayment,
-      isPaid: value,
+  const handleOnChange = (field, value) => {
+    setOrderState({
+      ...orderState,
+      [field]: value,
     });
   };
 
-  //Cập nhật giao hàng
-  const statusDataUpdated = dataUpdated?.status;
-  useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success(t("ADMIN.UPDATE_DELIVERY_SUCC"));
-      setIsOpenDrawer(false);
-    } else if (isErrorUpdated) {
-      message.error(t("ADMIN.UPDATE_DELIVERY_FAIL"));
-    }
-  }, [isSuccessUpdated, isErrorUpdated, statusDataUpdated]);
-
-  //Cập nhật payment
-  const statusDataUpdatedPayment = dataUpdatedPayment?.status;
-  useEffect(() => {
-    if (isSuccessUpdatedPayment && dataUpdatedPayment?.status === "OK") {
-      message.success(t("ADMIN.UPDATE_PAY_SUCC"));
-      setIsOpenDrawerPayment(false);
-    } else if (isErrorUpdatedPayment) {
-      message.error(t("ADMIN.UPDATE_PAY_FAIL"));
-    }
-  }, [
-    isSuccessUpdatedPayment,
-    isErrorUpdatedPayment,
-    statusDataUpdatedPayment,
-  ]);
+  const handleCancelDrawer = useCallback(() => {
+    setIsOpenDrawer(false);
+    setOrderState({
+      productNames: "",
+    });
+    form.resetFields();
+  }, [form]);
 
   //Xoá nhiều
   const statusDataDeletedMany = dataDeletedMany?.status;
@@ -347,6 +287,12 @@ const AdminOrder = () => {
 
   const columns = [
     {
+      title: t("ADMIN.ORDER_NUMBER"),
+      dataIndex: "orderNumber",
+      sorter: (a, b) => a.orderNumber.localeCompare(b.orderNumber),
+      ...getColumnSearchProps("orderNumber"),
+    },
+    {
       title: t("ADMIN.ORDER_USER"),
       dataIndex: "userName",
       sorter: (a, b) => a.userName.length - b.userName.length,
@@ -365,6 +311,12 @@ const AdminOrder = () => {
       ...getColumnSearchProps("address"),
     },
     {
+      title: t("ADMIN.ORDER_CITY"),
+      dataIndex: "city",
+      sorter: (a, b) => a.address.length - b.address.length,
+      ...getColumnSearchProps("city"),
+    },
+    {
       title: t("ADMIN.ORDER_PAYMENT_METHOD"),
       dataIndex: "paymentMethod",
     },
@@ -374,14 +326,16 @@ const AdminOrder = () => {
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
     },
     {
+      title: t("ADMIN.ORDER_CREATED_AT"),
+      dataIndex: "createdAt",
+      sorter: (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(), // Sắp xếp theo thời gian
+      render: (createdAt) => new Date(createdAt).toLocaleDateString("en-GB"), // Hiển thị theo định dạng mong muốn
+    },
+    {
       title: t("ADMIN.ORDER_PAID"),
       dataIndex: "isPaid",
       sorter: (a, b) => a.isPaid.length - b.isPaid.length,
-    },
-    {
-      title: t("ADMIN.ORDER_UPDATE_PAY"),
-      dataIndex: "isPaid",
-      render: renderActionPay,
     },
     {
       title: t("ADMIN.ORDER_SHIPPED"),
@@ -389,8 +343,8 @@ const AdminOrder = () => {
       sorter: (a, b) => a.isDelivered.length - b.isDelivered.length,
     },
     {
-      title: t("ADMIN.ORDER_UPDATE_DELIVERED"),
-      dataIndex: "isDelivered",
+      title: t("ADMIN.ACTION"),
+      dataIndex: "action",
       render: renderAction,
     },
   ];
@@ -398,68 +352,76 @@ const AdminOrder = () => {
   const dataTable =
     orders?.data?.length &&
     orders?.data?.map((order) => {
+      const productNames = order.orderItems.map((item) => item.name).join(", ");
       return {
         ...order,
         key: order._id,
+        orderNumber: order?.orderNumber,
         userName: order?.shippingAddress?.fullName,
         phone: order?.shippingAddress?.phone,
         address: order?.shippingAddress?.address,
+        city: order?.shippingAddress?.city,
         paymentMethod: orderConstant.payment[order?.paymentMethod],
         isPaid: order?.isPaid ? t("ADMIN.PAID") : t("ADMIN.UN_PAID"),
         isDelivered: (() => {
           switch (order.isDelivered) {
-            case "not shipped":
-              return t("ADMIN.NOT_SHIPPED");
+            case "successful order":
+              return t("ADMIN.SUCCESSFULL_ORDER");
             case "pending":
               return t("ADMIN.PENDING");
-            case "shipped":
-              return t("ADMIN.SHIPPED");
-            case "delivered":
-              return t("ADMIN.DELIVERED");
-            case "cancelled":
-              return t("ADMIN.CANCELLED");
+            case "sended":
+              return t("ADMIN.SENDED");
+            case "shipping":
+              return t("ADMIN.SHIPPING");
+            case "delivery success":
+              return t("ADMIN.DELIVERY_SUCCESS");
+            case "delivery fail":
+              return t("ADMIN.DELIVERY_FAIL");
             default:
               return t("ADMIN.UNKNOWN");
           }
         })(),
         totalPrice: convertPrice(order?.totalPrice),
+        productNames: productNames,
+        createdAt: new Date(order?.createdAt),
       };
     });
 
-  // const onUpdateDelivery = () => {
-  //   mutationUpdate.mutate(
-  //     { id: rowSelected, token: user?.access_token, ...stateOrderDelivery },
-  //     {
-  //       onSettled: () => {
-  //         queryOrder.refetch();
-  //       },
-  //     }
-  //   );
-  // };
-  const onUpdateDelivery = () => {
-    mutationUpdate.mutate(
-      {
-        id: rowSelected,
-        token: user?.access_token,
-        isDelivered: stateOrderDelivery.isDelivered,
-      },
-      {
-        onSettled: () => {
-          queryOrder.refetch();
-        },
-      }
-    );
-  };
+  const onUpdateOrder = (values) => {
+    const updateDeliveryPromise = mutationUpdate.mutateAsync({
+      id: rowSelected,
+      token: user?.access_token,
+      isDelivered: values.isDelivered, // Lấy giá trị giao hàng từ form
+    });
 
-  const onUpdatePayment = () => {
-    mutationUpdatePayment.mutate(
-      { id: rowSelected, token: user?.access_token, ...stateOrderPayment },
-      {
-        onSettled: () => {
-          queryOrder.refetch();
-        },
-      }
-    );
+    const updatePaymentPromise = mutationUpdatePayment.mutateAsync({
+      id: rowSelected,
+      token: user?.access_token,
+      isPaid: values.isPaid, // Lấy giá trị thanh toán từ form
+    });
+
+    Promise.allSettled([updateDeliveryPromise, updatePaymentPromise])
+      .then((results) => {
+        const allSuccess = results.every(
+          (result) => result.status === "fulfilled"
+        );
+
+        if (allSuccess) {
+          message.success(t("ADMIN.UPDATE_SUCCESS_ORDER"));
+          setIsOpenDrawer(false);
+          queryOrder.refetch(); // Refetch lại dữ liệu
+        } else {
+          message.error(t("ADMIN.UPDATE_FAIL"));
+        }
+      })
+      .catch(() => {
+        message.error(t("ADMIN.UPDATE_FAIL"));
+      })
+      .finally(() => {
+        // Refetch lại dữ liệu khi cả hai thao tác đều kết thúc
+        queryOrder.refetch();
+        setIsOpenDrawer(false);
+      });
   };
 
   return (
@@ -479,7 +441,7 @@ const AdminOrder = () => {
         <TableComponent
           handleDeleteMany={handleDeleteManyOrders}
           columns={columns}
-          isLoading={isLoadingOrders}
+          isLoading={isLoadingOrders || isLoadingDeletedMany}
           data={dataTable}
           onRow={(record, rowIndex) => {
             return {
@@ -501,15 +463,39 @@ const AdminOrder = () => {
         width={800}
       >
         {/* ... */}
-        <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
+        <Loading
+          isLoading={
+            isLoadingUpdate ||
+            isLoadingUpdated ||
+            isLoadingUpdate ||
+            isLoadingUpdatedPayment
+          }
+        >
           <Form
-            name="updateDeliveryStateForm"
+            name="basic"
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 18 }}
-            onFinish={onUpdateDelivery}
+            onFinish={onUpdateOrder}
             autoComplete="on"
             form={form}
           >
+            <Form.Item
+              label={t("ADMIN.PRODUCT_NAME")}
+              name="productNames"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input.TextArea
+                value={orderState.productNames}
+                name="productNames"
+                style={{ minHeight: "150px", width: "100%" }}
+                readOnly
+              />
+            </Form.Item>
+
             <Form.Item
               label={t("ADMIN.DELIVERY_STATE")}
               name="isDelivered"
@@ -521,64 +507,37 @@ const AdminOrder = () => {
               ]}
             >
               <Select
-                value={stateOrderDelivery.isDelivered}
-                onChange={(value) =>
-                  setStateOrderDelivery({ isDelivered: value })
-                }
+                value={orderState.isDelivered}
+                onChange={(value) => handleOnChange("isDelivered", value)}
               >
-                <Select.Option value="not shipped">
-                  {t("ADMIN.NOT_SHIPPED")}
+                <Select.Option value="successful order">
+                  {t("ADMIN.SUCCESSFULL_ORDER")}
                 </Select.Option>
                 <Select.Option value="pending">
                   {t("ADMIN.PENDING")}
                 </Select.Option>
-                <Select.Option value="shipped">
-                  {t("ADMIN.SHIPPED")}
+                <Select.Option value="sended">
+                  {t("ADMIN.SENDED")}
                 </Select.Option>
-                <Select.Option value="delivered">
-                  {t("ADMIN.DELIVERED")}
+                <Select.Option value="shipping">
+                  {t("ADMIN.SHIPPING")}
                 </Select.Option>
-                <Select.Option value="cancelled">
-                  {t("ADMIN.CANCELLED")}
+                <Select.Option value="delivery success">
+                  {t("ADMIN.DELIVERY_SUCCESS")}
+                </Select.Option>
+                <Select.Option value="delivery fail">
+                  {t("ADMIN.DELIVERY_FAIL")}
                 </Select.Option>
               </Select>
             </Form.Item>
-
-            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                {t("ADMIN.DETAIL_USER_APPLY")}
-              </Button>
-            </Form.Item>
-          </Form>
-        </Loading>
-      </DrawerComponent>
-
-      <DrawerComponent
-        title={t("ADMIN.ORDER_UPDATE_PAY")}
-        isOpen={isOpenDrawerPayment}
-        onCancel={() => setIsOpenDrawerPayment(false)}
-        footer={null}
-        styles={{ body: { padding: "24px" } }}
-        centered
-        width={800}
-      >
-        <Loading isLoading={isLoadingUpdate || isLoadingUpdatedPayment}>
-          <Form
-            name="updatePaymentStateForm"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
-            onFinish={onUpdatePayment}
-            autoComplete="on"
-            form={form}
-          >
             <Form.Item
               label={t("ADMIN.PAYMENT_STATE")}
               name="isPaid"
               rules={[{ required: true, message: t("ADMIN.SELECT_PAY") }]}
             >
               <Select
-                value={stateOrderPayment.isPaid}
-                onChange={handleOnchangePayment}
+                value={orderState.isPaid}
+                onChange={(value) => handleOnChange("isPaid", value)}
               >
                 <Select.Option value={true}>{t("ADMIN.PAID")}</Select.Option>
                 <Select.Option value={false}>

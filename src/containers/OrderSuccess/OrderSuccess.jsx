@@ -23,8 +23,8 @@ const OrderSuccess = () => {
     <div
       style={{
         background: "#f5f5fa",
-        with: "100%",
-        height: "auto",
+        width: "100%",
+        minHeight: "100vh",
         paddingTop: "0.1px",
         marginTop: "65px",
       }}
@@ -32,10 +32,10 @@ const OrderSuccess = () => {
       <Loading isLoading={false}>
         <div
           style={{
-            height: "100vh",
+            height: "100%",
             width: "1270px",
             margin: "0px auto",
-            padding: "0.1px 0px ",
+            padding: "0.1px 0px 100px",
           }}
         >
           <div

@@ -53,6 +53,26 @@ export const WrapperLabel = styled.div`
   text-transform: uppercase;
   margin-bottom: 15px;
 `;
+
+export const WrapperLabelDay = styled.div`
+  color: rgb(36, 36, 36);
+  font-size: 13px;
+  margin-bottom: 15px;
+`;
+
+export const WrapperLabelOrderDetail = styled.div`
+  color: #212b25;
+  font-size: 19px;
+  margin-bottom: 15px;
+`;
+
+export const WrapperLabelOrderNumber = styled.div`
+  color: #212b25;
+  font-size: 19px;
+  margin-bottom: 15px;
+  margin-left: 5px;
+`;
+
 export const WrapperContentInfo = styled.div`
   height: 118px;
   width: 320px;
@@ -98,4 +118,19 @@ export const WrapperAllPrice = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+`;
+
+export const WrapperStyleHeaderDelivery = styled.div`
+  background: rgb(255, 255, 255);
+  padding: 9px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  span {
+    color: rgb(36, 36, 36);
+    font-weight: 400;
+    font-size: 13px;
+  }
+  margin-bottom: 4px;
+  margin-top: 10px;
 `;

@@ -16,9 +16,9 @@ export const WrapperStyleHeader = styled.div`
 export const WrapperContainer = styled.div`
   width: 100%;
   background-color: #f5f5fa;
-  /* height: auto; */
   padding-top: 0.1px;
   min-height: 100vh;
+  padding-bottom: 50px;
 `;
 
 export const WrapperLeft = styled.div`
@@ -64,7 +64,6 @@ export const WrapperItemOrder = styled.div`
 
 export const WrapperStatus = styled.div`
   display: flex;
-  align-items: flex-start;
   width: 100%;
   margin-bottom: 10px;
   padding-bottom: 10px;

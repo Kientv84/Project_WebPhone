@@ -31,10 +31,6 @@ import { resetOrder } from "../../redux/slice/orderSlide.js";
 import LikeButtonComponent from "../LikeButtonComponent/LikeButtonComponent.jsx";
 import CommentComponent from "../CommentComponent/CommentComponent.jsx";
 import "./ProductDetailsComponent.css";
-import { useMutationHook } from "../../hooks/useMutationHook.js";
-import * as UserService from "../../services/UserService";
-import { updateAddress } from "../../redux/slice/userslide";
-import InputComponent from "../InputComponent/InputComponent.jsx";
 import addToCart from "../../assets/images/art-to-carts.png";
 import { useTranslation } from "react-i18next";
 
@@ -43,15 +39,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const user = useSelector((state) => state.user);
   const order = useSelector((state) => state.order);
   const [ErrorLimitOrder, setErrorLimitOrder] = useState(false);
-  const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
   const { t } = useTranslation();
-
-  const [stateUserDetails, setStateUserDetails] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-  });
 
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -179,12 +167,23 @@ const ProductDetailsComponent = ({ idProduct }) => {
     // Set initial image
     setSelectedImage(productDetailss);
   }, [productDetailss]);
+  const formatDescription = (description) => {
+    return description
+      .split("\n")
+      .map((line) => `- ${line}`)
+      .join("\n");
+  };
 
   return (
     <div>
       <Loading isLoading={isLoading}>
         <Row
-          style={{ padding: "25px", background: "#fff", borderRadius: "4px" }}
+          style={{
+            padding: "25px",
+            background: "#fff",
+            borderRadius: "4px",
+            marginTop: "20px",
+          }}
         >
           <Col
             span={10}
@@ -279,7 +278,8 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 {t("PRODUCT_DETAILS.DESCRIPTION")}
               </PromotionHeaderDecription>
               <WrapperDecriptionTextProduct>
-                {productDetails?.description}
+                {productDetails?.description &&
+                  formatDescription(productDetails.description)}
               </WrapperDecriptionTextProduct>
             </BoxDecriptionContent>
           </Col>
@@ -349,7 +349,8 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 </div>
               </PromotionHeader>
               <WrapperDecriptionTextProduct>
-                {productDetails?.promotion}
+                {productDetails?.promotion &&
+                  formatDescription(productDetails?.promotion)}
               </WrapperDecriptionTextProduct>
             </Box>
 

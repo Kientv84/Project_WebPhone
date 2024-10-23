@@ -1,0 +1,17 @@
+.steps-wrapper {
+  display: flex;
+  justify-content: space-between; /* Chia đều các bước trên cùng một hàng */
+}
+
+.steps-wrapper .step {
+  flex: 1; /* Mỗi bước sẽ chiếm cùng một tỷ lệ */
+  text-align: center; /* Canh giữa các nội dung của bước */
+}
+
+.steps-wrapper .step .title {
+  font-weight: bold;
+}
+
+.steps-wrapper .step .description {
+  color: #707070;
+}

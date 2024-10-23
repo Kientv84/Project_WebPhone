@@ -190,7 +190,7 @@ const MyOrderPage = () => {
               {t("MY_ODER.TITLE")}
             </span>
           </div>
-          {/* <h3 style={{ marginTop: "5px" }}>{t("MY_ODER.TITLE")}</h3> */}
+
           <WrapperListOrder>
             {data?.map((order) => {
               return (
@@ -200,28 +200,59 @@ const MyOrderPage = () => {
                       {" "}
                       {t("MY_ODER.STATUS")}{" "}
                     </span>
-                    <div>
+                    <div
+                      style={{
+                        display: "flex", // Đảm bảo hai phần tử hiển thị trên cùng một hàng
+                        justifyContent: "space-between", // Đẩy phần tử về hai phía của dòng
+                        alignItems: "center",
+                        marginTop: "3px",
+                      }}
+                    >
+                      <div>
+                        <span style={{ color: "rgb(255, 66, 78)" }}>
+                          {t("MY_ODER.ORDER_ID")}{" "}
+                        </span>
+                        {`${order.orderNumber}`}
+                      </div>
+                      <div style={{ marginLeft: "10px" }}>
+                        <span style={{ color: "rgb(255, 66, 78)" }}>
+                          {t("MY_ODER.ORDER_CREATED_AT")}{" "}
+                        </span>
+                        {`${new Date(order.createdAt).toLocaleDateString(
+                          "en-GB"
+                        )} ${new Date(order.createdAt).toLocaleTimeString(
+                          "en-GB",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}`}
+                      </div>
+                    </div>
+                    <div style={{ marginTop: "3px" }}>
                       <span style={{ color: "rgb(255, 66, 78)" }}>
                         {t("MY_ODER.IS_DELIVERRED")}{" "}
                       </span>
                       {(() => {
                         switch (order.isDelivered) {
-                          case "not shipped":
-                            return t("MY_ODER.NOT_SHIPPED");
+                          case "successful order":
+                            return t("MY_ODER.SUCCESSFULL_ORDER");
                           case "pending":
                             return t("MY_ODER.PENDING");
-                          case "shipped":
-                            return t("MY_ODER.SHIPPED");
-                          case "delivered":
-                            return t("MY_ODER.DELIVERED");
-                          case "cancelled":
-                            return t("MY_ODER.CANCELLED");
+                          case "sended":
+                            return t("MY_ODER.SENDED");
+                          case "shipping":
+                            return t("MY_ODER.SHIPPING");
+                          case "delivery success":
+                            return t("MY_ODER.DELIVERY_SUCCESS");
+                          case "delivery fail":
+                            return t("MY_ODER.DELIVERY_FAIL");
                           default:
                             return t("MY_ODER.UNKNOWN");
                         }
                       })()}
                     </div>
-                    <div>
+                    <div style={{ marginTop: "3px" }}>
                       <span style={{ color: "rgb(255, 66, 78)" }}>
                         {t("MY_ODER.IS_PAID")}{" "}
                       </span>
