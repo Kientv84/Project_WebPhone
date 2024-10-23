@@ -353,6 +353,12 @@ const PaymentPage = () => {
       const lastPrice = lastPaid["Giá trị"];
       const lastContent = lastPaid["Mô tả"];
 
+       console.log('LastContent', lastContent)
+              console.log('Content', content)
+
+       console.log('checkContent', lastContent.includes(content))
+        console.log('checkPirce', lastPrice >= price)
+
       if (lastPrice >= price && lastContent.includes(content)) {
         return true;
       } else {

@@ -44,7 +44,7 @@ const HomePage = () => {
   const [typeProducts, setTypeProducts] = useState([]);
   const [branchProducts, setBranchProducts] = useState([]);
   const { t } = useTranslation();
-  const [priceRange, setPriceRange] = useState([1000000, 5000000]);
+  const [priceRange, setPriceRange] = useState([1000, 10000000]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showSlider, setShowSlider] = useState(true);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
@@ -158,8 +158,8 @@ const HomePage = () => {
         <Slider
           range
           step={500000}
-          min={500000}
-          max={50000000}
+          min={1000}
+          max={70000000}
           value={priceRange}
           onChange={onSliderChange}
         />
@@ -320,6 +320,7 @@ const filterProductsByBrand = (brand) => {
                   name={product.name}
                   price={product.price}
                   rating={product.rating}
+                  branch={product.branch}
                   type={product.type}
                   sold={product.selled}
                   discount={product.discount}
