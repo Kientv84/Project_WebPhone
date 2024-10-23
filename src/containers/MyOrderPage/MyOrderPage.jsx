@@ -218,8 +218,14 @@ const MyOrderPage = () => {
                         <span style={{ color: "rgb(255, 66, 78)" }}>
                           {t("MY_ODER.ORDER_CREATED_AT")}{" "}
                         </span>
-                        {`${new Date(order?.createdAt).toLocaleDateString(
+                        {`${new Date(order.createdAt).toLocaleDateString(
                           "en-GB"
+                        )} ${new Date(order.createdAt).toLocaleTimeString(
+                          "en-GB",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
                         )}`}
                       </div>
                     </div>

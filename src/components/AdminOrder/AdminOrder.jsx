@@ -311,6 +311,12 @@ const AdminOrder = () => {
       ...getColumnSearchProps("address"),
     },
     {
+      title: t("ADMIN.ORDER_CITY"),
+      dataIndex: "city",
+      sorter: (a, b) => a.address.length - b.address.length,
+      ...getColumnSearchProps("city"),
+    },
+    {
       title: t("ADMIN.ORDER_PAYMENT_METHOD"),
       dataIndex: "paymentMethod",
     },
@@ -354,6 +360,7 @@ const AdminOrder = () => {
         userName: order?.shippingAddress?.fullName,
         phone: order?.shippingAddress?.phone,
         address: order?.shippingAddress?.address,
+        city: order?.shippingAddress?.city,
         paymentMethod: orderConstant.payment[order?.paymentMethod],
         isPaid: order?.isPaid ? t("ADMIN.PAID") : t("ADMIN.UN_PAID"),
         isDelivered: (() => {
