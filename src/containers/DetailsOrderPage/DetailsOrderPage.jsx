@@ -27,6 +27,7 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Steps } from "antd";
+import "./DetailsOrderPage.css";
 
 const DetailsOrderPage = () => {
   const params = useParams();
@@ -72,6 +73,8 @@ const DetailsOrderPage = () => {
     }
 
     switch (data?.isDelivered) {
+      case "cancelled":
+        return 0; // Bước đầu tiên
       case "successful order":
         return 0; // Bước đầu tiên
       case "pending":
@@ -100,12 +103,36 @@ const DetailsOrderPage = () => {
       : "";
   };
 
+  const itemsDeliveryCancelled = [
+    {
+      title: t("ORDER.CANCELLED"),
+      status: "error",
+      description: formatTimestamp(data?.cancelledAt),
+    },
+  ];
+
   const itemsDelivery = [
     {
       title: t("ORDER.SUCCESSFULL_ORDER"),
       status: currentStep() >= 0 ? "finish" : "wait",
       description: formatTimestamp(data?.createdAt),
     },
+    // {
+    //   title:
+    //     data?.isDelivered === "cancelled"
+    //       ? t("ORDER.CANCELLED")
+    //       : t("ORDER.SUCCESSFULL_ORDER"),
+    //   status:
+    //     data?.isDelivered === "cancelled"
+    //       ? "error" // Nếu đơn hàng bị hủy, đặt trạng thái "error" cho bước này
+    //       : currentStep() >= 0
+    //       ? "finish"
+    //       : "wait", // Nếu không, vẫn là "finish" khi đã qua bước 1
+    //   description:
+    //     data?.isDelivered === "cancelled"
+    //       ? formatTimestamp(data?.cancelledAt) // Hiển thị thời gian hủy nếu bị hủy
+    //       : formatTimestamp(data?.createdAt), // Hiển thị thời gian tạo đơn hàng
+    // },
     {
       title: t("ORDER.PENDING"),
       status: currentStep() >= 1 ? "finish" : "wait",
@@ -272,10 +299,29 @@ const DetailsOrderPage = () => {
               {t("ORDER_DETAIL.SHIPPING_STATUS")}
             </WrapperLabel>
 
-            <WrapperStyleHeaderDelivery>
-              <Steps current={currentStep()} items={itemsDelivery} />
-            </WrapperStyleHeaderDelivery>
+            {data?.isDelivered === "cancelled" ? (
+              <div className="cancelled-container">
+                <div className="cancelled-text">{t("ORDER.CANCELLED")}</div>
+                <div className="cancelled-time">{`${t(
+                  "ORDER.IN"
+                )} ${formatTimestamp(data?.cancelledAt)}`}</div>
+              </div>
+            ) : (
+              <WrapperStyleHeaderDelivery>
+                <Steps current={currentStep()} items={itemsDelivery} />
+              </WrapperStyleHeaderDelivery>
+            )}
+
+            {/* <WrapperStyleHeaderDelivery>
+              {data?.isDelivered === "cancelled" ? (
+                <Steps current={0} items={itemsDeliveryCancelled} />
+                
+              ) : (
+                <Steps current={currentStep()} items={itemsDelivery} />
+              )}
+            </WrapperStyleHeaderDelivery> */}
           </div>
+          <div></div>
           <WrapperHeaderUser>
             <WrapperInfoUser>
               <WrapperLabel>{t("ORDER_DETAIL.RECEPTION_ADDRESS")}</WrapperLabel>

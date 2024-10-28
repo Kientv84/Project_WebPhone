@@ -45,6 +45,7 @@ const resources = {
         UNKNOWN: "Unknown",
         ORDER_ID: "Order ID",
         ORDER_CREATED_AT: "Created date",
+        CANCELLED: "Cancelled",
       },
       ORDER: {
         DELIVERRED_DES1: "Below 200.000 VND",
@@ -81,7 +82,9 @@ const resources = {
         SHIPPING: "Shipping",
         DELIVERY_FAIL: "Delivery fail",
         SUCCESSFULL_ORDER: "Order placed",
+        CANCELLED: "Cancelled",
         PROCESSING: "Delivered",
+        IN: "in",
       },
       SIGN_IN: {
         TITLE: "Sign-In for member",
@@ -184,6 +187,7 @@ const resources = {
         SHIPPING: "Shipping",
         DELIVERY_FAIL: "Delivery fail",
         SUCCESSFULL_ORDER: "Order placed",
+        CANCELLED: "Cancelled",
         UPDATE_DELIVERY: "Update state",
         DELIVERY_STATE: "Delivery State:",
         SELECT_DELIVERY: "Please select the delivery state!",
@@ -350,7 +354,7 @@ const resources = {
         ACCESSORY: "Accessory",
         SCREEN: "Screen",
         TELEVISION: "Television",
-        BRAND_TEXT: "OUTSTANDING BRAND"
+        BRAND_TEXT: "OUTSTANDING BRAND",
       },
 
       FOOTER: {
@@ -394,18 +398,17 @@ const resources = {
       },
 
       FILTER: {
-        TITLE: 'Filter',
-        PRICE: 'Choose Price',
-        PRICE_UNDER_5: 'Under 5tr',
-        PRICE_5_TO_10: 'From 5tr to 10tr',
-        PRICE_10_TO_20: 'From 10tr to 20tr',
-        PRICE_20_TO_30: 'From 20tr to 30tr',
-        PRICE_30_TO_50: 'From 30tr to 50tr',
-        PRICE_OVER_50: 'Over 50tr',
-        CHOOSE_PRICE: 'Choose the price',
-        CHOOSE_BRAND: 'Choose the Brand',
-
-      }
+        TITLE: "Filter",
+        PRICE: "Choose Price",
+        PRICE_UNDER_5: "Under 5tr",
+        PRICE_5_TO_10: "From 5tr to 10tr",
+        PRICE_10_TO_20: "From 10tr to 20tr",
+        PRICE_20_TO_30: "From 20tr to 30tr",
+        PRICE_30_TO_50: "From 30tr to 50tr",
+        PRICE_OVER_50: "Over 50tr",
+        CHOOSE_PRICE: "Choose the price",
+        CHOOSE_BRAND: "Choose the Brand",
+      },
     },
   },
   vi: {
@@ -439,7 +442,7 @@ const resources = {
         IS_PAID: "Trạng thái thanh toán",
         PAID: "Đã thanh toán",
         UN_PAID: "Chưa thanh toán",
-        DELETE_ORDER: "Xóa đơn hàng",
+        DELETE_ORDER: "Hủy đơn hàng",
         MORE_DETAILS: "Xem chi tiết",
         TOAST_SUCCESS: "Xóa đơn hàng thành công",
         TOAST_FAILED: "Xóa đơn hàng thất bại",
@@ -448,6 +451,7 @@ const resources = {
         UNKNOWN: "Không xác định",
         ORDER_ID: "Mã đơn hàng",
         ORDER_CREATED_AT: "Ngày tạo",
+        CANCELLED: "Đã hủy đơn hàng",
       },
       ORDER: {
         DELIVERRED_DES1: "Dưới 200.000 VND",
@@ -484,7 +488,9 @@ const resources = {
         SHIPPING: "Đang vận chuyển",
         DELIVERY_FAIL: "Giao hàng không thành công",
         SUCCESSFULL_ORDER: "Đặt hàng thành công",
+        CANCELLED: "Đã hủy đơn hàng",
         PROCESSING: "Đã giao",
+        IN: "vào",
       },
       SIGN_IN: {
         TITLE: "Người dùng đăng nhập",
@@ -587,6 +593,7 @@ const resources = {
         SHIPPING: "Đang vận chuyển",
         DELIVERY_FAIL: "Giao hàng không thành công",
         SUCCESSFULL_ORDER: "Đặt hàng thành công",
+        CANCELLED: "Đã hủy",
         UPDATE_DELIVERY: "Cập nhật trạng thái",
         DELIVERY_STATE: "Trạng thái giao hàng:",
         SELECT_DELIVERY: "Vui lòng chọn trạng thái",
@@ -782,7 +789,7 @@ const resources = {
         ACCESSORY: "Phụ kiện",
         SCREEN: "Màn hình",
         TELEVISION: "Tivi",
-        BRAND_TEXT: "THƯƠNG HIỆU NỔI BẬT"
+        BRAND_TEXT: "THƯƠNG HIỆU NỔI BẬT",
       },
 
       FOOTER: {
@@ -825,19 +832,18 @@ const resources = {
         SEARCH_RESULT: "Kết quả tìm kiếm cho:",
       },
 
-        FILTER: {
-        TITLE: 'Lọc',
-        PRICE: 'Chọn giá',
-        PRICE_UNDER_5: 'Dưới 5tr',
-        PRICE_5_TO_10: 'Từ 5tr đến 10tr',
-        PRICE_10_TO_20: 'Từ 10tr đến 20tr',
-        PRICE_20_TO_30: 'Từ 20tr đến 30tr',
-        PRICE_30_TO_50: 'Từ 30tr đến 50tr',
-        PRICE_OVER_50: 'Trên 50tr',
-        CHOOSE_PRICE: 'Chọn mức giá phù hợp',
-        CHOOSE_BRAND: 'Chọn thương hiệu phù hợp',
-
-      }
+      FILTER: {
+        TITLE: "Lọc",
+        PRICE: "Chọn giá",
+        PRICE_UNDER_5: "Dưới 5tr",
+        PRICE_5_TO_10: "Từ 5tr đến 10tr",
+        PRICE_10_TO_20: "Từ 10tr đến 20tr",
+        PRICE_20_TO_30: "Từ 20tr đến 30tr",
+        PRICE_30_TO_50: "Từ 30tr đến 50tr",
+        PRICE_OVER_50: "Trên 50tr",
+        CHOOSE_PRICE: "Chọn mức giá phù hợp",
+        CHOOSE_BRAND: "Chọn thương hiệu phù hợp",
+      },
     },
   },
 };

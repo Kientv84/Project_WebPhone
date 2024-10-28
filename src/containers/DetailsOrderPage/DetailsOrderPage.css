@@ -1,0 +1,19 @@
+.cancelled-container {
+  background-color: #d1f2ed; /* Màu nền nhạt */
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid rgb(245, 245, 250);
+}
+
+.cancelled-text {
+  color: rgb(66, 200, 183); /* Màu đỏ */
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 32px;
+}
+
+.cancelled-time {
+  color: #707070;
+  font-size: 14px;
+  margin-top: 5px;
+}

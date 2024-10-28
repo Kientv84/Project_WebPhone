@@ -296,6 +296,7 @@ const HomePage = () => {
               margin: "10px auto",
               display: "flex",
               paddingBottom: "20px",
+              alignItems: "center",
             }}
           >
             <Popover

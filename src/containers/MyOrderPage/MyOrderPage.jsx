@@ -69,10 +69,12 @@ const MyOrderPage = () => {
       {
         onSuccess: () => {
           message.success(t("MY_ODER.TOAST_SUCCESS"));
-
-          // Cập nhật lại danh sách đơn hàng mà không cần refetch
           queryClient.setQueryData(["orders"], (oldData) => {
-            return oldData?.filter((item) => item._id !== order._id);
+            return oldData?.map((item) =>
+              item._id === order._id
+                ? { ...item, isDelivered: "cancelled" }
+                : item
+            );
           });
         },
         onError: () => {
@@ -131,6 +133,10 @@ const MyOrderPage = () => {
       );
     });
   };
+
+  const sortedData = data
+    ? [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    : [];
 
   return (
     <Loading isLoading={isLoading || isLoadingCancel}>
@@ -192,7 +198,7 @@ const MyOrderPage = () => {
           </div>
 
           <WrapperListOrder>
-            {data?.map((order) => {
+            {sortedData?.map((order) => {
               return (
                 <WrapperItemOrder key={order?._id}>
                   <WrapperStatus>
@@ -247,6 +253,8 @@ const MyOrderPage = () => {
                             return t("MY_ODER.DELIVERY_SUCCESS");
                           case "delivery fail":
                             return t("MY_ODER.DELIVERY_FAIL");
+                          case "cancelled":
+                            return t("MY_ODER.CANCELLED");
                           default:
                             return t("MY_ODER.UNKNOWN");
                         }
@@ -278,24 +286,39 @@ const MyOrderPage = () => {
                       </span>
                     </div>
                     <div style={{ display: "flex", gap: "10px" }}>
-                      {order.isDelivered === "delivered" && (
-                        <ButtonComponent
-                          onClick={() => handleCancelOrder(order)}
-                          size={40}
-                          styleButton={{
-                            height: "36px",
-                            border: "1px solid rgb(11, 116, 229)",
-                            borderRadius: "4px",
-                          }}
-                          textbutton={t("MY_ODER.DELETE_ORDER")}
-                          styletextbutton={{
-                            color: "rgb(11, 116, 229)",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {/* Nội dung nút */}
-                        </ButtonComponent>
-                      )}
+                      {(order.isDelivered === "successful order" ||
+                        order.isDelivered === "pending") &&
+                        (() => {
+                          const currentDate = new Date();
+                          const orderDate = new Date(order.createdAt);
+                          const timeDifference = currentDate - orderDate; // Chênh lệch thời gian
+                          const oneDay = 24 * 60 * 60 * 1000; // 1 ngày tính bằng mili giây
+
+                          if (timeDifference <= oneDay) {
+                            // Nếu thời gian từ lúc đặt hàng đến hiện tại <= 1 ngày thì hiển thị nút Hủy
+                            return (
+                              <ButtonComponent
+                                onClick={() => handleCancelOrder(order)}
+                                size={40}
+                                styleButton={{
+                                  height: "36px",
+                                  border: "1px solid rgb(11, 116, 229)",
+                                  borderRadius: "4px",
+                                }}
+                                textbutton={t("MY_ODER.DELETE_ORDER")}
+                                styletextbutton={{
+                                  color: "rgb(11, 116, 229)",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {/* Nội dung nút */}
+                              </ButtonComponent>
+                            );
+                          } else {
+                            return null; // Nếu đã qua 1 ngày, không hiển thị nút
+                          }
+                        })()}
+
                       <ButtonComponent
                         onClick={() => handleDetailsOrder(order?._id)}
                         size={40}

@@ -1,13 +1,13 @@
-import styled,{ keyframes }  from "styled-components";
+import styled, { keyframes } from "styled-components";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { Button } from "antd";
 
 export const WrapperBranchProduct = styled.div`
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   justify-content: flex-start;
-  height: 44px;
+  height: 55px;
 `;
 export const WrapperTypeProduct = styled.div`
   background-color: #fff;
@@ -52,10 +52,9 @@ export const WrapperFilter = styled.div`
   cursor: pointer;
 
   &:hover {
-    border-color: #ccc;  
+    border-color: #ccc;
   }
-`
-
+`;
 
 export const Wrapper = styled.div`
   padding: 20px;
@@ -116,16 +115,28 @@ export const TextBrand = styled.span`
 
   /* Định nghĩa animation nhấp nháy */
   @keyframes flickerAnimation {
-    0% { opacity: 1; }
-    25% { opacity: 0.8; }
-    50% { opacity: 1; }
-    75% { opacity: 0.9; }
-    100% { opacity: 1; }
+    0% {
+      opacity: 1;
+    }
+    25% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 1;
+    }
+    75% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 
   /* Hiệu ứng khi di chuột vào */
   &:hover {
-    font-size: 1.2em; /* Tăng kích thước chữ khi di chuột vào */
+    /* font-size: 1.2em; */
+    cursor: pointer;
+    transform: scale(1.2);
     color: #ff5722; /* Thay đổi màu khi di chuột vào */
     text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5); /* Tăng bóng chữ khi di chuột */
   }
@@ -144,7 +155,7 @@ export const BrandBox = styled.div`
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  
+
   &:hover {
     background-color: #dfe6e9;
   }

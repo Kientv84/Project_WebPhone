@@ -365,6 +365,8 @@ const AdminOrder = () => {
         isPaid: order?.isPaid ? t("ADMIN.PAID") : t("ADMIN.UN_PAID"),
         isDelivered: (() => {
           switch (order.isDelivered) {
+            case "cancelled":
+              return t("ADMIN.CANCELLED");
             case "successful order":
               return t("ADMIN.SUCCESSFULL_ORDER");
             case "pending":
@@ -510,6 +512,9 @@ const AdminOrder = () => {
                 value={orderState.isDelivered}
                 onChange={(value) => handleOnChange("isDelivered", value)}
               >
+                <Select.Option value="cancelled">
+                  {t("ADMIN.CANCELLED")}
+                </Select.Option>
                 <Select.Option value="successful order">
                   {t("ADMIN.SUCCESSFULL_ORDER")}
                 </Select.Option>

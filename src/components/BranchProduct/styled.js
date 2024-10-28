@@ -7,6 +7,11 @@ const blinkAnimation = keyframes`
 `;
 
 export const WrapperBranch = styled.div`
+  width: 65px; /* Đặt chiều rộng cho khung logo */
+  height: 65px; /* Đặt chiều cao cho khung logo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 20px; /* Bo tròn cho các thẻ */
   background-color: #f2f2f2; /* Màu nền thẻ */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
