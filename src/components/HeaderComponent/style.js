@@ -65,12 +65,3 @@ export const WrapperLanguages = styled.div`
   padding: 20px;
   border-radius: 5px;
 `;
-
-//  border-radius: 5px; /* Bo góc */
-//   font-size: 18px;
-//   font-weight: bold;
-//   text-align: left;
-//   cursor: pointer;
-//   &:hover {
-//     color: #42c8b7;
-//   }

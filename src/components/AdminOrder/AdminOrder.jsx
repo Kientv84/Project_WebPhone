@@ -351,43 +351,47 @@ const AdminOrder = () => {
 
   const dataTable =
     orders?.data?.length &&
-    orders?.data?.map((order) => {
-      const productNames = order.orderItems.map((item) => item.name).join(", ");
-      return {
-        ...order,
-        key: order._id,
-        orderNumber: order?.orderNumber,
-        userName: order?.shippingAddress?.fullName,
-        phone: order?.shippingAddress?.phone,
-        address: order?.shippingAddress?.address,
-        city: order?.shippingAddress?.city,
-        paymentMethod: orderConstant.payment[order?.paymentMethod],
-        isPaid: order?.isPaid ? t("ADMIN.PAID") : t("ADMIN.UN_PAID"),
-        isDelivered: (() => {
-          switch (order.isDelivered) {
-            case "cancelled":
-              return t("ADMIN.CANCELLED");
-            case "successful order":
-              return t("ADMIN.SUCCESSFULL_ORDER");
-            case "pending":
-              return t("ADMIN.PENDING");
-            case "sended":
-              return t("ADMIN.SENDED");
-            case "shipping":
-              return t("ADMIN.SHIPPING");
-            case "delivery success":
-              return t("ADMIN.DELIVERY_SUCCESS");
-            case "delivery fail":
-              return t("ADMIN.DELIVERY_FAIL");
-            default:
-              return t("ADMIN.UNKNOWN");
-          }
-        })(),
-        totalPrice: convertPrice(order?.totalPrice),
-        productNames: productNames,
-        createdAt: new Date(order?.createdAt),
-      };
-    });
+    orders?.data
+      ?.map((order) => {
+        const productNames = order.orderItems
+          .map((item) => item.name)
+          .join(", ");
+        return {
+          ...order,
+          key: order._id,
+          orderNumber: order?.orderNumber,
+          userName: order?.shippingAddress?.fullName,
+          phone: order?.shippingAddress?.phone,
+          address: order?.shippingAddress?.address,
+          city: order?.shippingAddress?.city,
+          paymentMethod: orderConstant.payment[order?.paymentMethod],
+          isPaid: order?.isPaid ? t("ADMIN.PAID") : t("ADMIN.UN_PAID"),
+          isDelivered: (() => {
+            switch (order.isDelivered) {
+              case "cancelled":
+                return t("ADMIN.CANCELLED");
+              case "successful order":
+                return t("ADMIN.SUCCESSFULL_ORDER");
+              case "pending":
+                return t("ADMIN.PENDING");
+              case "sended":
+                return t("ADMIN.SENDED");
+              case "shipping":
+                return t("ADMIN.SHIPPING");
+              case "delivery success":
+                return t("ADMIN.DELIVERY_SUCCESS");
+              case "delivery fail":
+                return t("ADMIN.DELIVERY_FAIL");
+              default:
+                return t("ADMIN.UNKNOWN");
+            }
+          })(),
+          totalPrice: convertPrice(order?.totalPrice),
+          productNames: productNames,
+          createdAt: new Date(order?.createdAt),
+        };
+      })
+      ?.sort((a, b) => b.createdAt - a.createdAt);
 
   const onUpdateOrder = (values) => {
     const updateDeliveryPromise = mutationUpdate.mutateAsync({
