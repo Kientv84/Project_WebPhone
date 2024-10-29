@@ -5,11 +5,13 @@ import {
   UserOutlined,
   AppstoreOutlined,
   ShoppingCartOutlined,
+  FieldNumberOutlined,
 } from "@ant-design/icons";
 import HeaderComponent from "../../components/HeaderComponent/HeaderComponent";
 import AdminUser from "../../components/AdminUser/AdminUser";
 import AdminProduct from "../../components/AdminProduct/AdminProduct";
 import OrderAdmin from "../../components/AdminOrder/AdminOrder";
+import AdminCountInStock from "../../components/AdminCountInStock/AdminCountInStock";
 
 import { useTranslation } from "react-i18next";
 
@@ -23,6 +25,7 @@ const AdminPage = () => {
     getItem(t("ADMIN.USER"), "user", <UserOutlined />),
     getItem(t("ADMIN.PRODUCT"), "product", <AppstoreOutlined />),
     getItem(t("ADMIN.ORDER"), "order", <ShoppingCartOutlined />),
+    getItem(t("ADMIN.QUANLITY_ADMIN"), "quanlity",  <FieldNumberOutlined />),
   ];
 
   useEffect(() => {
@@ -37,6 +40,8 @@ const AdminPage = () => {
         return <AdminProduct />;
       case "order":
         return <OrderAdmin />;
+        case "quanlity":
+        return <AdminCountInStock />;
       default:
         return <></>;
     }

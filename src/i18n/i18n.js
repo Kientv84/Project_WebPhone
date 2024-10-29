@@ -272,6 +272,9 @@ const resources = {
 
         DELETE_MANY_SUCCESS: "Delete many success!",
         DELETE_MANY_FAIL: "Delete many fail!",
+
+        QUANLITY_ADMIN: "Quantity",
+        TITILE_NO: "PRODUCT LIST IS ABOUT TO END UP, NEED TO IMPORT MORE!"
       },
       PAYMENT: {
         TITLE: "Payment",
@@ -663,6 +666,10 @@ const resources = {
 
         DELETE_MANY_SUCCESS: "Xóa nhiều thành công!",
         DELETE_MANY_FAIL: "Xóa nhiều thất bại!",
+
+        
+        QUANLITY_ADMIN: "Nhập thêm",
+        TITILE_NO: "DANH SÁCH SẢN PHẨM SẮP HẾT, CẦN NHẬP THÊM!"
       },
       PAYMENT: {
         TITLE: "Thanh toán",
