@@ -43,9 +43,11 @@ const DetailsOrderPage = () => {
   };
 
   const queryOrder = useQuery(
-    { queryKey: ["orders-details"], queryFn: fetchDetailsOrder },
+    { queryKey: ["orders-details", id], queryFn: fetchDetailsOrder },
     {
-      enabled: id,
+      enabled: Boolean(id),
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
     }
   );
   const { isLoading, data } = queryOrder;
@@ -55,7 +57,7 @@ const DetailsOrderPage = () => {
       // Scroll to the top of the page
       window.scrollTo(0, 0);
     }
-  }, [isLoading]);
+  }, [isLoading, id]);
 
   const priceMemo = useMemo(() => {
     const result = data?.orderItems?.reduce((total, cur) => {
@@ -311,15 +313,6 @@ const DetailsOrderPage = () => {
                 <Steps current={currentStep()} items={itemsDelivery} />
               </WrapperStyleHeaderDelivery>
             )}
-
-            {/* <WrapperStyleHeaderDelivery>
-              {data?.isDelivered === "cancelled" ? (
-                <Steps current={0} items={itemsDeliveryCancelled} />
-                
-              ) : (
-                <Steps current={currentStep()} items={itemsDelivery} />
-              )}
-            </WrapperStyleHeaderDelivery> */}
           </div>
           <div></div>
           <WrapperHeaderUser>
