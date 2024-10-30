@@ -76,21 +76,21 @@ const DetailsOrderPage = () => {
 
     switch (data?.isDelivered) {
       case "cancelled":
-        return 0; // Bước đầu tiên
+        return 0;
       case "successful order":
-        return 0; // Bước đầu tiên
+        return 0;
       case "pending":
-        return 1; // Bước thứ hai
+        return 1;
       case "sended":
-        return 2; // Bước thứ ba
+        return 2;
       case "shipping":
-        return 3; // Bước thứ tư
+        return 3;
       case "delivery success":
-        return 4; // Tick bước giao hàng thành công
+        return 4;
       case "delivery fail":
-        return 4; // Tick bước giao hàng thất bại
+        return 4;
       default:
-        return 0; // Mặc định là bước đầu tiên
+        return 0;
     }
   };
 
@@ -105,36 +105,12 @@ const DetailsOrderPage = () => {
       : "";
   };
 
-  const itemsDeliveryCancelled = [
-    {
-      title: t("ORDER.CANCELLED"),
-      status: "error",
-      description: formatTimestamp(data?.cancelledAt),
-    },
-  ];
-
   const itemsDelivery = [
     {
       title: t("ORDER.SUCCESSFULL_ORDER"),
       status: currentStep() >= 0 ? "finish" : "wait",
       description: formatTimestamp(data?.createdAt),
     },
-    // {
-    //   title:
-    //     data?.isDelivered === "cancelled"
-    //       ? t("ORDER.CANCELLED")
-    //       : t("ORDER.SUCCESSFULL_ORDER"),
-    //   status:
-    //     data?.isDelivered === "cancelled"
-    //       ? "error" // Nếu đơn hàng bị hủy, đặt trạng thái "error" cho bước này
-    //       : currentStep() >= 0
-    //       ? "finish"
-    //       : "wait", // Nếu không, vẫn là "finish" khi đã qua bước 1
-    //   description:
-    //     data?.isDelivered === "cancelled"
-    //       ? formatTimestamp(data?.cancelledAt) // Hiển thị thời gian hủy nếu bị hủy
-    //       : formatTimestamp(data?.createdAt), // Hiển thị thời gian tạo đơn hàng
-    // },
     {
       title: t("ORDER.PENDING"),
       status: currentStep() >= 1 ? "finish" : "wait",
