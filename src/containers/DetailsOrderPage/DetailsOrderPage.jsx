@@ -27,6 +27,7 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Steps } from "antd";
+import "./DetailsOrderPage.css";
 
 const DetailsOrderPage = () => {
   const params = useParams();
@@ -42,9 +43,11 @@ const DetailsOrderPage = () => {
   };
 
   const queryOrder = useQuery(
-    { queryKey: ["orders-details"], queryFn: fetchDetailsOrder },
+    { queryKey: ["orders-details", id], queryFn: fetchDetailsOrder },
     {
-      enabled: id,
+      enabled: Boolean(id),
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
     }
   );
   const { isLoading, data } = queryOrder;
@@ -54,7 +57,7 @@ const DetailsOrderPage = () => {
       // Scroll to the top of the page
       window.scrollTo(0, 0);
     }
-  }, [isLoading]);
+  }, [isLoading, id]);
 
   const priceMemo = useMemo(() => {
     const result = data?.orderItems?.reduce((total, cur) => {
@@ -72,20 +75,22 @@ const DetailsOrderPage = () => {
     }
 
     switch (data?.isDelivered) {
+      case "cancelled":
+        return 0;
       case "successful order":
-        return 0; // Bước đầu tiên
+        return 0;
       case "pending":
-        return 1; // Bước thứ hai
+        return 1;
       case "sended":
-        return 2; // Bước thứ ba
+        return 2;
       case "shipping":
-        return 3; // Bước thứ tư
+        return 3;
       case "delivery success":
-        return 4; // Tick bước giao hàng thành công
+        return 4;
       case "delivery fail":
-        return 4; // Tick bước giao hàng thất bại
+        return 4;
       default:
-        return 0; // Mặc định là bước đầu tiên
+        return 0;
     }
   };
 
@@ -272,10 +277,20 @@ const DetailsOrderPage = () => {
               {t("ORDER_DETAIL.SHIPPING_STATUS")}
             </WrapperLabel>
 
-            <WrapperStyleHeaderDelivery>
-              <Steps current={currentStep()} items={itemsDelivery} />
-            </WrapperStyleHeaderDelivery>
+            {data?.isDelivered === "cancelled" ? (
+              <div className="cancelled-container">
+                <div className="cancelled-text">{t("ORDER.CANCELLED")}</div>
+                <div className="cancelled-time">{`${t(
+                  "ORDER.IN"
+                )} ${formatTimestamp(data?.cancelledAt)}`}</div>
+              </div>
+            ) : (
+              <WrapperStyleHeaderDelivery>
+                <Steps current={currentStep()} items={itemsDelivery} />
+              </WrapperStyleHeaderDelivery>
+            )}
           </div>
+          <div></div>
           <WrapperHeaderUser>
             <WrapperInfoUser>
               <WrapperLabel>{t("ORDER_DETAIL.RECEPTION_ADDRESS")}</WrapperLabel>
