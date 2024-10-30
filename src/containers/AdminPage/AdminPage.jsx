@@ -40,7 +40,7 @@ const AdminPage = () => {
         return <AdminProduct />;
       case "order":
         return <OrderAdmin />;
-        case "quanlity":
+      case "quanlity":
         return <AdminCountInStock />;
       default:
         return <></>;

@@ -1,14 +1,14 @@
-import { Button, Form, Space, Input, Modal } from "antd"; 
-import React, { useCallback, useRef, useState } from "react";
+import { Button, Form, Space, Input, Modal } from "antd";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { EditOutlined, SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../TableComponent/TableComponent";
 import * as ProductService from "../../services/ProductService";
 import { useMutationHook } from "../../hooks/useMutationHook";
-import { useQuery, useQueryClient } from "react-query"; 
+import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import InputComponent from "../InputComponent/InputComponent";
-import { WrapperHeader, WrapperUploadFile } from "./style";
+import { WrapperHeader } from "./style";
 
 const AdminCountInStock = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +18,7 @@ const AdminCountInStock = () => {
   const { t } = useTranslation();
   const searchInput = useRef(null);
 
-  const queryClient = useQueryClient(); // Khởi tạo queryClient
+  const queryClient = useQueryClient(); 
   const [form] = Form.useForm();
 
   // Fetch sản phẩm
@@ -29,9 +29,13 @@ const AdminCountInStock = () => {
   };
 
   const { isLoading: isLoadingProducts, data: products, refetch } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["productsInStock"], // Đổi queryKey để đảm bảo refetch đúng
     queryFn: getAllProduct,
   });
+
+  useEffect(() => {
+    refetch(); // Gọi refetch mỗi khi component được render lại
+  }, [refetch]);
 
   // Lọc sản phẩm có số lượng dưới 10
   const filteredProducts = products?.filter((product) => product.countInStock < 10);
@@ -84,15 +88,15 @@ const AdminCountInStock = () => {
       });
 
       // Cập nhật số lượng sản phẩm ngay lập tức trong dữ liệu hiển thị
-      const updatedProducts = dataTable.map((item) => {
-        if (item.key === rowSelected) {
+      const updatedProducts = products.map((item) => {
+        if (item._id === rowSelected) {
           return { ...item, countInStock: newStock }; // Cập nhật số lượng
         }
         return item;
       });
 
       // Cập nhật lại state sản phẩm với danh sách sản phẩm đã cập nhật
-      queryClient.setQueryData(["products"], updatedProducts);
+      queryClient.setQueryData(["productsInStock"], updatedProducts);
 
       setIsModalOpen(false); // Đóng modal sau khi cập nhật
     }
@@ -165,11 +169,11 @@ const AdminCountInStock = () => {
           color: product.countInStock < 10 ? "red" : "green",
           textAlign: "center",
           display: "inline-block",
-          width: "100px", // Thay đổi kích thước để tạo không gian
+          width: "100px", 
           padding: "5px",
           borderRadius: "5px",
-          backgroundColor: product.countInStock < 10 ? "#ffe6e6" : "#e6ffe6", // Màu nền tương ứng
-          transition: "background-color 0.3s", // Hiệu ứng chuyển màu
+          backgroundColor: product.countInStock < 10 ? "#ffe6e6" : "#e6ffe6",
+          transition: "background-color 0.3s",
         }}>
           {product.countInStock}
         </span>
@@ -199,7 +203,7 @@ const AdminCountInStock = () => {
 
   return (
     <>
-      <WrapperHeader>{'CÁC SẢN PHẨM SẮP HẾT'}</WrapperHeader>
+      <WrapperHeader>{t('ADMIN.TITILE_NO')}</WrapperHeader>
       <TableComponent columns={columns} dataSource={dataTable} loading={isLoadingProducts} />
       
       {/* Modal cập nhật số lượng */}
