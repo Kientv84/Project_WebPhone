@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from '@ant-design/charts';
-import { useQuery } from 'react-query';
-import * as OrderService from '../../../services/OrderService';
-import { useSelector } from 'react-redux';
-import { Card, Typography, Row, Col, Spin } from 'antd';
+import { Card, Typography, Row, Col, Spin, Alert } from 'antd';
 import styled from 'styled-components';
 
 const { Title, Paragraph } = Typography;
@@ -23,33 +20,15 @@ const WeekRevenue = styled.div`
   color: #1890ff; // Màu xanh của Ant Design
 `;
 
-const StatisticsCard = () => {
-  const user = useSelector((state) => state?.user);
+const StatisticsCard = ({ orders }) => {
   const [weeklyData, setWeeklyData] = useState([]);
   const [averageRevenue, setAverageRevenue] = useState(0);
-
-  const fetchOrderData = async () => {
-    const res = await OrderService.getAllOrder(user?.access_token);
-    return res.data.map(order => ({
-      date: new Date(order.createdAt),
-      totalPrice: order.totalPrice,
-    }));
-  };
-
-  const { isLoading: isLoadingOrders, data: orders } = useQuery(
-    ["orders", user?.access_token], // thêm access_token vào queryKey
-    fetchOrderData,
-    {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-    }
-  );
 
   useEffect(() => {
     if (orders) {
       const revenueByWeek = {};
       orders.forEach(order => {
-        const weekStart = getStartOfWeek(order.date);
+        const weekStart = getStartOfWeek(new Date(order.createdAt));
         if (!revenueByWeek[weekStart]) {
           revenueByWeek[weekStart] = 0;
         }
@@ -63,17 +42,17 @@ const StatisticsCard = () => {
 
       setWeeklyData(weeklyArray);
       setAverageRevenue(
-        weeklyArray.reduce((acc, item) => acc + item.value, 0) / weeklyArray.length
+        weeklyArray.reduce((acc, item) => acc + item.value, 0) / weeklyArray.length || 0 // Đảm bảo không chia cho 0
       );
     }
   }, [orders]);
 
   const getStartOfWeek = (date) => {
     const startOfWeek = new Date(date);
-    const day = startOfWeek.getDay(); // 0 (Chủ nhật) đến 6 (Thứ bảy)
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Chuyển đổi thành thứ 2
+    const day = startOfWeek.getDay();
+    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
     startOfWeek.setDate(diff);
-    return startOfWeek.toLocaleDateString(); // Trả về ngày bắt đầu tuần
+    return startOfWeek.toLocaleDateString();
   };
 
   const props = {
@@ -106,8 +85,8 @@ const StatisticsCard = () => {
     },
   };
 
-  if (isLoadingOrders) {
-    return <Spin size="large" />;
+  if (!orders) {
+    return <Spin size="large" tip="Đang tải dữ liệu..." />;
   }
 
   return (
