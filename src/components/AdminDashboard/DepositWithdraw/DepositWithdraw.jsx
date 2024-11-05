@@ -1,8 +1,13 @@
 import React from 'react';
 import { Card, Col, Row, Statistic } from 'antd';
 import { PieChart } from 'react-minimal-pie-chart';
+import { useTranslation } from "react-i18next";
 
 const DepositWithdraw = ({ orders }) => {
+
+    const { t } = useTranslation();
+
+
   // Tổng số đơn hàng
   const totalOrders = orders.length;
 
@@ -25,11 +30,11 @@ const DepositWithdraw = ({ orders }) => {
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Thống Kê Đơn Hàng</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>{t('DASHBOARD.DEPOSIT_TITLE')}</h2>
       <Row gutter={16}>
         <Col span={8}>
           <Card>
-            <Statistic title="Tổng Số Đơn Hàng" value={totalOrders} />
+            <Statistic title={t('DASHBOARD.DEPOSIT_TOTAL')} value={totalOrders} />
           </Card>
         </Col>
         {Object.keys(orderStatusCount).map((status) => (
@@ -41,7 +46,7 @@ const DepositWithdraw = ({ orders }) => {
         ))}
       </Row>
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <h3>Biểu Đồ Đơn Hàng Theo Loại Thanh Toán</h3>
+        <h3>{t('DASHBOARD.DEPOSIT_CHART')}</h3>
         <PieChart
           data={paymentMethodsData.map(({ title, value }) => ({
             title,

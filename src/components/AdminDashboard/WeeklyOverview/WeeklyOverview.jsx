@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Line } from '@ant-design/charts';
 import { Card, Typography, Row, Col, Spin, Alert } from 'antd';
 import styled from 'styled-components';
+import { useTranslation } from "react-i18next";
 
 const { Title, Paragraph } = Typography;
 
@@ -23,6 +24,7 @@ const WeekRevenue = styled.div`
 const StatisticsCard = ({ orders }) => {
   const [weeklyData, setWeeklyData] = useState([]);
   const [averageRevenue, setAverageRevenue] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (orders) {
@@ -91,17 +93,17 @@ const StatisticsCard = ({ orders }) => {
 
   return (
     <StatisticsCardContainer>
-      <Title level={4}>Thống kê Doanh thu theo Tuần</Title>
+      <Title level={4}>{t('DASHBOARD.WEEKLY_TITLE')}</Title>
       <Paragraph>
-        Doanh thu trung bình mỗi tuần: <strong>{averageRevenue.toLocaleString()} VNĐ</strong>
+          {t('DASHBOARD.WEEKLY_AVG')} <strong>{averageRevenue.toLocaleString()} VNĐ</strong>
       </Paragraph>
       <Line {...props} />
       <Row gutter={16} style={{ marginTop: '20px' }}>
         {weeklyData.map((item, index) => (
           <Col span={6} key={index}>
             <WeekRevenue>
-              Tuần bắt đầu: {item.week}<br />
-              Doanh thu: {item.value.toLocaleString()} VNĐ
+             {t('DASHBOARD.WEEKLY_START')} {item.week}<br />
+             {t('DASHBOARD.WEEKLY_TOTAL')} {item.value.toLocaleString()} VNĐ
             </WeekRevenue>
           </Col>
         ))}

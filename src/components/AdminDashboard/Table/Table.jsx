@@ -1,8 +1,12 @@
 // ** MUI Imports   
 import React from 'react';
 import { Table } from 'antd';
+import { useTranslation } from "react-i18next";
 
 const DashboardTable = ({ orders }) => {
+
+    const { t } = useTranslation();
+
   // Hàm tính toán sản phẩm bán chạy
   const calculateBestSellingProducts = (orders) => {
     const productCount = {};
@@ -65,7 +69,7 @@ const DashboardTable = ({ orders }) => {
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#f5f5f5', borderRadius: '10px' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Top 3 Best Selling Products</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>{t('DASHBOARD.TABLE_TITLE_1')}</h2>
       <Table
         dataSource={bestSellingProducts.map((product, index) => ({
           ...product,
@@ -73,19 +77,19 @@ const DashboardTable = ({ orders }) => {
         }))}
         columns={[
           {
-            title: 'Top',
+            title: t('DASHBOARD.TABLE_TOP'),
             dataIndex: 'top',
             key: 'top',
             render: text => <span style={{ color: 'red', fontWeight: 'bold' }}>{text}</span>, // Styled nổi bật
           },
           {
-            title: 'Product Name',
+            title:  t('DASHBOARD.TABLE_NAME'),
             dataIndex: 'name',
             key: 'name',
             render: text => <span style={{ fontWeight: 'bold' }}>{text}</span>,
           },
           {
-            title: 'Quantity Sold',
+            title: t('DASHBOARD.TABLE_QUAN'),
             dataIndex: 'count',
             key: 'count',
             align: 'center', // Canh giữa số lượng
@@ -98,7 +102,7 @@ const DashboardTable = ({ orders }) => {
         style={{ backgroundColor: '#fff' }} // Màu nền cho bảng
       />
 
-      <h2 style={{ textAlign: 'center', marginTop: '40px', marginBottom: '20px' }}>Least Selling Products</h2>
+      <h2 style={{ textAlign: 'center', marginTop: '40px', marginBottom: '20px' }}>{t('DASHBOARD.TABLE_TITLE_2')}</h2>
       <Table
         dataSource={leastSellingProducts.map((product, index) => ({
           ...product,
@@ -106,19 +110,19 @@ const DashboardTable = ({ orders }) => {
         }))}
         columns={[
           {
-            title: 'Rank',
+            title: t('DASHBOARD.TABLE_TOP'),
             dataIndex: 'rank',
             key: 'rank',
             render: text => <span style={{ color: 'blue', fontWeight: 'bold' }}>{text}</span>, // Styled nổi bật
           },
           {
-            title: 'Product Name',
+            title: t('DASHBOARD.TABLE_NAME'),
             dataIndex: 'name',
             key: 'name',
             render: text => <span style={{ fontWeight: 'bold' }}>{text}</span>,
           },
           {
-            title: 'Quantity Sold',
+            title:  t('DASHBOARD.TABLE_QUAN'),
             dataIndex: 'count',
             key: 'count',
             align: 'center', // Canh giữa số lượng
@@ -135,3 +139,4 @@ const DashboardTable = ({ orders }) => {
 };
 
 export default DashboardTable;
+ 

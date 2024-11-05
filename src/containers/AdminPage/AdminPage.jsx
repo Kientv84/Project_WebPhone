@@ -24,11 +24,11 @@ const AdminPage = () => {
   const { t } = useTranslation();
 
   const items = [
+    getItem(t("DASHBOARD.DASHBOARD"), "dashboard",  <DashboardOutlined />),
     getItem(t("ADMIN.USER"), "user", <UserOutlined />),
     getItem(t("ADMIN.PRODUCT"), "product", <AppstoreOutlined />),
     getItem(t("ADMIN.ORDER"), "order", <ShoppingCartOutlined />),
     getItem(t("ADMIN.QUANLITY_ADMIN"), "quanlity",  <FieldNumberOutlined />),
-    getItem('DASHBOARD', "dashboard",  <DashboardOutlined />),
   ];
 
   useEffect(() => {
