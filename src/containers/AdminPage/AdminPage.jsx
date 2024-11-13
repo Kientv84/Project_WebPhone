@@ -20,14 +20,12 @@ import { useTranslation } from "react-i18next";
 import AdminDashboard from "../../components/AdminDashboard/AdminDashboard";
 
 const AdminPage = () => {
-
-
   const [keySelected, setKeySelected] = useState("dashboard");
 
   const { t } = useTranslation();
 
   const items = [
-    getItem(t("DASHBOARD.DASHBOARD"), "dashboard",  <DashboardOutlined />),
+    getItem(t("DASHBOARD.DASHBOARD"), "dashboard", <DashboardOutlined />),
     getItem(t("ADMIN.USER"), "user", <UserOutlined />),
     getItem(t("ADMIN.PRODUCT"), "product", <AppstoreOutlined />),
     getItem(t("ADMIN.ORDER"), "order", <ShoppingCartOutlined />),
@@ -35,25 +33,24 @@ const AdminPage = () => {
     getItem(
       t("ADMIN.PROMOTION"),
       "promotion",
-      <img src={Promotion} alt="Promotion" style={{ width: 20, height: 20 }} />
+      <img src={Promotion} alt="Promotion" style={{ width: 18, height: 18 }} />
     ),
   ];
-
 
   const renderPage = (key) => {
     switch (key) {
       case "user":
-        return <AdminUser  key="user"/>;
+        return <AdminUser key="user" />;
       case "product":
-        return <AdminProduct  key="product"/>;
+        return <AdminProduct key="product" />;
       case "order":
-        return <OrderAdmin key="order"/>;
+        return <OrderAdmin key="order" />;
       case "quanlity":
-        return <AdminCountInStock key="quanlity"/>;
+        return <AdminCountInStock key="quanlity" />;
       case "promotion":
-        return <AdminPromotion key="promotion"/>;
+        return <AdminPromotion key="promotion" />;
       case "dashboard":
-        return <AdminDashboard key="dashboard"/>;
+        return <AdminDashboard key="dashboard" />;
       default:
         return <></>;
     }
