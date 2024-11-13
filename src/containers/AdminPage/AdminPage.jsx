@@ -18,9 +18,10 @@ import { useTranslation } from "react-i18next";
 import AdminDashboard from "../../components/AdminDashboard/AdminDashboard";
 
 const AdminPage = () => {
-  const [keySelected, setKeySelected] = useState(
-    localStorage.getItem("adminPageKey") || "user"
-  );
+
+
+  const [keySelected, setKeySelected] = useState("dashboard");
+
   const { t } = useTranslation();
 
   const items = [
@@ -31,9 +32,6 @@ const AdminPage = () => {
     getItem(t("ADMIN.QUANLITY_ADMIN"), "quanlity",  <FieldNumberOutlined />),
   ];
 
-  useEffect(() => {
-    localStorage.setItem("adminPageKey", keySelected);
-  }, [keySelected]);
 
   const renderPage = (key) => {
     switch (key) {
