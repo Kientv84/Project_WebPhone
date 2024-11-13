@@ -454,6 +454,28 @@ const resources = {
         SEARCH_RESULT: "Search results for:",
       },
 
+      DASHBOARD: {
+      WEEKLY_TITLE: "Revenue Statistics by Week",
+      WEEKLY_AVG: "Average weekly revenue:",
+      WEEKLY_START: "Week:",
+      WEEKLY_TOTAL: "Total:",
+
+      TABLE_TITLE_1: "Top Best-Selling Products!",
+      TABLE_TITLE_2: "Products Least Interested by Customers!",
+      TABLE_TOP: "Rank",
+      TABLE_NAME: "Product Name",
+      TABLE_QUAN: "sold",
+
+      DEPOSIT_TITLE: "Order Statistics",
+      DEPOSIT_TOTAL: "Total Orders",
+      DEPOSIT_SUS: "Successfully Delivered Orders",
+      DEPOSIT_PEDDING: "Orders on the Way",
+      DEPOSIT_CANCEL: "Cancelled Orders",
+      DEPOSIT_CHART: "Chart of orders by Payment method",
+      DASHBOARD: "Dashboard"
+      },
+
+
       FILTER: {
         TITLE: "Filter",
         PRICE: "Choose Price",
@@ -953,6 +975,28 @@ const resources = {
       SEARCHPRODUCT: {
         BACK_HOMEPAGE: "Trang chủ",
         SEARCH_RESULT: "Kết quả tìm kiếm cho:",
+      },
+
+       DASHBOARD: {
+        WEEKLY_TITLE: "Thống kê Doanh thu theo Tuần",
+        WEEKLY_AVG: "Doanh thu trung bình mỗi tuần:",
+        WEEKLY_START: "Tuần:",
+        WEEKLY_TOTAL: "Doanh thu:",
+
+        TABLE_TITLE_1: "Top sản phẩm bán chạy nhất!",
+        TABLE_TITLE_2: "Sản phẩm ít được khách hàng quan tâm!",
+        TABLE_TOP: "Hạng",
+        TABLE_NAME: "Tên sản phẩm",
+        TABLE_QUAN: "đã bán",
+
+        DEPOSIT_TITLE: "Thống Kê Đơn Hàng",
+        DEPOSIT_TOTAL: "Tổng Số Đơn Hàng",
+        DEPOSIT_SUS: "Đơn hàng giao thành công",
+        DEPOSIT_PEDDING: "Đơn hàng đang trên đường vẫn chuyển",
+        DEPOSIT_CANCLE: "Đơn hàng bị hủy",
+        DEPOSIT_CHART: "Biểu Đồ tròn hiển thị phương thức thanh toán",
+        DASHBOARD: "Thống kê"
+
       },
 
       FILTER: {

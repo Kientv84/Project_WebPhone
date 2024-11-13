@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/charts": "^2.2.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -27,6 +28,7 @@
     "react-dom": "^18.2.0",
     "react-html-table-to-excel": "^2.0.0",
     "react-i18next": "^11.8.5",
+    "react-minimal-pie-chart": "^8.4.0",
     "react-paypal-button-v2": "^2.6.3",
     "react-query": "^3.39.3",
     "react-redux": "^8.1.3",

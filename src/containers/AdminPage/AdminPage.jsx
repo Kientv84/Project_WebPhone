@@ -6,6 +6,7 @@ import {
   AppstoreOutlined,
   ShoppingCartOutlined,
   FieldNumberOutlined,
+  DashboardOutlined,
 } from "@ant-design/icons";
 import HeaderComponent from "../../components/HeaderComponent/HeaderComponent";
 import AdminUser from "../../components/AdminUser/AdminUser";
@@ -16,14 +17,17 @@ import AdminPromotion from "../../components/AdminPromotion/AdminPromotion.jsx";
 import Promotion from "../../assets/images/promotions.svg";
 
 import { useTranslation } from "react-i18next";
+import AdminDashboard from "../../components/AdminDashboard/AdminDashboard";
 
 const AdminPage = () => {
-  const [keySelected, setKeySelected] = useState(
-    localStorage.getItem("adminPageKey") || "user"
-  );
+
+
+  const [keySelected, setKeySelected] = useState("dashboard");
+
   const { t } = useTranslation();
 
   const items = [
+    getItem(t("DASHBOARD.DASHBOARD"), "dashboard",  <DashboardOutlined />),
     getItem(t("ADMIN.USER"), "user", <UserOutlined />),
     getItem(t("ADMIN.PRODUCT"), "product", <AppstoreOutlined />),
     getItem(t("ADMIN.ORDER"), "order", <ShoppingCartOutlined />),
@@ -35,22 +39,22 @@ const AdminPage = () => {
     ),
   ];
 
-  useEffect(() => {
-    localStorage.setItem("adminPageKey", keySelected);
-  }, [keySelected]);
 
   const renderPage = (key) => {
     switch (key) {
       case "user":
-        return <AdminUser />;
+        return <AdminUser  key="user"/>;
       case "product":
-        return <AdminProduct />;
+        return <AdminProduct  key="product"/>;
       case "order":
-        return <OrderAdmin />;
+        return <OrderAdmin key="order"/>;
       case "quanlity":
         return <AdminCountInStock />;
       case "promotion":
         return <AdminPromotion />;
+        return <AdminCountInStock key="quanlity"/>;
+      case "dashboard":
+        return <AdminDashboard key="dashboard"/>;
       default:
         return <></>;
     }
