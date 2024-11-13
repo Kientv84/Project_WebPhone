@@ -60,7 +60,6 @@ const HomePage = () => {
   const fetchAllBranchProduct = async () => {
     const res = await ProductService.getAllBranchProduct();
     if (res?.status === "OK") setBranchProducts(res?.data);
-    console.log("res", res);
   };
 
   const {

@@ -22,6 +22,7 @@ export const createProduct = async (data) => {
   );
   return res.data;
 };
+
 // lấy dữ liệu sản phẩm
 export const getDetailsProduct = async (id) => {
   const res = await axios.get(
@@ -56,8 +57,6 @@ export const deleteProduct = async (id, access_token) => {
 };
 
 export const deleteManyProduct = async (data, access_token) => {
-  // console.log('data', data)
-  // console.log('access_token', access_token)
   const res = await axiosJWT.post(
     `${process.env.REACT_APP_URL_BACKEND}/product/delete-many`,
     data,
@@ -112,7 +111,7 @@ export const getAllsearchProducts = async (query) => {
 export const getProductSearch = async (query, page, limit) => {
   if (query) {
     const res = await axios.get(
-      `${process.env.REACT_APP_URL_BACKEND}/product/get-all?filter=name&filter=${query}&limit=${limit}&page=${page}`
+      `${process.env.REACT_APP_URL_BACKEND}/product/get-all-search?filter=name&filter=${query}&limit=${limit}&page=${page}`
     );
     return res.data;
   }

@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { PayPalButton } from "react-paypal-button-v2";
 import * as PaymentService from "../../services/PaymentService";
 import { useTranslation } from "react-i18next";
+import * as PromotionService from "../../services/PromotionService";
 
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
@@ -43,6 +44,8 @@ const PaymentPage = () => {
 
   const navigate = useNavigate();
   const [sdkReady, setSdkReady] = useState(false);
+
+  const [promotions, setPromotions] = useState([]);
 
   const { t } = useTranslation();
 
@@ -78,12 +81,132 @@ const PaymentPage = () => {
     setIsOpenModalUpdateInfo(true);
   };
 
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const response = await PromotionService.getAllPromotion(); // Giả sử PromotionService có hàm lấy danh sách khuyến mãi
+        setPromotions(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch promotions", error);
+      }
+    };
+
+    fetchPromotions();
+  }, []);
+
+  const calculatePromotionDiscount = (orderItems, promotions) => {
+    let discountTotal = 0;
+    let extraDiscountTotal = 0;
+
+    // Lấy tháng và năm hiện tại
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+
+    // Group items by brand và tính tổng số lượng sản phẩm từ cùng một thương hiệu
+    const itemsByBrand = {};
+    orderItems.forEach((item) => {
+      if (!itemsByBrand[item.branch]) {
+        itemsByBrand[item.branch] = { items: [], totalQuantity: 0 };
+      }
+      itemsByBrand[item.branch].items.push(item);
+      itemsByBrand[item.branch].totalQuantity += item.amount;
+    });
+
+    // Điều kiện 1: Giảm giá số tiền cố định khi mua tối thiểu 2 sản phẩm từ cùng một brand
+    for (const [brand, { items, totalQuantity }] of Object.entries(
+      itemsByBrand
+    )) {
+      const brandPromotion = promotions.find(
+        (promo) =>
+          promo.branch === brand &&
+          promo.minimumQuantity <= totalQuantity &&
+          promo.discountAmount &&
+          promo.month === currentMonth &&
+          promo.year === currentYear
+      );
+      if (brandPromotion) {
+        const discountAmount = brandPromotion.discountAmount;
+        extraDiscountTotal += discountAmount;
+      }
+    }
+
+    // Kiểm tra các điều kiện khuyến mãi khác
+    orderItems.forEach((item) => {
+      let itemDiscount = 0;
+
+      // Điều kiện 2: Nếu sản phẩm là sản phẩm kích hoạt, giảm giá cho bundle product
+      const triggerPromotion = promotions.find(
+        (promo) =>
+          promo.triggerProduct?._id?.toString() === item.product.toString() &&
+          promo.month === currentMonth &&
+          promo.year === currentYear
+      );
+      if (triggerPromotion && item.amount >= 1) {
+        const bundleProductItem = orderItems.find(
+          (bundleItem) =>
+            bundleItem.product.toString() ===
+            triggerPromotion.bundleProduct?.productId._id.toString()
+        );
+
+        if (bundleProductItem) {
+          const discountAmount =
+            triggerPromotion.bundleProduct.discountPrice *
+            bundleProductItem.amount;
+          extraDiscountTotal += discountAmount;
+        }
+      }
+
+      // Điều kiện 3: Thêm sản phẩm bundle với giá giảm khi mua sản phẩm từ brand đó
+      const brandBundlePromotion = promotions.find(
+        (promo) =>
+          promo.branch === item.branch &&
+          promo.bundleProduct &&
+          promo.month === currentMonth &&
+          promo.year === currentYear
+      );
+      if (brandBundlePromotion) {
+        const bundleProductItem = orderItems.find(
+          (bundleItem) =>
+            bundleItem.product.toString() ===
+            brandBundlePromotion.bundleProduct?.productId._id.toString()
+        );
+
+        if (bundleProductItem) {
+          const bundleDiscountAmount =
+            brandBundlePromotion.bundleProduct.discountPrice *
+            bundleProductItem.amount;
+          extraDiscountTotal += bundleDiscountAmount;
+        }
+      }
+
+      // Điều kiện bổ sung: Tính giảm giá từ `item.discount` nếu có và không bị bỏ qua
+      if (!item.skipDiscount) {
+        const productDiscount = item.discount ? item.discount : 0;
+        const discountFromItemDiscount =
+          item.price * (productDiscount / 100) * item.amount;
+        itemDiscount += discountFromItemDiscount;
+      }
+
+      discountTotal += itemDiscount;
+    });
+
+    return { discountTotal, extraDiscountTotal };
+  };
+
   const priceMemo = useMemo(() => {
     const result = order?.orderItemsSelected?.reduce((total, cur) => {
       return total + cur.price * cur.amount;
     }, 0);
     return result;
   }, [order]);
+
+  const { discountTotal, extraDiscountTotal } = useMemo(() => {
+    return calculatePromotionDiscount(
+      order?.orderItemsSelected || [],
+      promotions
+    );
+  }, [order, promotions]);
 
   const priceDiscountMemo = useMemo(() => {
     const result = order?.orderItemsSelected?.reduce((total, cur) => {
@@ -108,9 +231,12 @@ const PaymentPage = () => {
 
   const totalPriceMemo = useMemo(() => {
     return (
-      Number(priceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo)
+      Number(priceMemo) -
+      Number(discountTotal) -
+      Number(extraDiscountTotal) +
+      Number(deliveryPriceMemo)
     );
-  }, [priceMemo, priceDiscountMemo, deliveryPriceMemo]);
+  }, [priceMemo, discountTotal, extraDiscountTotal, deliveryPriceMemo]);
 
   const handleAddOrder = () => {
     if (
@@ -353,11 +479,11 @@ const PaymentPage = () => {
       const lastPrice = lastPaid["Giá trị"];
       const lastContent = lastPaid["Mô tả"];
 
-       console.log('LastContent', lastContent)
-              console.log('Content', content)
+      console.log("LastContent", lastContent);
+      console.log("Content", content);
 
-       console.log('checkContent', lastContent.includes(content))
-        console.log('checkPirce', lastPrice >= price)
+      console.log("checkContent", lastContent.includes(content));
+      console.log("checkPirce", lastPrice >= price);
 
       if (lastPrice >= price && lastContent.includes(content)) {
         return true;
@@ -548,9 +674,29 @@ const PaymentPage = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {convertPrice(priceDiscountMemo)}
+                      {convertPrice(discountTotal)}
                     </span>
                   </div>
+                  {extraDiscountTotal > 0 && (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span>{t("PAYMENT.EXTRA_DISCOUNT")}</span>
+                      <span
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {convertPrice(extraDiscountTotal)}
+                      </span>
+                    </div>
+                  )}
                   <div
                     style={{
                       display: "flex",

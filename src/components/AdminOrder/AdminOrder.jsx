@@ -35,6 +35,9 @@ const AdminOrder = () => {
     isPaid: null,
     productNames: "",
   });
+  const [isModalOpenDeleteAll, setIsModalOpenDeleteAll] = useState(false);
+  const [isDeleteManySuccessNotified, setIsDeleteManySuccessNotified] =
+    useState(false);
   const [form] = Form.useForm();
 
   const getAllOrder = async () => {
@@ -125,14 +128,9 @@ const AdminOrder = () => {
   };
 
   const handleDeleteManyOrders = (ids) => {
-    mutationDeletedMany.mutate(
-      { ids: ids, token: user?.access_token },
-      {
-        onSettled: () => {
-          queryOrder.refetch();
-        },
-      }
-    );
+    setRowSelected(ids); // Lưu lại danh sách các ID muốn xóa
+    setIsModalOpenDeleteAll(true); // Mở hộp thoại xác nhận
+    setIsDeleteManySuccessNotified(false);
   };
 
   // show ra tình trạng đơn hàng
@@ -185,15 +183,39 @@ const AdminOrder = () => {
     form.resetFields();
   }, [form]);
 
+  const handleConfirmDeleteAll = () => {
+    mutationDeletedMany.mutate(
+      { ids: rowSelected, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryOrder.refetch();
+          setIsModalOpenDeleteAll(false); // Đóng modal sau khi xóa
+        },
+      }
+    );
+  };
+
   //Xoá nhiều
   const statusDataDeletedMany = dataDeletedMany?.status;
   useEffect(() => {
-    if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
-      message.success(t("ADMIN.DELETE_MANY_SUCCESS"));
+    if (
+      isSuccessDeletedMany &&
+      statusDataDeletedMany === "OK" &&
+      !isDeleteManySuccessNotified
+    ) {
+      message.success(t("ADMIN.DELETE_MANY_SUCCESS_ORDER"));
+      setIsDeleteManySuccessNotified(true); // Đánh dấu đã hiển thị thông báo thành công
+      queryOrder.refetch();
     } else if (isErrorDeletedMany) {
-      message.error(t("ADMIN.DELETE_MANY_FAIL"));
+      message.error(t("ADMIN.DELETE_MANY_FAIL_ORDER"));
+      setIsDeleteManySuccessNotified(false); // Đặt lại cờ nếu xảy ra lỗi
     }
-  }, [isSuccessDeletedMany, statusDataDeletedMany, isErrorDeletedMany]);
+  }, [
+    isSuccessDeletedMany,
+    statusDataDeletedMany,
+    isErrorDeletedMany,
+    isDeleteManySuccessNotified,
+  ]);
 
   //Xoá 1
   const statusDataDeleted = dataDeleted?.status;
@@ -565,7 +587,18 @@ const AdminOrder = () => {
       </DrawerComponent>
 
       <ModalComponent
-        title="Delete order"
+        title={t("ADMIN.DELETE_ALL_ORDER")}
+        open={isModalOpenDeleteAll}
+        onCancel={() => setIsModalOpenDeleteAll(false)}
+        onOk={handleConfirmDeleteAll}
+      >
+        <Loading isLoading={isLoadingDeletedMany}>
+          <div>{t("ADMIN.MESS_DELETE_ALL_ORDER")}</div>
+        </Loading>
+      </ModalComponent>
+
+      <ModalComponent
+        title={t("ADMIN.DELETE_ORDER")}
         open={isModalOpenDelete}
         onCancel={() => setIsModalOpenDelete(false)}
         onOk={handleDeleteOrder}

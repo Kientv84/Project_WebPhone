@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   WrapperAllPrice,
   WrapperContentInfo,
@@ -28,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Steps } from "antd";
 import "./DetailsOrderPage.css";
+import * as PromotionService from "../../services/PromotionService";
 
 const DetailsOrderPage = () => {
   const params = useParams();
@@ -36,9 +37,11 @@ const DetailsOrderPage = () => {
   const { id } = params;
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [promotions, setPromotions] = useState([]);
 
   const fetchDetailsOrder = async () => {
     const res = await OrderService.getDetailsOrder(id, state?.token);
+    console.log("object", res);
     return res.data;
   };
 
@@ -51,6 +54,234 @@ const DetailsOrderPage = () => {
     }
   );
   const { isLoading, data } = queryOrder;
+
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const response = await PromotionService.getAllPromotion(); // Giả sử PromotionService có hàm lấy danh sách khuyến mãi
+        setPromotions(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch promotions", error);
+      }
+    };
+
+    fetchPromotions();
+  }, []);
+
+  // const calculatePromotionDiscount = (orderItems, promotions) => {
+  //   let discountTotal = 0;
+  //   let extraDiscountTotal = 0;
+  //   console.log("Promotions:", promotions);
+  //   console.log("Order Items:", orderItems);
+
+  //   // Lấy tháng và năm hiện tại
+  //   const currentDate = new Date();
+  //   const currentMonth = currentDate.getMonth() + 1;
+  //   const currentYear = currentDate.getFullYear();
+
+  //   // Group items by brand và tính tổng số lượng sản phẩm từ cùng một thương hiệu
+  //   const itemsByBrand = {};
+  //   orderItems.forEach((item) => {
+  //     if (!itemsByBrand[item.branch]) {
+  //       itemsByBrand[item.branch] = { items: [], totalQuantity: 0 };
+  //     }
+  //     itemsByBrand[item.branch].items.push(item);
+  //     itemsByBrand[item.branch].totalQuantity += item.amount;
+  //   });
+
+  //   // Điều kiện 1: Giảm giá số tiền cố định khi mua tối thiểu 2 sản phẩm từ cùng một brand
+  //   for (const [brand, { items, totalQuantity }] of Object.entries(
+  //     itemsByBrand
+  //   )) {
+  //     const brandPromotion = promotions.find(
+  //       (promo) =>
+  //         promo.branch === brand &&
+  //         promo.minimumQuantity <= totalQuantity &&
+  //         promo.discountAmount &&
+  //         promo.month === currentMonth &&
+  //         promo.year === currentYear
+  //     );
+  //     if (brandPromotion) {
+  //       const discountAmount = brandPromotion.discountAmount;
+  //       extraDiscountTotal += discountAmount;
+  //     }
+  //   }
+
+  //   // Kiểm tra các điều kiện khuyến mãi khác
+  //   orderItems.forEach((item) => {
+  //     let itemDiscount = 0;
+
+  //     // Điều kiện 2: Nếu sản phẩm là sản phẩm kích hoạt, giảm giá cho bundle product
+  //     const triggerPromotion = promotions.find(
+  //       (promo) =>
+  //         promo.triggerProduct?._id?.toString() === item.product.toString() &&
+  //         promo.month === currentMonth &&
+  //         promo.year === currentYear
+  //     );
+  //     if (triggerPromotion && item.amount >= 1) {
+  //       const bundleProductItem = orderItems.find(
+  //         (bundleItem) =>
+  //           bundleItem.product.toString() ===
+  //           triggerPromotion.bundleProduct?.productId._id.toString()
+  //       );
+
+  //       if (bundleProductItem) {
+  //         const discountAmount =
+  //           triggerPromotion.bundleProduct.discountPrice *
+  //           bundleProductItem.amount;
+  //         extraDiscountTotal += discountAmount;
+  //       }
+  //     }
+
+  //     // Điều kiện 3: Thêm sản phẩm bundle với giá giảm khi mua sản phẩm từ brand đó
+  //     const brandBundlePromotion = promotions.find(
+  //       (promo) =>
+  //         promo.branch === item.branch &&
+  //         promo.bundleProduct &&
+  //         promo.month === currentMonth &&
+  //         promo.year === currentYear
+  //     );
+  //     if (brandBundlePromotion) {
+  //       const bundleProductItem = orderItems.find(
+  //         (bundleItem) =>
+  //           bundleItem.product.toString() ===
+  //           brandBundlePromotion.bundleProduct?.productId._id.toString()
+  //       );
+
+  //       if (bundleProductItem) {
+  //         const bundleDiscountAmount =
+  //           brandBundlePromotion.bundleProduct.discountPrice *
+  //           bundleProductItem.amount;
+  //         extraDiscountTotal += bundleDiscountAmount;
+  //       }
+  //     }
+
+  //     // Điều kiện bổ sung: Tính giảm giá từ `item.discount` nếu có và không bị bỏ qua
+  //     if (!item.skipDiscount) {
+  //       const productDiscount = item.discount ? item.discount : 0;
+  //       const discountFromItemDiscount =
+  //         item.price * (productDiscount / 100) * item.amount;
+  //       itemDiscount += discountFromItemDiscount;
+  //     }
+
+  //     discountTotal += itemDiscount;
+  //   });
+  //   return { discountTotal, extraDiscountTotal };
+  // };
+
+  const calculatePromotionDiscount = (orderItems, promotions) => {
+    let discountTotal = 0;
+    let extraDiscountTotal = 0;
+    console.log("Promotions:", promotions);
+    console.log("Order Items:", orderItems);
+
+    // Lấy tháng và năm hiện tại
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+
+    // Group items by brand và tính tổng số lượng sản phẩm từ cùng một thương hiệu
+    const itemsByBrand = {};
+    orderItems.forEach((item) => {
+      if (!itemsByBrand[item.branch]) {
+        itemsByBrand[item.branch] = { items: [], totalQuantity: 0 };
+      }
+      itemsByBrand[item.branch].items.push(item);
+      itemsByBrand[item.branch].totalQuantity += item.amount;
+    });
+
+    // Điều kiện 1: Giảm giá số tiền cố định khi mua tối thiểu 2 sản phẩm từ cùng một brand
+    for (const [brand, { items, totalQuantity }] of Object.entries(
+      itemsByBrand
+    )) {
+      const brandPromotion = promotions.find(
+        (promo) =>
+          promo.branch === brand &&
+          promo.minimumQuantity <= totalQuantity &&
+          promo.discountAmount &&
+          promo.month === currentMonth &&
+          promo.year === currentYear
+      );
+      if (brandPromotion) {
+        const discountAmount = brandPromotion.discountAmount;
+        extraDiscountTotal += discountAmount;
+      }
+    }
+
+    // Kiểm tra các điều kiện khuyến mãi khác
+    orderItems.forEach((item) => {
+      let itemDiscount = 0;
+
+      // Điều kiện 2: Nếu sản phẩm là sản phẩm kích hoạt, giảm giá cho bundle product
+      const triggerPromotion = promotions.find(
+        (promo) =>
+          promo.triggerProduct?._id?.toString() === item.product.toString() &&
+          promo.month === currentMonth &&
+          promo.year === currentYear
+      );
+      if (triggerPromotion && item.amount >= 1) {
+        const bundleProductItem = orderItems.find(
+          (bundleItem) =>
+            bundleItem.product.toString() ===
+            triggerPromotion.bundleProduct?.productId._id.toString()
+        );
+
+        if (bundleProductItem) {
+          const discountAmount =
+            triggerPromotion.bundleProduct.discountPrice *
+            bundleProductItem.amount;
+          extraDiscountTotal += discountAmount;
+        }
+      }
+
+      // Điều kiện 3: Thêm sản phẩm bundle với giá giảm khi mua sản phẩm từ brand đó
+      const brandBundlePromotion = promotions.find(
+        (promo) =>
+          promo.branch === item.branch &&
+          promo.bundleProduct &&
+          promo.month === currentMonth &&
+          promo.year === currentYear
+      );
+      if (brandBundlePromotion) {
+        const bundleProductItem = orderItems.find(
+          (bundleItem) =>
+            bundleItem.product.toString() ===
+            brandBundlePromotion.bundleProduct?.productId._id.toString()
+        );
+
+        if (bundleProductItem) {
+          const bundleDiscountAmount =
+            brandBundlePromotion.bundleProduct.discountPrice *
+            bundleProductItem.amount;
+          extraDiscountTotal += bundleDiscountAmount;
+        }
+      }
+
+      // Điều kiện bổ sung: Tính giảm giá từ `item.discount` nếu có và không bị bỏ qua
+      if (!item.skipDiscount) {
+        const productDiscount = item.discount ? item.discount : 0;
+        const discountFromItemDiscount =
+          item.price * (productDiscount / 100) * item.amount;
+        itemDiscount += discountFromItemDiscount;
+      }
+
+      discountTotal += itemDiscount;
+    });
+
+    console.log("Extra Discount Total:", extraDiscountTotal); // Thêm log kiểm tra
+    return { discountTotal, extraDiscountTotal };
+  };
+
+  const order = useSelector((state) => state.order);
+
+  const { discountTotal, extraDiscountTotal } = useMemo(() => {
+    const result = calculatePromotionDiscount(
+      data?.orderItems || [],
+      promotions
+    );
+    console.log("Discounts:", result); // Kiểm tra kết quả tính toán
+    return result;
+  }, [data, promotions]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -395,6 +626,12 @@ const DetailsOrderPage = () => {
               <WrapperItemLabel>{t("ORDER_DETAIL.SUBTOTAL")}</WrapperItemLabel>
               <WrapperItem>{convertPrice(priceMemo)}</WrapperItem>
             </WrapperAllPrice>
+            {extraDiscountTotal > 0 && (
+              <WrapperAllPrice>
+                <WrapperItemLabel>{t("ORDER.EXTRA_DISCOUNT")}</WrapperItemLabel>
+                <WrapperItem>{convertPrice(extraDiscountTotal)}</WrapperItem>
+              </WrapperAllPrice>
+            )}
             <WrapperAllPrice>
               <WrapperItemLabel>
                 {t("ORDER_DETAIL.SHIPPING_COST")}

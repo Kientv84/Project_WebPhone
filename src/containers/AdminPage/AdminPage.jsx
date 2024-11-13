@@ -12,6 +12,8 @@ import AdminUser from "../../components/AdminUser/AdminUser";
 import AdminProduct from "../../components/AdminProduct/AdminProduct";
 import OrderAdmin from "../../components/AdminOrder/AdminOrder";
 import AdminCountInStock from "../../components/AdminCountInStock/AdminCountInStock";
+import AdminPromotion from "../../components/AdminPromotion/AdminPromotion.jsx";
+import Promotion from "../../assets/images/promotions.svg";
 
 import { useTranslation } from "react-i18next";
 
@@ -25,7 +27,12 @@ const AdminPage = () => {
     getItem(t("ADMIN.USER"), "user", <UserOutlined />),
     getItem(t("ADMIN.PRODUCT"), "product", <AppstoreOutlined />),
     getItem(t("ADMIN.ORDER"), "order", <ShoppingCartOutlined />),
-    getItem(t("ADMIN.QUANLITY_ADMIN"), "quanlity",  <FieldNumberOutlined />),
+    getItem(t("ADMIN.QUANLITY_ADMIN"), "quanlity", <FieldNumberOutlined />),
+    getItem(
+      t("ADMIN.PROMOTION"),
+      "promotion",
+      <img src={Promotion} alt="Promotion" style={{ width: 20, height: 20 }} />
+    ),
   ];
 
   useEffect(() => {
@@ -42,6 +49,8 @@ const AdminPage = () => {
         return <OrderAdmin />;
       case "quanlity":
         return <AdminCountInStock />;
+      case "promotion":
+        return <AdminPromotion />;
       default:
         return <></>;
     }

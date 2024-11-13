@@ -46,6 +46,8 @@ const resources = {
         ORDER_ID: "Order ID",
         ORDER_CREATED_AT: "Created date",
         CANCELLED: "Cancelled",
+        CONFIRM_CANCEL_ORDER: "Confirm delete order ",
+        CONFIRM_CANCEL_MESSAGE: "Are you sure you want to delete this order?",
       },
       ORDER: {
         DELIVERRED_DES1: "Below 200.000 VND",
@@ -85,6 +87,7 @@ const resources = {
         CANCELLED: "Cancelled",
         PROCESSING: "Delivered",
         IN: "in",
+        EXTRA_DISCOUNT: "Extra discount",
       },
       SIGN_IN: {
         TITLE: "Sign-In for member",
@@ -165,6 +168,7 @@ const resources = {
         PRODUCT_RATING: "Rating",
         PRODUCT_TYPE: "Type",
         PRODUCT_BRANCH: "Brand",
+        PRODUCT_PROMOTION: "Promotion",
 
         ORDER_USER: "User name",
         ORDER_PHONE: "Phone",
@@ -199,22 +203,39 @@ const resources = {
         DELETE_PRODUCT: "Delete Product",
         MESS_DELETE_PRODUCT: "Are you sure you want to delete this product?",
 
+        DELETE_PROMOTION: "Delete Promotion",
+        MESS_DELETE_PROMOTION:
+          "Are you sure you want to delete this promotion?",
+
+        DELETE_ALL_PRODUCT: "Delete all Product ",
+        MESS_DELETE_ALL_PRODUCT:
+          "Are you sure you want to delete all this product?",
+
+        DELETE_ALL_ORDER: "Delete all Order ",
+        MESS_DELETE_ALL_ORDER:
+          "Are you sure you want to delete all this order?",
+
+        DELETE_ALL_PROMOTIONS: "Delete all Promotion ",
+        MESS_DELETE_ALL_PROMOTIONS:
+          "Are you sure you want to delete all this promotion?",
+
         DELETE_USER: "Delete User",
         MESS_DELETE_USER: "Are you sure you want to delete this user?",
 
         DELETE_ORDER: "Delete Order",
         MESS_DELETE_ORDER: "Are you sure you want to delete this order?",
         CANCEL_BUTTON: "Cancel",
-        OKE_BUTTON: "Delte",
+        OKE_BUTTON: "Delete",
 
         ADD_NEW_PRODUCT: "New Product",
+        ADD_NEW_PROMOTION: "New Promotion",
         NEW_PRODCUT_NAME: "Name",
         NEW_TYPE: "Type",
         ADD_TYPE: "Add Type",
         ADD_NEW_TYPE: "New Type",
         NEW_BRANCH: "Branch",
-        ADD_BRANCH: "Add Brand",
         ADD_NEW_BRANCH: "New Brand",
+        ADD_BRANCH: "Brand",
         COUNT_IN_STOCK: "Count in Stock",
         PRICE: "Price",
         NEW_DESCRIPTION: "Description",
@@ -227,6 +248,9 @@ const resources = {
         SELECT_IMG_PRODUCT: "Select File",
         BUTTON_SUBMID_ADD_PRODUCT: "Submit",
         PRODUCT_DETAIL: "Product Details",
+        PROMOTION_DETAIL: "Promotion Details",
+        BUNDLE_PRODUCT: "Bundle product",
+        DISCOUNT_PRICE: "Discount price",
 
         PLACEHOODER_PRODCUT_NAME: "Please input product name!",
         PLACEHOODER_TYPE: "Please input product type!",
@@ -239,6 +263,13 @@ const resources = {
         PLACEHOODER_RAING: "Please input your count rating!",
         PLACEHOODER_DISCOUNT: "Please input your discount of product!",
         PLACEHOODER_IMG: "Please input your count image product!",
+
+        PLACEHOODER_MONTH: "Please input month promotion!",
+        PLACEHOODER_YEAR: "Please input year promotion!",
+        PLACEHOODER_DISCOUNT_PERCENTAGE: "Please input discount!",
+        PLACEHOODER_MINIMUM_QUANTITY:
+          "Please input the minimum quantity of products!",
+        PLACEHOLDER_BUNDLE_PRODUCT: "Please choose the bundle of products!",
 
         USER_DETAIL: "User Details",
         AVATAR: "Avatar",
@@ -254,22 +285,28 @@ const resources = {
         RESET: "Reset",
         CLOSE: "Close",
 
-        DELETE_USER_SUCCESS: "Deltete user sucess!",
+        DELETE_USER_SUCCESS: "Delete user sucess!",
         DELETE_USER_FAIL: "Delete user fail!",
         UPDATE_USER_SUCCESS: "Update user sucess!",
         UPDATE_USER_FAIL: "Update user fail!",
 
         ADD_SUCCESS: "Add product success!",
         ADD_FAIL: "Add product fail",
-        DELETE_SUCCESS: "Deltete product sucess!",
+        ADD_PROMOTION_SUCCESS: "Add promotion success!",
+        ADD_PROMOTION_FAIL: "Add promotion fail",
+        DELETE_SUCCESS: "Delete product sucess!",
         DELETE_FAIL: "Delete product fail!",
+        DELETE_SUCCESS_PROMOTION: "Delete promotion sucess!",
+        DELETE_FAIL_PROMOTION: "Delete promotion fail!",
         UPDATE_SUCCESS: "Update product sucess!",
         UPDATE_FAIL: "Update product fail!",
         UPDATE_SUCCESS_ORDER: "Update sucess!",
         UPDATE_FAIL_ORDER: "Update fail!",
         ORDER_NUMBER: "Order ID",
+        UPDATE_FAIL_BRAND:
+          "The promotion with this brand already exists. Please choose a different brand!",
 
-        DELETE_ORDER_SUCCESS: "Deltete order sucess!",
+        DELETE_ORDER_SUCCESS: "Delete order sucess!",
         DELETE_ORDER_FAIL: "Delete order fail!",
         UPDATE_ORDER_SUCCESS: "Update order sucess!",
         UPDATE_ORDER_FAIL: "Update order fail!",
@@ -277,8 +314,23 @@ const resources = {
         DELETE_MANY_SUCCESS: "Delete many success!",
         DELETE_MANY_FAIL: "Delete many fail!",
 
+        DELETE_MANY_SUCCESS_ORDER: "Delete many order success!",
+        DELETE_MANY_FAIL_ORDER: "Delete many order fail!",
+
+        DELETE_MANY_SUCCESS_PRODUCT: "Delete many product success!",
+        DELETE_MANY_FAIL_PRODUCT: "Delete many product fail!",
+
+        DELETE_MANY_SUCCESS_PROMOTION: "Delete many promotion success!",
+        DELETE_MANY_FAIL_PROMOTION: "Delete many promotion fail!",
+
         QUANLITY_ADMIN: "Quantity",
-        TITILE_NO: "PRODUCT LIST IS ABOUT TO END UP, NEED TO IMPORT MORE!"
+        PROMOTION: "Promotion",
+        TITILE_NO: "PRODUCT LIST IS ABOUT TO END UP, NEED TO IMPORT MORE!",
+        MONTH: "Month",
+        YEAR: "Year",
+        DISCOUNT_PERCENTAGE: "Discount",
+        MINIMUM_QUANTITY: "Minimum Quantity",
+        TRIGGER_PRODUCT: "Trigger Product",
       },
       PAYMENT: {
         TITLE: "Payment",
@@ -312,6 +364,7 @@ const resources = {
         PLACEHOODER_NAME: "Please input your name!",
         PLACEHOODER_CITY: "Please input your city!",
         PLACEHOODER_PHONE: "Please input your  phone!",
+        EXTRA_DISCOUNT: "Extra discount",
       },
       ORDER_SUCCESS: {
         TITLE: "Order Success",
@@ -343,6 +396,7 @@ const resources = {
         SHIPPING_STATUS: "Track Order",
         ORDER_CREATED_AT: "Created date:",
         ORDER_NUMBER: "Order ID:",
+        EXTRA_DISCOUNT: "Extra discount",
       },
       CONSTANT: {
         LATER_MONEY: "Cash on Delivery (COD)",
@@ -455,6 +509,8 @@ const resources = {
         ORDER_ID: "Mã đơn hàng",
         ORDER_CREATED_AT: "Ngày tạo",
         CANCELLED: "Đã hủy đơn hàng",
+        CONFIRM_CANCEL_ORDER: "Xác nhận xóa đơn hàng ",
+        CONFIRM_CANCEL_MESSAGE: "Bạn có chắc chắn muốn xóa đơn hàng này không?",
       },
       ORDER: {
         DELIVERRED_DES1: "Dưới 200.000 VND",
@@ -494,6 +550,7 @@ const resources = {
         CANCELLED: "Đã hủy đơn hàng",
         PROCESSING: "Đã giao",
         IN: "vào",
+        EXTRA_DISCOUNT: "Giảm thêm",
       },
       SIGN_IN: {
         TITLE: "Người dùng đăng nhập",
@@ -574,6 +631,28 @@ const resources = {
         PRODUCT_RATING: "Đánh giá",
         PRODUCT_TYPE: "Loại",
         PRODUCT_BRANCH: "Thương hiệu",
+        BUNDLE_PRODUCT: "Gói sản phẩm",
+        PRODUCT_PROMOTION: "Khuyến mãi",
+
+        PLACEHOODER_PRODCUT_NAME: "Vui lòng nhập tên sản phẩm!",
+        PLACEHOODER_TYPE: "Vui lòng nhập loại sản phẩm!",
+        PLACEHOODER_BRANCH: "Vui lòng nhập nhãn hiệu sản phẩm!",
+        PLACEHOODER_ADD_BRANCH: "Vui lòng nhập nhãn hiệu sản phẩm!",
+        PLACEHOODER_COUNT_IN_STOCK:
+          "Vui lòng nhập số lượng sản phẩm còn trong kho!",
+        PLACEHOODER_PRICE: "Vui lòng nhập giá sản phẩm!",
+        PLACEHOODER_DESCRIPTION: "Vui lòng nhập mô tả sản phẩm",
+        PLACEHOODER_PROMOTION: "Vui lòng nhập khuyến mãi sản phẩm!",
+        PLACEHOODER_RAING: "Vui lòng nhập đánh giá!",
+        PLACEHOODER_DISCOUNT: "Vui lòng nhập mức giảm giá của sản phẩm!",
+        PLACEHOODER_IMG: "Vui lòng nhập hình ảnh sản phẩm!",
+
+        PLACEHOODER_MONTH: "Vui lòng nhập tháng khuyến mãi!",
+        PLACEHOODER_YEAR: "Vui lòng nhập năm khuyến mãi!",
+        PLACEHOODER_DISCOUNT_PERCENTAGE: "Vui lòng nhập giảm giá!",
+        PLACEHOODER_MINIMUM_QUANTITY:
+          "Vui lòng nhập số lượng sản phẩm tối thiểu!",
+        PLACEHOLDER_BUNDLE_PRODUCT: "Vui lòng chọn sản phẩm đi kèm!",
 
         ORDER_USER: "Người mua hàng",
         ORDER_PHONE: "Số điện thoại",
@@ -607,6 +686,8 @@ const resources = {
         UPDATE_SUCCESS_ORDER: "Cập nhật thành công!",
         UPDATE_FAIL_ORDER: "Cập nhật thất bại!",
         ORDER_NUMBER: "Mã đơn hàng",
+        UPDATE_FAIL_BRAND:
+          "Promotion với brand này đã tồn tại. Vui lòng chọn brand khác!",
 
         DELETE_USER: "Xóa người dùng",
         MESS_DELETE_USER: "Bạn có chắc sẽ xóa người dùng này?",
@@ -614,12 +695,25 @@ const resources = {
         DELETE_PRODUCT: "Xóa sản phẩm",
         MESS_DELETE_PRODUCT: "Bạn có chắc sẽ xóa sản phẩm này?",
 
+        DELETE_PROMOTION: "Xóa khuyến mãi",
+        MESS_DELETE_PROMOTION: "Bạn có chắc sẽ xóa khuyến mãi này?",
+
+        DELETE_ALL_ORDER: "Xóa tất cả đơn hàng ",
+        MESS_DELETE_ALL_ORDER: "Bạn có chắc sẽ xóa tất cả đơn hàng này?",
+
+        DELETE_ALL_PRODUCT: "Xóa tất cả sản phẩm ",
+        MESS_DELETE_ALL_PRODUCT: "Bạn có chắc sẽ xóa tất cả sản phẩm này?",
+
+        DELETE_ALL_PROMOTIONS: "Xóa tất cả khuyến mãi ",
+        MESS_DELETE_ALL_PROMOTIONS: "Bạn có chắc sẽ xóa tất cả khuyến mãi này?",
+
         DELETE_ORDER: "Xóa đơn hàng",
         MESS_DELETE_ORDER: "Bạn có chắc sẽ xóa đơn hàng này?",
         CANCEL_BUTTON: "Hủy",
         OKE_BUTTON: "Xóa",
 
         ADD_NEW_PRODUCT: "Thêm sản phẩm mới",
+        ADD_NEW_PROMOTION: "Thêm mã khuyến mãi",
         NEW_PRODCUT_NAME: "Tên sảm phẩm",
         NEW_TYPE: "Loại",
         ADD_TYPE: "Thêm loại",
@@ -639,6 +733,7 @@ const resources = {
         SELECT_IMG_PRODUCT: "Chọn hình ảnh",
         BUTTON_SUBMID_ADD_PRODUCT: "Lưu sản phẩm",
         PRODUCT_DETAIL: "Chi tiết sản phẩm",
+        PROMOTION_DETAIL: "Chi tiết mã khuyến mãi",
 
         USER_DETAIL: "Chi tiết người dùng",
         AVATAR: "Ảnh đại diện",
@@ -660,8 +755,12 @@ const resources = {
 
         ADD_SUCCESS: "Thêm sản phẩm thành công!",
         ADD_FAIL: "Thêm sản phẩm thất bại!",
+        ADD_PROMOTION_SUCCESS: "Thêm mã khuyến mãi thành công!",
+        ADD_PROMOTION_FAIL: "Thêm mã khuyến mãi thất bại!",
         DELETE_SUCCESS: "Xóa sản phẩm thành công!",
         DELETE_FAIL: "Xóa sản phẩm thất bại!",
+        DELETE_SUCCESS_PROMOTION: "Xóa khuyến mãi thành công!",
+        DELETE_FAIL_PROMOTION: "Xóa khuyến mãi thất bại!",
         UPDATE_SUCCESS: "Cập nhật sản phẩm thành công!",
         UPDATE_FAIL: "Cập nhật sản phẩm thất bại!",
         UPDATE_SUCCESS: "Cập nhật thành công",
@@ -674,9 +773,24 @@ const resources = {
         DELETE_MANY_SUCCESS: "Xóa nhiều thành công!",
         DELETE_MANY_FAIL: "Xóa nhiều thất bại!",
 
-        
+        DELETE_MANY_SUCCESS_ORDER: "Xóa nhiều đơn hàng thành công!",
+        DELETE_MANY_FAIL_ORDER: "Xóa nhiều đơn hàng thất bại!",
+
+        DELETE_MANY_SUCCESS_PRODUCT: "Xóa nhiều sản phẩm thành công!",
+        DELETE_MANY_FAIL_PRODUCT: "Xóa nhiều sản phẩm thất bại!",
+
+        DELETE_MANY_SUCCESS_PROMOTION: "Xóa nhiều khuyến mãi thành công!",
+        DELETE_MANY_FAIL_PROMOTION: "Xóa nhiều khuyến mãi thất bại!",
+
         QUANLITY_ADMIN: "Nhập thêm",
-        TITILE_NO: "DANH SÁCH SẢN PHẨM SẮP HẾT, CẦN NHẬP THÊM!"
+        PROMOTION: "Giảm giá",
+        TITILE_NO: "DANH SÁCH SẢN PHẨM SẮP HẾT, CẦN NHẬP THÊM!",
+        MONTH: "Tháng",
+        YEAR: "Năm",
+        DISCOUNT_PERCENTAGE: "Giảm giá",
+        MINIMUM_QUANTITY: "Số lượng tối thiểu",
+        TRIGGER_PRODUCT: "Sản phẩm kích hoạt",
+        DISCOUNT_PRICE: "Giá giảm",
       },
       PAYMENT: {
         TITLE: "Thanh toán",
@@ -751,6 +865,7 @@ const resources = {
         PLACEHOODER_NAME: "Vui lòng nhập địa chỉ",
         PLACEHOODER_CITY: "Thành phố",
         PLACEHOODER_PHONE: "Số điện thoại",
+        EXTRA_DISCOUNT: "Giảm thêm",
       },
       ORDER_SUCCESS: {
         TITLE: "Đặt hàng thành công",
@@ -782,6 +897,7 @@ const resources = {
         SHIPPING_STATUS: "Theo dõi đơn hàng",
         ORDER_CREATED_AT: "Ngày tạo:",
         ORDER_NUMBER: "Mã đơn hàng:",
+        EXTRA_DISCOUNT: "Giảm thêm",
       },
       CONSTANT: {
         LATER_MONEY: "Thanh toán khi nhận hàng",

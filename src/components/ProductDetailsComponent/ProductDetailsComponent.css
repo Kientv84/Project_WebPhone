@@ -117,3 +117,17 @@
 .comment {
   width: 1640;
 }
+
+.promotion {
+  color: #0a0a0a;
+  cursor: pointer;
+}
+
+.promotion:hover {
+  text-decoration: underline;
+  color: rgb(66, 200, 183);
+}
+
+.promotion .no-underline {
+  text-decoration: none;
+}
