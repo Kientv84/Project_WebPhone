@@ -19,9 +19,14 @@ import { useSelector } from "react-redux";
 import ModalComponent from "../ModalComponent/ModalComponent";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../ultis/firebase";
-import { getBase64, renderOptionsType, renderOptionsBranch } from "../../utils";
-import FooterComponent from "../FooterComponent/FooterComponent";
+import {
+  getBase64,
+  renderOptionsType,
+  renderOptionsBranch,
+  convertPrice,
+} from "../../utils";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const AdminProduct = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,6 +36,9 @@ const AdminProduct = () => {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const product = useSelector((state) => state?.product);
   const { t } = useTranslation();
+  const [isModalOpenDeleteAll, setIsModalOpenDeleteAll] = useState(false);
+  const [isDeleteManySuccessNotified, setIsDeleteManySuccessNotified] =
+    useState(false);
 
   // const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
@@ -160,14 +168,9 @@ const AdminProduct = () => {
   }, [setIsOpenDrawer]);
 
   const handleDeleteManyProducts = (ids) => {
-    mutationDeletedMany.mutate(
-      { ids: ids, token: product?.access_token },
-      {
-        onSettled: () => {
-          queryProduct.refetch();
-        },
-      }
-    );
+    setRowSelected(ids); // Lưu lại danh sách các ID muốn xóa
+    setIsModalOpenDeleteAll(true); // Mở hộp thoại xác nhận
+    setIsDeleteManySuccessNotified(false);
   };
 
   const handleChangeSelect = (value) => {
@@ -194,7 +197,7 @@ const AdminProduct = () => {
   const handleChangeNewSelectBranch = (valueBranch) => {
     setStateProductDetails({
       ...stateProductDetails,
-      type: valueBranch,
+      branch: valueBranch,
     });
   };
 
@@ -223,6 +226,7 @@ const AdminProduct = () => {
   } = mutationDeleted;
   const {
     data: dataDeletedMany,
+    isLoading: isLoadingDeletedMany,
     isSuccess: isSuccessDeletedMany,
     isError: isErrorDeletedMany,
   } = mutationDeletedMany;
@@ -370,6 +374,7 @@ const AdminProduct = () => {
         }
         return record.price <= 10000000;
       },
+      render: (price) => price && <span>{convertPrice(price)}</span>,
     },
     {
       title: t("ADMIN.PRODUCT_RATING"),
@@ -396,12 +401,20 @@ const AdminProduct = () => {
       dataIndex: "branch",
       ...getColumnSearchProps("branch"), // search branch
     },
+    // {
+    //   title: t("ADMIN.PRODUCT_PROMOTION"),
+    //   dataIndex: "promotion",
+    //   render: (promotion, record) => (
+    //     <Link to={`/product-details/${record._id}`}>{promotion}</Link>
+    //   ),
+    // },
     {
       title: t("ADMIN.ACTION"),
       dataIndex: "action",
       render: renderAction,
     },
   ];
+
   const dataTable =
     products?.data?.length &&
     products?.data?.map((product) => {
@@ -438,15 +451,39 @@ const AdminProduct = () => {
     }
   }, [isSuccess, statuss, handleCancel, isError]);
 
+  // Hàm xác nhận xóa tất cả
+  const handleConfirmDeleteAll = () => {
+    mutationDeletedMany.mutate(
+      { ids: rowSelected, token: product?.access_token },
+      {
+        onSettled: () => {
+          queryProduct.refetch();
+          setIsModalOpenDeleteAll(false); // Đóng modal sau khi xóa
+        },
+      }
+    );
+  };
+
   const statusDeletedMany = dataDeletedMany?.status;
-  //Xoá nhiều sp
   useEffect(() => {
-    if (isSuccessDeletedMany && statusDeletedMany === "OK") {
-      message.success(t("ADMIN.DELETE_MANY_SUCCESS"));
+    if (
+      isSuccessDeletedMany &&
+      statusDeletedMany === "OK" &&
+      !isDeleteManySuccessNotified
+    ) {
+      message.success(t("ADMIN.DELETE_MANY_SUCCESS_PRODUCT"));
+      setIsDeleteManySuccessNotified(true); // Đánh dấu đã hiển thị thông báo thành công
+      queryProduct.refetch();
     } else if (isErrorDeletedMany) {
-      message.error(t("ADMIN.DELETE_MANY_FAIL"));
+      message.error(t("ADMIN.DELETE_MANY_FAIL_PRODUCT"));
+      setIsDeleteManySuccessNotified(false); // Đặt lại cờ nếu xảy ra lỗi
     }
-  }, [isSuccessDeletedMany, statusDeletedMany, isErrorDeletedMany]);
+  }, [
+    isSuccessDeletedMany,
+    statusDeletedMany,
+    isErrorDeletedMany,
+    isDeleteManySuccessNotified,
+  ]);
 
   const handleCancelDelete = useCallback(() => {
     setIsModalOpenDelete(false);
@@ -770,14 +807,20 @@ const AdminProduct = () => {
   };
 
   const onUpdateProduct = () => {
-    mutationUpdate.mutate(
-      { id: rowSelected, token: product?.access_token, ...stateProductDetails },
-      {
-        onSettled: () => {
-          queryProduct.refetch();
-        },
-      }
-    );
+    const updateData = {
+      id: rowSelected,
+      token: product?.access_token,
+      ...stateProductDetails,
+    };
+
+    mutationUpdate.mutate(updateData, {
+      onSettled: () => {
+        queryProduct.refetch();
+      },
+      onError: (error) => {
+        console.error("Update failed:", error); // Log lỗi nếu có
+      },
+    });
   };
 
   return (
@@ -817,7 +860,7 @@ const AdminProduct = () => {
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
-        bodyStyle={{ padding: "24px" }}
+        style={{ padding: "24px" }}
         centered
         width={800}
       >
@@ -1347,6 +1390,16 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </DrawerComponent>
+      <ModalComponent
+        title={t("ADMIN.DELETE_ALL_PRODUCT")}
+        open={isModalOpenDeleteAll}
+        onCancel={() => setIsModalOpenDeleteAll(false)}
+        onOk={handleConfirmDeleteAll}
+      >
+        <Loading isLoading={isLoadingDeletedMany}>
+          <div>{t("ADMIN.MESS_DELETE_ALL_PRODUCT")}</div>
+        </Loading>
+      </ModalComponent>
       <ModalComponent
         title={t("ADMIN.DELETE_PRODUCT")}
         open={isModalOpenDelete}

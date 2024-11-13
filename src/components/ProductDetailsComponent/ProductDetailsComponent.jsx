@@ -110,6 +110,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
               product: productDetails?._id,
               discount: productDetails?.discount,
               countInStock: productDetails?.countInStock,
+              branch: productDetails?.branch,
             },
           })
         );
@@ -143,6 +144,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
               product: productDetails?._id,
               discount: productDetails?.discount,
               countInStock: productDetails?.countInStock,
+              branch: productDetails?.branch,
             },
           })
         );
@@ -167,11 +169,29 @@ const ProductDetailsComponent = ({ idProduct }) => {
     // Set initial image
     setSelectedImage(productDetailss);
   }, [productDetailss]);
+
   const formatDescription = (description) => {
     return description
       .split("\n")
       .map((line) => `- ${line}`)
       .join("\n");
+  };
+
+  const formatPromotion = (promotion) => {
+    return promotion
+      .split("\n")
+      .map((line) => `- ${line}`)
+      .join("\n");
+  };
+
+  const handlePromotionClick = () => {
+    const targetProductId =
+      productDetails.linkedProductId || productDetails._id;
+    if (targetProductId) {
+      navigate(`/product-details/${targetProductId}`);
+    } else {
+      console.error("Product ID is not defined");
+    }
   };
 
   return (
@@ -348,9 +368,19 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   </div>
                 </div>
               </PromotionHeader>
-              <WrapperDecriptionTextProduct>
+              {/* <WrapperDecriptionTextProduct>
                 {productDetails?.promotion &&
                   formatDescription(productDetails?.promotion)}
+              </WrapperDecriptionTextProduct> */}
+              <WrapperDecriptionTextProduct>
+                {productDetails?.promotion ? (
+                  <span className="promotion" onClick={handlePromotionClick}>
+                    {productDetails.linkedProductName ||
+                      formatPromotion(productDetails.promotion)}
+                  </span>
+                ) : (
+                  <span>No Promotion</span>
+                )}
               </WrapperDecriptionTextProduct>
             </Box>
 

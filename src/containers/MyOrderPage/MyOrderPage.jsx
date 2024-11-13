@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useQuery, useQueryClient } from "react-query";
 import * as OrderService from "../../services/OrderService";
@@ -16,6 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import { message } from "antd";
 import { useTranslation } from "react-i18next";
+import ModalComponent from "../../components/ModalComponent/ModalComponent";
 
 const MyOrderPage = () => {
   const location = useLocation();
@@ -23,6 +24,9 @@ const MyOrderPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
+
+  const [isModalOpenCancelOrder, setIsModalOpenCancelOrder] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const fetchMyOrder = async () => {
     if (!state?.id || !state?.token) {
@@ -39,7 +43,7 @@ const MyOrderPage = () => {
   };
 
   const queryOrder = useQuery(
-    { queryKey: ["orders"], queryFn: fetchMyOrder },
+    { queryKey: ["myorders"], queryFn: fetchMyOrder },
     {
       enabled: !!state?.id && !!state?.token,
       refetchOnMount: true,
@@ -59,26 +63,37 @@ const MyOrderPage = () => {
 
   const mutation = useMutationHook((data) => {
     const { id, token, orderItems } = data;
-    OrderService.cancelOrder(id, token, orderItems);
-    return;
+    const res = OrderService.cancelOrder(id, token, orderItems);
+    return res;
   });
 
   const handleCancelOrder = (order) => {
+    setSelectedOrder(order);
+    setIsModalOpenCancelOrder(true); // Mở modal xác nhận
+  };
+
+  const confirmCancelOrder = () => {
     mutation.mutate(
-      { id: order._id, token: state?.token, orderItems: order?.orderItems },
+      {
+        id: selectedOrder._id,
+        token: state?.token,
+        orderItems: selectedOrder?.orderItems,
+      },
       {
         onSuccess: () => {
           message.success(t("MY_ODER.TOAST_SUCCESS"));
-          queryClient.setQueryData(["orders"], (oldData) => {
+          queryClient.setQueryData(["myorders"], (oldData) => {
             return oldData?.map((item) =>
-              item._id === order._id
+              item._id === selectedOrder._id
                 ? { ...item, isDelivered: "cancelled" }
                 : item
             );
           });
+          setIsModalOpenCancelOrder(false); // Đóng modal sau khi hủy
         },
         onError: () => {
           message.error(t("MY_ODER.TOAST_FAILED"));
+          setIsModalOpenCancelOrder(false); // Đóng modal khi gặp lỗi
         },
       }
     );
@@ -139,7 +154,7 @@ const MyOrderPage = () => {
     : [];
 
   return (
-    <Loading isLoading={isLoading || isLoadingCancel}>
+    <Loading isLoading={isLoading}>
       <WrapperContainer>
         <div
           style={{
@@ -340,6 +355,16 @@ const MyOrderPage = () => {
             })}
           </WrapperListOrder>
         </div>
+        <ModalComponent
+          title={t("MY_ODER.CONFIRM_CANCEL_ORDER")}
+          open={isModalOpenCancelOrder}
+          onCancel={() => setIsModalOpenCancelOrder(false)}
+          onOk={confirmCancelOrder}
+        >
+          <Loading isLoading={isLoadingCancel}>
+            <div>{t("MY_ODER.CONFIRM_CANCEL_MESSAGE")}</div>
+          </Loading>
+        </ModalComponent>
       </WrapperContainer>
     </Loading>
   );
