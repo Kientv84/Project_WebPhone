@@ -49,10 +49,9 @@ const AdminPage = () => {
       case "order":
         return <OrderAdmin key="order"/>;
       case "quanlity":
-        return <AdminCountInStock />;
-      case "promotion":
-        return <AdminPromotion />;
         return <AdminCountInStock key="quanlity"/>;
+      case "promotion":
+        return <AdminPromotion key="promotion"/>;
       case "dashboard":
         return <AdminDashboard key="dashboard"/>;
       default:
