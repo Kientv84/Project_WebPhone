@@ -103,7 +103,7 @@ export const PriceInput = styled.input`
 export const TextBrand = styled.span`
   font-weight: bold; /* In đậm */
   color: #d32f2f; /* Màu đỏ đậm */
-  font-size: 1em; /* Giảm kích thước chữ xuống */
+  font-size: 14px; /* Giảm kích thước chữ xuống */
   text-transform: uppercase; /* Chữ in hoa */
   margin: 10px 0; /* Khoảng cách trên/dưới */
   letter-spacing: 1px; /* Khoảng cách giữa các ký tự */
