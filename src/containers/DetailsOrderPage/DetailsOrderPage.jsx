@@ -442,12 +442,13 @@ const DetailsOrderPage = () => {
               <WrapperLabel>{t("ORDER_DETAIL.SHIPPING_METHOD")}</WrapperLabel>
               <WrapperContentInfo>
                 <div className="delivery-info">
-                  <span className="name-delivery">FAST</span>{" "}
+                  <span className="name-delivery">{data?.typeofdelivery}</span>{" "}
                   {t("ORDER_DETAIL.FAST")}
                 </div>
+
                 <div className="delivery-fee">
                   <span>{t("ORDER_DETAIL.SHIPPING_COST")} </span>{" "}
-                  {data?.shippingPrice}
+                  {convertPrice(data?.shippingPrice)}
                 </div>
               </WrapperContentInfo>
             </WrapperInfoUser>
