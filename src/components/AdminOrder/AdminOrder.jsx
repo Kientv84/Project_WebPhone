@@ -343,6 +343,10 @@ const AdminOrder = () => {
       dataIndex: "paymentMethod",
     },
     {
+      title: t("ADMIN.ORDER_TYPE_OF_DELIVERY"),
+      dataIndex: "typeofdelivery",
+    },
+    {
       title: t("ADMIN.ORDER_TOTAL_PRICE"),
       dataIndex: "totalPrice",
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
@@ -378,6 +382,7 @@ const AdminOrder = () => {
         const productNames = order.orderItems
           .map((item) => item.name)
           .join(", ");
+        console.log("Order typeofdelivery:", order.typeofdelivery);
         return {
           ...order,
           key: order._id,
@@ -387,6 +392,7 @@ const AdminOrder = () => {
           address: order?.shippingAddress?.address,
           city: order?.shippingAddress?.city,
           paymentMethod: orderConstant.payment[order?.paymentMethod],
+          typeofdelivery: order.typeofdelivery,
           isPaid: order?.isPaid ? t("ADMIN.PAID") : t("ADMIN.UN_PAID"),
           isDelivered: (() => {
             switch (order.isDelivered) {
