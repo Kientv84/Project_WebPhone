@@ -238,21 +238,20 @@ const HomePage = () => {
   };
 
   return (
-    <div style={{ minWidth: "100vw" }}>
+    <div>
+      {/* style={{ minWidth: "100vw" }} */}
       <Loading isLoading={isLoading}>
         <div
           className="body"
           style={{
-            width: "100%",
+            width: "100vw",
             backgroundColor: "#efefef",
-            margin: "0",
           }}
         >
           <div
             style={{
               display: "flex",
-              width: "100%",
-              maxWidth: "1270px",
+              width: "1270px",
               margin: "65px auto 0",
               gap: "20px",
               paddingBottom: "20px",
