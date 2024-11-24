@@ -422,6 +422,15 @@ const AdminOrder = () => {
       ?.sort((a, b) => b.createdAt - a.createdAt);
 
   const onUpdateOrder = (values) => {
+    const isUnchanged =
+      values.isDelivered === orderState.isDelivered &&
+      values.isPaid === orderState.isPaid;
+
+    if (isUnchanged) {
+      message.error(t("ADMIN.APPLY_ERROR"));
+      return; // Dừng xử lý nếu không có thay đổi
+    }
+
     const updateDeliveryPromise = mutationUpdate.mutateAsync({
       id: rowSelected,
       token: user?.access_token,

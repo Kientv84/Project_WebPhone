@@ -53,9 +53,35 @@ const PasswordReset = () => {
   }, [isError, isSuccess, handleNavigateSignIn, status]);
 
   const updatePassword = async () => {
-    await mutation.mutate({
-      password,
-    });
+    await mutation.mutate(
+      {
+        password,
+      },
+      {
+        onSuccess: (data) => {
+          // Xử lý nếu thành công (đã có trong useEffect)
+        },
+        onError: (error) => {
+          message.error("An error occurred. Please try again later."); // Lỗi không dự đoán được
+        },
+        onSettled: (data) => {
+          // Xử lý lỗi trả về từ API
+          if (data?.status === "ERR") {
+            message.error(data?.message || "An error occurred!");
+          }
+        },
+      }
+    );
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (!password.trim()) {
+        message.error("Please fill in password!"); // Hiển thị popup lỗi
+        return;
+      }
+      updatePassword();
+    }
   };
 
   return (
@@ -64,7 +90,7 @@ const PasswordReset = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#ccc",
+        background: "#fff",
         height: "100vh",
       }}
     >
@@ -73,6 +99,7 @@ const PasswordReset = () => {
           width: "400px",
           height: "300px",
           borderRadius: "6px",
+          border: "1px solid #42C8B7",
           background: "#fff",
           display: "flex",
         }}
@@ -102,14 +129,12 @@ const PasswordReset = () => {
               style={{ marginBottom: "10px" }}
               value={password}
               onChange={handleOnChangePassword}
+              onKeyDown={handleKeyDown}
             />
           </div>
-          {data?.status === "ERR" && (
-            <span style={{ color: "red" }}>{data?.message}</span>
-          )}
           <Loading isLoading={isLoading}>
             <ButtonComponent
-              onClick={t("SIGN_IN.UPDATE_PASS")}
+              onClick={updatePassword}
               size={40}
               styleButton={{
                 background: "rgba(255, 57, 69)",

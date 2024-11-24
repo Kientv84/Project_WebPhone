@@ -38,7 +38,7 @@ const SignUpPage = () => {
 
   useEffect(() => {
     if (isSuccess && data?.status === "OK") {
-      message.success(t('SIGN_IN.SIGN_UP_MESS_SUCCESS'));
+      message.success(t("SIGN_IN.SIGN_UP_MESS_SUCCESS"));
       handleNavigateSignIn();
     } else if (isError) {
       message.error();
@@ -58,11 +58,45 @@ const SignUpPage = () => {
   };
 
   const handleSignUp = async () => {
-    await mutation.mutate({
-      email,
-      password,
-      confirmPassword,
-    });
+    if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
+      message.error(
+        "Please fill in both email, password, and confirm password!"
+      ); // Hiển thị popup lỗi
+      return;
+    }
+    mutation.mutate(
+      {
+        email,
+        password,
+        confirmPassword,
+      },
+      {
+        onSuccess: (data) => {
+          // Xử lý nếu thành công (đã có trong useEffect)
+        },
+        onError: (error) => {
+          message.error("An error occurred. Please try again later."); // Lỗi không dự đoán được
+        },
+        onSettled: (data) => {
+          // Xử lý lỗi trả về từ API
+          if (data?.status === "ERR") {
+            message.error(data?.message || "An error occurred!");
+          }
+        },
+      }
+    );
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
+        message.error(
+          "Please fill in both email, password, and confirm password!"
+        ); // Hiển thị popup lỗi
+        return;
+      }
+      handleSignUp();
+    }
   };
 
   return (
@@ -71,7 +105,7 @@ const SignUpPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#ccc",
+        background: "#fff",
         height: "100vh",
       }}
     >
@@ -80,6 +114,7 @@ const SignUpPage = () => {
           width: "800px",
           height: "400px",
           borderRadius: "6px",
+          border: "1px solid #42C8B7",
           background: "#fff",
           display: "flex",
         }}
@@ -88,13 +123,14 @@ const SignUpPage = () => {
           <h1
             style={{ fontSize: "30px", marginBottom: "8px", marginTop: "0px" }}
           >
-            {t('SIGN_IN.REGISTER')}
+            {t("SIGN_IN.REGISTER")}
           </h1>
           <InputForm
             style={{ marginBottom: "8px", marginTop: "10px" }}
             placeholder="abc@gmail.com"
             value={email}
             onChange={handleOnChangeEmail}
+            onKeyDown={handleKeyDown}
           />
           <div style={{ position: "relative" }}>
             <span
@@ -110,11 +146,12 @@ const SignUpPage = () => {
               {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
             </span>
             <InputForm
-              placeholder= {t('SIGN_IN.PASSWORD_PLACEHOODER')}
+              placeholder={t("SIGN_IN.PASSWORD_PLACEHOODER")}
               type={isShowPassword ? "text" : "password"}
               style={{ marginBottom: "10px" }}
               value={password}
               onChange={handleOnChangePassword}
+              onKeyDown={handleKeyDown}
             />
           </div>
           <div style={{ position: "relative" }}>
@@ -131,18 +168,18 @@ const SignUpPage = () => {
               {isShowConfirmPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
             </span>
             <InputForm
-              placeholder={t('SIGN_IN.FORGOT_PLACEHOODER')}
+              placeholder={t("SIGN_IN.CONFIRM_PASS")}
               type={isShowConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={handleOnChangeConfirmPassword}
+              onKeyDown={handleKeyDown}
             />
           </div>
-
-          {data?.status === "ERR" && (
-            <span style={{ color: "red" }}>{data?.message}</span>
-          )}
           <Loading isLoading={isLoading}>
             <ButtonComponent
+              // disabled={
+              //   !email.length || !password.length || !confirmPassword.length
+              // }
               onClick={handleSignUp}
               size={40}
               styleButton={{
@@ -153,7 +190,7 @@ const SignUpPage = () => {
                 borderRadius: "4px",
                 margin: "26px 0 10px",
               }}
-              textbutton= {t('SIGN_IN.RES_BUTTON')}
+              textbutton={t("SIGN_IN.RES_BUTTON")}
               styletextbutton={{
                 color: "#fff",
                 fontSize: "15px",
@@ -162,10 +199,10 @@ const SignUpPage = () => {
             ></ButtonComponent>
           </Loading>
           <p style={{ fontSize: " 15px" }}>
-            {t('SIGN_IN.RES_TEXT')}{" "}
+            {t("SIGN_IN.RES_TEXT")}{" "}
             <WrapperTextLight onClick={handleNavigateSignIn}>
               {" "}
-              {t('SIGN_IN.SIGN_IN_BUTTON')}
+              {t("SIGN_IN.SIGN_IN_BUTTON")}
             </WrapperTextLight>
           </p>
         </WrapperContainerLeft>

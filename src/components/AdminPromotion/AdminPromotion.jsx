@@ -522,17 +522,38 @@ const AdminPromotion = () => {
   };
 
   const onFinish = async () => {
+    const {
+      month,
+      year,
+      discountAmount,
+      minimumQuantity,
+      branch,
+      triggerProduct,
+      bundleProduct,
+      discountPrice,
+    } = statePromotion;
+
+    // Kiểm tra nếu cả discountAmount, triggerProduct, và bundleProduct đều không có giá trị
+    if (!discountAmount && !branch && !triggerProduct && !bundleProduct) {
+      message.error(
+        "At least one of Discount, Brand, Trigger Product, or Bundle Product must be filled."
+      );
+      return;
+    }
+
+    // Tạo params sau khi validation thành công
     const params = {
-      month: statePromotion.month || new Date().getMonth() + 1,
-      year: statePromotion.year || new Date().getFullYear(),
-      discountAmount: statePromotion.discountAmount,
-      minimumQuantity: statePromotion.minimumQuantity,
-      branch: statePromotion.branch,
-      triggerProduct: statePromotion.triggerProduct || null,
-      bundleProduct: statePromotion.bundleProduct,
-      discountPrice: statePromotion.discountPrice,
+      month: month || new Date().getMonth() + 1,
+      year: year || new Date().getFullYear(),
+      discountAmount: discountAmount || null,
+      minimumQuantity,
+      branch: branch || null,
+      triggerProduct: triggerProduct || null,
+      bundleProduct: bundleProduct || null,
+      discountPrice: discountPrice || null,
     };
 
+    // Gửi mutation
     mutation.mutate(params, {
       onSettled: () => {
         queryPromotion.refetch();
@@ -605,7 +626,7 @@ const AdminPromotion = () => {
 
   return (
     <div>
-      <WrapperHeader>{t("ADMIN.PROMOTION")}</WrapperHeader>
+      <WrapperHeader>{t("ADMIN.MANAGE_PROMOTION")}</WrapperHeader>
       <div style={{ marginTop: "10px" }}>
         <Button
           style={{

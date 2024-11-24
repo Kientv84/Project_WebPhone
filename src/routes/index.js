@@ -102,6 +102,7 @@ export const routes = [
     path: "/forgot-password",
     page: ForgotPassPage,
     isShowHeader: true,
+    isShowChatbox: false,
   },
   {
     path: "/reset-password/:id/:token",

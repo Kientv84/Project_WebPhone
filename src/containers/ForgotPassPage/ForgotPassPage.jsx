@@ -37,9 +37,35 @@ const ForgotPassPage = () => {
     setEmail(value);
   };
   const sendLink = async () => {
-    await mutation.mutate({
-      email,
-    });
+    await mutation.mutate(
+      {
+        email,
+      },
+      {
+        onSuccess: (data) => {
+          // Xử lý nếu thành công (đã có trong useEffect)
+        },
+        onError: (error) => {
+          message.error("An error occurred. Please try again later."); // Lỗi không dự đoán được
+        },
+        onSettled: (data) => {
+          // Xử lý lỗi trả về từ API
+          if (data?.status === "ERR") {
+            message.error(data?.message || "An error occurred!");
+          }
+        },
+      }
+    );
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (!email.trim()) {
+        message.error("Please fill in email!"); // Hiển thị popup lỗi
+        return;
+      }
+      sendLink();
+    }
   };
 
   return (
@@ -48,7 +74,7 @@ const ForgotPassPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#ccc",
+        background: "#fff",
         height: "100vh",
       }}
     >
@@ -57,6 +83,7 @@ const ForgotPassPage = () => {
           width: "400px",
           height: "300px",
           borderRadius: "6px",
+          border: "1px solid #42C8B7",
           background: "#fff",
           display: "flex",
         }}
@@ -65,17 +92,18 @@ const ForgotPassPage = () => {
           <h1
             style={{ fontSize: "30px", marginBottom: "8px", marginTop: "0px" }}
           >
-            {t('SIGN_IN.TITLE_FORGOT_PASS')}
+            {t("SIGN_IN.TITLE_FORGOT_PASS")}
           </h1>
           <InputForm
             style={{ marginBottom: "8px", marginTop: "10px" }}
-            placeholder={t('SIGN_IN.FORGOT_PLACEHOODER')}
+            placeholder={t("SIGN_IN.FORGOT_PLACEHOODER")}
             value={email}
             onChange={handleOnChangeEmail}
+            onKeyDown={handleKeyDown}
           />
-          {data?.status === "ERR" && (
+          {/* {data?.status === "ERR" && (
             <span style={{ color: "red" }}>{data?.message}</span>
-          )}
+          )} */}
           <Loading isLoading={isLoading}>
             <ButtonComponent
               onClick={sendLink}
@@ -88,7 +116,7 @@ const ForgotPassPage = () => {
                 borderRadius: "4px",
                 margin: "26px 0 10px",
               }}
-              textbutton={t('SIGN_IN.BUTTON_FORGOT')}
+              textbutton={t("SIGN_IN.BUTTON_FORGOT")}
               styletextbutton={{
                 color: "#fff",
                 fontSize: "15px",

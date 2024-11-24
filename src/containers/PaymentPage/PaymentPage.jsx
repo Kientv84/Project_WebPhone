@@ -494,7 +494,7 @@ const PaymentPage = () => {
         padding: "0.1px 0",
         background: "#f5f5fa",
         with: "100%",
-        height: "100vh",
+        minHeight: "100vh",
         marginTop: "65px",
       }}
     >

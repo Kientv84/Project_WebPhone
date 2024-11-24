@@ -21,7 +21,6 @@ import styles from "./styles.module.css";
 import googleIcon from "../../assets/images/image45.93ceca6.png";
 import { useTranslation } from "react-i18next";
 
-
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -31,7 +30,6 @@ const SignInPage = () => {
   const navigate = useNavigate();
 
   const { t } = useTranslation();
-
 
   const mutation = useMutationHook((data) => UserService.loginUser(data));
 
@@ -50,7 +48,7 @@ const SignInPage = () => {
       if (locations) {
         navigate(locations);
       } else {
-        message.success(t('SIGN_IN.SIGN_IN_MESS_SUCCESS'));
+        message.success(t("SIGN_IN.SIGN_IN_MESS_SUCCESS"));
         navigate("/");
       }
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
@@ -71,11 +69,43 @@ const SignInPage = () => {
     setPassword(value);
   };
 
-  const handleSignIn = () => {
-    mutation.mutate({
-      email,
-      password,
-    });
+  const handleSignIn = async () => {
+    if (!email.trim() || !password.trim()) {
+      message.error("Please fill in both email and password!");
+      return;
+    }
+
+    // Gửi request và xử lý lỗi
+    mutation.mutate(
+      {
+        email,
+        password,
+      },
+      {
+        onSuccess: (data) => {
+          // Xử lý nếu thành công (đã có trong useEffect)
+        },
+        onError: (error) => {
+          message.error("An error occurred. Please try again later."); // Lỗi không dự đoán được
+        },
+        onSettled: (data) => {
+          // Xử lý lỗi trả về từ API
+          if (data?.status === "ERR") {
+            message.error(data?.message || "An error occurred!");
+          }
+        },
+      }
+    );
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (!email.trim() || !password.trim()) {
+        message.error("Please fill in both email and password!"); // Hiển thị popup lỗi
+        return;
+      }
+      handleSignIn();
+    }
   };
 
   const handleNavigateSignUp = () => {
@@ -96,7 +126,7 @@ const SignInPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#ccc",
+        background: "#fff",
         height: "100vh",
       }}
     >
@@ -105,6 +135,7 @@ const SignInPage = () => {
           width: "800px",
           height: "400px",
           borderRadius: "6px",
+          border: "1px solid #42C8B7",
           background: "#fff",
           display: "flex",
         }}
@@ -113,13 +144,14 @@ const SignInPage = () => {
           <h1
             style={{ fontSize: "30px", marginBottom: "5px", marginTop: "0px" }}
           >
-            {t('SIGN_IN.TITLE')}
+            {t("SIGN_IN.TITLE")}
           </h1>
           <InputForm
-            style={{ marginBottom: "10px", marginTop: "40px" }}
+            style={{ marginBottom: "10px", marginTop: "25px" }}
             placeholder="abc@gmail.com"
             value={email}
             onChange={handleOnChangeEmail}
+            onKeyDown={handleKeyDown}
           />
           <div style={{ position: "relative" }}>
             <span
@@ -135,18 +167,16 @@ const SignInPage = () => {
               {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
             </span>
             <InputForm
-              placeholder={t('SIGN_IN.PASSWORD_PLACEHOODER')}
+              placeholder={t("SIGN_IN.PASSWORD_PLACEHOODER")}
               type={isShowPassword ? "text" : "password"}
               value={password}
               onChange={handleOnChangePassword}
+              onKeyDown={handleKeyDown}
             />
           </div>
-          {data?.status === "ERR" && (
-            <span style={{ color: "red" }}>{data?.message}</span>
-          )}
           <Loading isLoading={isLoading}>
             <ButtonComponent
-              disabled={!email.length || !password.length}
+              // disabled={!email.length || !password.length}
               onClick={handleSignIn}
               size={40}
               styleButton={{
@@ -157,14 +187,14 @@ const SignInPage = () => {
                 borderRadius: "4px",
                 margin: "15px 0 10px",
               }}
-              textbutton={t('SIGN_IN.SIGN_IN_BUTTON')}
+              textbutton={t("SIGN_IN.SIGN_IN_BUTTON")}
               styletextbutton={{
                 color: "#fff",
                 fontSize: "15px",
                 fontWeight: "700",
               }}
             ></ButtonComponent>
-            <p className={styles.text}>{t('SIGN_IN.OR')}</p>
+            <p className={styles.text}>{t("SIGN_IN.OR")}</p>
             <div className={styles.container_btn}>
               <button
                 className={styles.google_btn}
@@ -173,26 +203,19 @@ const SignInPage = () => {
                 <img src={googleIcon} alt="google icon" />
                 <span>Google</span>
               </button>
-
-              <button
-                className={styles.facebook_btn}
-                onClick={() => handleSignInAuth("facebook")}
-              >
-                <span style={{ color: "white" }}>Facebook</span>
-              </button>
             </div>
           </Loading>
           <p
             style={{ marginBottom: "-10px", marginTop: "-8px" }}
             onClick={handleNavigateForgotPass}
           >
-            <WrapperTextLight>{t('SIGN_IN.FORGOT_PASS')}</WrapperTextLight>
+            <WrapperTextLight>{t("SIGN_IN.FORGOT_PASS")}</WrapperTextLight>
           </p>
           <p style={{ fontSize: " 15px" }}>
-            {t('SIGN_IN.TEXT')}{" "}
+            {t("SIGN_IN.TEXT")}{" "}
             <WrapperTextLight onClick={handleNavigateSignUp}>
               {" "}
-              {t('SIGN_IN.REGISTER')}
+              {t("SIGN_IN.REGISTER")}
             </WrapperTextLight>
           </p>
         </WrapperContainerLeft>
