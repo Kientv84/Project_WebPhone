@@ -318,7 +318,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
               />
               <WrapperStyleTextSell>
                 {" "}
-                | {t("PRODUCT_DETAILS.STAR")} {productDetails?.selled}
+                | {t("PRODUCT_DETAILS.SOLD")} {productDetails?.selled}
               </WrapperStyleTextSell>
             </div>
             <WrapperPriceProduct>

@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Line } from '@ant-design/charts';
-import { Card, Typography, Row, Col, Spin, Alert } from 'antd';
-import styled from 'styled-components';
+import React, { useEffect, useState } from "react";
+import { Line } from "@ant-design/charts";
+import { Card, Typography, Row, Col, Spin, Alert } from "antd";
+import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 
 const { Title, Paragraph } = Typography;
 
 const StatisticsCardContainer = styled(Card)`
-  margin-top: 20px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -29,7 +28,7 @@ const StatisticsCard = ({ orders }) => {
   useEffect(() => {
     if (orders) {
       const revenueByWeek = {};
-      orders.forEach(order => {
+      orders.forEach((order) => {
         const weekStart = getStartOfWeek(new Date(order.createdAt));
         if (!revenueByWeek[weekStart]) {
           revenueByWeek[weekStart] = 0;
@@ -37,14 +36,20 @@ const StatisticsCard = ({ orders }) => {
         revenueByWeek[weekStart] += order.totalPrice;
       });
 
-      const weeklyArray = Object.entries(revenueByWeek).map(([date, revenue]) => ({
-        week: date,
-        value: revenue,
-      }));
+      const weeklyArray = Object.entries(revenueByWeek).map(
+        ([date, revenue]) => ({
+          week: date,
+          value: revenue,
+        })
+      );
 
       setWeeklyData(weeklyArray);
       setAverageRevenue(
-        weeklyArray.reduce((acc, item) => acc + item.value, 0) / weeklyArray.length || 0 // Đảm bảo không chia cho 0
+        // weeklyArray.reduce((acc, item) => acc + item.value, 0) / weeklyArray.length || 0 // Đảm bảo không chia cho 0
+        Math.ceil(
+          weeklyArray.reduce((acc, item) => acc + item.value, 0) /
+            weeklyArray.length || 0
+        )
       );
     }
   }, [orders]);
@@ -59,11 +64,11 @@ const StatisticsCard = ({ orders }) => {
 
   const props = {
     data: weeklyData,
-    xField: 'week',
-    yField: 'value',
+    xField: "week",
+    yField: "value",
     xAxis: {
       title: {
-        text: 'Tuần',
+        text: "Tuần",
       },
       label: {
         formatter: (text) => `Tuần ${new Date(text).toLocaleDateString()}`,
@@ -71,7 +76,7 @@ const StatisticsCard = ({ orders }) => {
     },
     yAxis: {
       title: {
-        text: 'Doanh thu (VNĐ)',
+        text: "Doanh thu (VNĐ)",
       },
       label: {
         formatter: (value) => `${value.toLocaleString()} VNĐ`,
@@ -80,7 +85,7 @@ const StatisticsCard = ({ orders }) => {
     tooltip: {
       formatter: (datum) => {
         return {
-          name: 'Doanh thu',
+          name: "Doanh thu",
           value: `${datum.value.toLocaleString()} VNĐ`,
         };
       },
@@ -93,17 +98,19 @@ const StatisticsCard = ({ orders }) => {
 
   return (
     <StatisticsCardContainer>
-      <Title level={4}>{t('DASHBOARD.WEEKLY_TITLE')}</Title>
+      <Title level={4}>{t("DASHBOARD.WEEKLY_TITLE")}</Title>
       <Paragraph>
-          {t('DASHBOARD.WEEKLY_AVG')} <strong>{averageRevenue.toLocaleString()} VNĐ</strong>
+        {t("DASHBOARD.WEEKLY_AVG")}{" "}
+        <strong>{averageRevenue.toLocaleString()} VNĐ</strong>
       </Paragraph>
       <Line {...props} />
-      <Row gutter={16} style={{ marginTop: '20px' }}>
+      <Row gutter={16} style={{ marginTop: "20px" }}>
         {weeklyData.map((item, index) => (
           <Col span={6} key={index}>
             <WeekRevenue>
-             {t('DASHBOARD.WEEKLY_START')} {item.week}<br />
-             {t('DASHBOARD.WEEKLY_TOTAL')} {item.value.toLocaleString()} VNĐ
+              {t("DASHBOARD.WEEKLY_START")} {item.week}
+              <br />
+              {t("DASHBOARD.WEEKLY_TOTAL")} {item.value.toLocaleString()} VNĐ
             </WeekRevenue>
           </Col>
         ))}

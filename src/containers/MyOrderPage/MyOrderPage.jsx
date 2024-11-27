@@ -106,13 +106,13 @@ const MyOrderPage = () => {
     data: dataCancel,
   } = mutation;
 
-  useEffect(() => {
-    if (isSuccessCancel && dataCancel?.status === "OK") {
-      message.success();
-    } else if (isErrorCancel) {
-      message.error();
-    }
-  }, [isErrorCancel, isSuccessCancel, dataCancel]);
+  // useEffect(() => {
+  //   if (isSuccessCancel && dataCancel?.status === "OK") {
+  //     message.success();
+  //   } else if (isErrorCancel) {
+  //     message.error();
+  //   }
+  // }, [isErrorCancel, isSuccessCancel, dataCancel]);
 
   const renderProduct = (data) => {
     return data?.map((order) => {

@@ -30,7 +30,7 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useTranslation } from "react-i18next";
 import { FilterOutlined } from "@ant-design/icons";
-import { Popover, Slider, Button, Row, Col } from "antd";
+import { Popover, Slider, Row, Col } from "antd";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -115,7 +115,6 @@ const HomePage = () => {
     const handlePriceFilter = (minPrice, maxPrice) => {
       setPriceRange([minPrice, maxPrice]);
       filterProductsByPrice(minPrice, maxPrice); // gọi hàm lọc sản phẩm
-      setShowSlider(false);
     };
 
     const onSliderChange = (value) => {
@@ -233,13 +232,8 @@ const HomePage = () => {
     setFilteredProducts(filteredProducts);
   };
 
-  const onSliderChange = (value) => {
-    setPriceRange(value);
-  };
-
   return (
     <div>
-      {/* style={{ minWidth: "100vw" }} */}
       <Loading isLoading={isLoading}>
         <div
           className="body"

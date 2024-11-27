@@ -115,6 +115,7 @@ const resources = {
         BACK_HOMEPAGE: "Home page",
         PRODUCT_INFOR: "Product Information",
         STAR: "Star",
+        SOLD: "Sold",
         SOLD_OUT: "Sold Out",
         MESSAGE_SUCCESS: "Success to add product to cart",
         PROMOTION: "Promotion",
@@ -335,6 +336,7 @@ const resources = {
         TRIGGER_PRODUCT: "Trigger Product",
         APPLY_ERROR:
           "No changes were made. Please update the fields before applying!",
+        UPDATE_STOCK: "Update count in stock",
       },
       PAYMENT: {
         TITLE: "Payment",
@@ -606,6 +608,7 @@ const resources = {
         BACK_HOMEPAGE: "Trang chủ",
         PRODUCT_INFOR: "Thông tin về sản phẩm",
         STAR: "Sao",
+        SOLD: "Đã bán",
         SOLD_OUT: "Hết hàng",
         MESSAGE_SUCCESS: "Thêm giỏ hàng thành công",
         PROMOTION: "Khuyến mãi",
@@ -823,6 +826,7 @@ const resources = {
         DISCOUNT_PRICE: "Giá giảm",
         APPLY_ERROR:
           "Không có thay đổi nào được thực hiện. Vui lòng cập nhật các trường trước khi áp dụng!",
+        UPDATE_STOCK: "Cập nhật số lượng hàng hóa",
       },
       PAYMENT: {
         TITLE: "Thanh toán",
