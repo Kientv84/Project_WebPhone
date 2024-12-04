@@ -249,6 +249,7 @@ const resources = {
         NEW_IMG_2: "Image Product",
         SELECT_IMG_PRODUCT: "Select File",
         BUTTON_SUBMID_ADD_PRODUCT: "Submit",
+        BUTTON_SUBMID_ADD_PROMOTION: "Submit",
         PRODUCT_DETAIL: "Product Details",
         PROMOTION_DETAIL: "Promotion Details",
         BUNDLE_PRODUCT: "Bundle product",
@@ -307,6 +308,9 @@ const resources = {
         ORDER_NUMBER: "Order ID",
         UPDATE_FAIL_BRAND:
           "The promotion with this brand already exists. Please choose a different brand!",
+
+        UPDATE_FAIL_TRIGGER_PRODUCT_DUPLICATE:
+          "The promotion with this trigger product already exists. Please choose a different trigger product!",
 
         DELETE_ORDER_SUCCESS: "Delete order sucess!",
         DELETE_ORDER_FAIL: "Delete order fail!",
@@ -721,6 +725,8 @@ const resources = {
         ORDER_NUMBER: "Mã đơn hàng",
         UPDATE_FAIL_BRAND:
           "Promotion với brand này đã tồn tại. Vui lòng chọn brand khác!",
+        UPDATE_FAIL_TRIGGER_PRODUCT_DUPLICATE:
+          "Promotion với sản phẩm kích hoạt này đã tồn tại. Vui lòng chọn sản phẩm kích hoạt khác!",
 
         DELETE_USER: "Xóa người dùng",
         MESS_DELETE_USER: "Bạn có chắc sẽ xóa người dùng này?",
@@ -765,6 +771,7 @@ const resources = {
         NEW_IMG_2: "Ảnh 2",
         SELECT_IMG_PRODUCT: "Chọn hình ảnh",
         BUTTON_SUBMID_ADD_PRODUCT: "Lưu sản phẩm",
+        BUTTON_SUBMID_ADD_PROMOTION: "Lưu khuyến mãi",
         PRODUCT_DETAIL: "Chi tiết sản phẩm",
         PROMOTION_DETAIL: "Chi tiết mã khuyến mãi",
 
