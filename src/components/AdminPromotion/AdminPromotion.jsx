@@ -110,8 +110,8 @@ const AdminPromotion = () => {
 
   //
   const getAllPromotion = async () => {
-    const product = JSON.parse(localStorage.getItem("promotion"));
-    const res = await PromotionService.getAllPromotion(product?.access_token);
+    const promotion = JSON.parse(localStorage.getItem("promotion"));
+    const res = await PromotionService.getAllPromotion(promotion?.access_token);
     return { data: res?.data, key: "promotions" };
   };
 
@@ -657,6 +657,8 @@ const AdminPromotion = () => {
       branch: statePromotionDetails.branch,
       minimumQuantity: statePromotionDetails.minimumQuantity,
     };
+
+    // Kiểm tra sự thay đổi dữ liệu so với promotion cũ
 
     if (
       statePromotionDetails.bundleProduct &&

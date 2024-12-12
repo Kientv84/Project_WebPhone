@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { WrapperContainerLeft } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as UserService from "../../services/UserService";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
@@ -13,6 +13,12 @@ const ForgotPassPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const { t } = useTranslation();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   const mutation = useMutationHook((data) => UserService.forgotPassword(data));
 

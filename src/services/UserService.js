@@ -43,7 +43,6 @@ export const getDetailsUser = async (id, access_token) => {
       },
     }
   );
-  // console.log(res.data)
   return res.data;
 };
 

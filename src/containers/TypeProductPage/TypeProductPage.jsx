@@ -46,6 +46,12 @@ const TypeProductPage = () => {
   const [showSlider, setShowSlider] = useState(true);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
+
   const fetchAllBranchProduct = async () => {
     const res = await ProductService.getAllBranchProduct();
     if (res?.status === "OK") setBranchProducts(res?.data);

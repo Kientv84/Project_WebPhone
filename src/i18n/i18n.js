@@ -17,11 +17,12 @@ const resources = {
         LOGOUT: "Log Out",
         SIGN_IN_UP: " Sign-In/ Sign-Up",
         ACCOUNT: "Account",
-        PRODUCT_SUGGET: "Product suggests",
+        PRODUCT_SUGGEST: "Product suggests",
         MY_INFOR: " My Information",
         MANAGE: "Management",
         MY_ORDER: "My Order",
         LOG_OUT: "Log Out",
+        NO_RESULT: "No results found",
       },
       MY_ODER: {
         TITLE: "My Oder",
@@ -123,6 +124,7 @@ const resources = {
         DESCRIPTION: "Description",
         PURCHASE: "Purchase now",
         ADD_CART: "Add to cart",
+        BUY_WITH_SHOCKING_PRICE: "Buy with a shocking price",
       },
       LOGIN_TOAST: {
         TOAST_SUCCESS: "Logged in successfully",
@@ -514,11 +516,12 @@ const resources = {
         LOGOUT: "Đăng xuất",
         SIGN_IN_UP: " Đăng nhập/ Đăng ký",
         ACCOUNT: "Tài khoản",
-        PRODUCT_SUGGET: "Gợi ý sản phẩm",
+        PRODUCT_SUGGEST: "Gợi ý sản phẩm",
         MY_INFOR: " Thông tin của tôi",
         MANAGE: "Quản lý sản phẩm",
         MY_ORDER: "Đơn hàng của tôi",
         LOG_OUT: "Đăng xuất",
+        NO_RESULT: "Không có kết quả cần tìm",
       },
       MY_ODER: {
         TITLE: "Đơn hàng của tôi",
@@ -620,6 +623,7 @@ const resources = {
         DESCRIPTION: "Mô tả",
         PURCHASE: "Mua ngay",
         ADD_CART: "Thêm giỏ hàng",
+        BUY_WITH_SHOCKING_PRICE: "Mua kèm giá sốc",
       },
       LOGIN_TOAST: {
         TOAST_SUCCESS: "Đăng nhập thành công",

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { WrapperContainerLeft } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import * as message from "../../components/Message/Message";
 import { useMutationHook } from "../../hooks/useMutationHook";
@@ -17,6 +17,12 @@ const PasswordReset = () => {
   const { id, token } = useParams();
 
   const { t } = useTranslation();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   const handleOnChangePassword = (value) => {
     setPassword(value);

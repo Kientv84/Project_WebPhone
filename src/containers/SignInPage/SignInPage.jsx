@@ -31,6 +31,10 @@ const SignInPage = () => {
 
   const { t } = useTranslation();
 
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
+
   const mutation = useMutationHook((data) => UserService.loginUser(data));
 
   const { data, isLoading, isSuccess } = mutation;

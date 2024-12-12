@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import * as ProductService from "../../services/ProductService";
 import Loading from "../../components/LoadingComponent/Loading";
 import { WrapperProducts } from "./style";
@@ -22,6 +22,12 @@ const SearchProductPage = () => {
     limit: 18,
     total: 1,
   });
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   const fetchProductType = useCallback(
     async (query, page, limit) => {

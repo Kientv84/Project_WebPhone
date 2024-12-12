@@ -28,6 +28,10 @@ const MyOrderPage = () => {
   const [isModalOpenCancelOrder, setIsModalOpenCancelOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
+
   const fetchMyOrder = async () => {
     if (!state?.id || !state?.token) {
       throw new Error("Invalid state");

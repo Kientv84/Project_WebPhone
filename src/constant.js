@@ -1,7 +1,4 @@
-import { useTranslation } from "react-i18next";
-
 export const orderConstant = {
-  // const { t } = useTranslation(),
   delivery: {
     fast: "GHTK",
     gojek: "VIETTELPOST",

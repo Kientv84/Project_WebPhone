@@ -39,6 +39,10 @@ const DetailsOrderPage = () => {
   const navigate = useNavigate();
   const [promotions, setPromotions] = useState([]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
+
   const fetchDetailsOrder = async () => {
     const res = await OrderService.getDetailsOrder(id, state?.token);
     console.log("object", res);

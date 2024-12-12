@@ -1,6 +1,5 @@
 import { Col, Image, InputNumber } from "antd";
 import styled from "styled-components";
-import CommentComponent from "../CommentComponent/CommentComponent";
 
 export const WrapperStyleImageSmall = styled(Image)`
   height: 64px;

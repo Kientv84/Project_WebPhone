@@ -40,6 +40,11 @@ const BranchProductPage = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showSlider, setShowSlider] = useState(true);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   const fetchProductBranch = useCallback(
     async (branch, page, limit) => {

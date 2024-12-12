@@ -26,7 +26,7 @@ export const createProduct = async (data) => {
 // lấy dữ liệu sản phẩm
 export const getDetailsProduct = async (id) => {
   const res = await axios.get(
-    `${process.env.REACT_APP_URL_BACKEND}/product/get-details/${id}`
+    `${process.env.REACT_APP_URL_BACKEND}/product/product-details/${id}`
   );
   return res.data;
 };

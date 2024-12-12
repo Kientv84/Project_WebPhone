@@ -31,6 +31,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 import { useTranslation } from "react-i18next";
 import { FilterOutlined } from "@ant-design/icons";
 import { Popover, Slider, Row, Col } from "antd";
+import { useLocation } from "react-router-dom";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -44,6 +45,12 @@ const HomePage = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showSlider, setShowSlider] = useState(true);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" }); // Cuộn cả chiều ngang và dọc về đầu trang
+  }, [location]);
 
   const fetchProductAll = async (context) => {
     const limit = (context?.queryKey && context?.queryKey[1]) || 12;

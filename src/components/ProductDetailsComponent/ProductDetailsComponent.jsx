@@ -16,6 +16,7 @@ import {
   BoxDecriptionContent,
   PromotionHeaderDecription,
   StyledCommentComponent,
+  WrapperProducts,
 } from "./style";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
@@ -33,6 +34,8 @@ import CommentComponent from "../CommentComponent/CommentComponent.jsx";
 import "./ProductDetailsComponent.css";
 import addToCart from "../../assets/images/art-to-carts.png";
 import { useTranslation } from "react-i18next";
+import * as PromotionService from "../../services/PromotionService";
+import CardComponent from "../../components/CardComponent/CardComponent";
 
 const ProductDetailsComponent = ({ idProduct }) => {
   const [numProduct, setNumProduct] = useState(1);
@@ -41,10 +44,16 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const [ErrorLimitOrder, setErrorLimitOrder] = useState(false);
   const { t } = useTranslation();
 
-  const [form] = Form.useForm();
+  const [bundleProducts, setBundleProducts] = useState([]);
+
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const [productName, setProductName] = useState("");
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   const onChange = (value) => {
     setNumProduct(Number(value));
@@ -54,9 +63,16 @@ const ProductDetailsComponent = ({ idProduct }) => {
     const id = context?.queryKey && context?.queryKey[1];
     if (id) {
       const res = await ProductService.getDetailsProduct(id);
-      return res.data;
+      if (res?.data) {
+        setProductName(res.data.name); // Lưu tên sản phẩm
+      }
+      return res?.data;
     }
   };
+
+  useEffect(() => {
+    console.log("idProduct:", idProduct); // Kiểm tra giá trị idProduct trong useEffect
+  }, [idProduct]);
 
   useEffect(() => {
     initFacebookSDK();
@@ -88,6 +104,8 @@ const ProductDetailsComponent = ({ idProduct }) => {
     fetchGetDetailsProduct,
     { enabled: !!idProduct }
   );
+
+  console.log("Product details:", productDetails);
 
   const handleAddOrderProduct = () => {
     if (!user?.id) {
@@ -197,6 +215,54 @@ const ProductDetailsComponent = ({ idProduct }) => {
   return (
     <div>
       <Loading isLoading={isLoading}>
+        <div
+          style={{
+            fontWeight: "normal",
+            marginTop: "5px",
+            fontSize: "15px",
+            marginTop: "20px",
+          }}
+        >
+          {" "}
+          <span
+            style={{
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "14px",
+              color: "#707070",
+            }}
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            {t("PRODUCT_DETAILS.BACK_HOMEPAGE")}
+          </span>{" "}
+          <svg
+            style={{
+              margin: "0 10px 0 6px",
+              width: "14px",
+              color: "#707070",
+              height: "14px",
+              verticalAlign: "middle",
+            }}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 320 512"
+          >
+            <path
+              fill="currentColor"
+              d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+            ></path>
+          </svg>
+          <span
+            style={{
+              fontSize: "14px", // Kích thước chữ
+              fontWeight: "bold", // Kiểu chữ đậm
+              color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+            }}
+          >
+            {productName}
+          </span>
+        </div>
         <Row
           style={{
             padding: "25px",
@@ -368,19 +434,9 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   </div>
                 </div>
               </PromotionHeader>
-              {/* <WrapperDecriptionTextProduct>
+              <WrapperDecriptionTextProduct>
                 {productDetails?.promotion &&
                   formatDescription(productDetails?.promotion)}
-              </WrapperDecriptionTextProduct> */}
-              <WrapperDecriptionTextProduct>
-                {productDetails?.promotion ? (
-                  <span className="promotion" onClick={handlePromotionClick}>
-                    {productDetails.linkedProductName ||
-                      formatPromotion(productDetails.promotion)}
-                  </span>
-                ) : (
-                  <span>No Promotion</span>
-                )}
               </WrapperDecriptionTextProduct>
             </Box>
 
@@ -475,6 +531,30 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 {t("PRODUCT_DETAILS.SOLD_OUT")}
               </span>
             )}
+            {/* <div className="title-option">
+              {t("PRODUCT_DETAILS.BUY_WITH_SHOCKING_PRICE")}
+            </div>
+            <WrapperProducts>
+              {bundleProducts?.length > 0 ? (
+                bundleProducts.map((bundleProduct) => (
+                  <CardComponent
+                    key={bundleProduct._id}
+                    countInStock={bundleProduct.countInStock}
+                    image={bundleProduct.image}
+                    name={bundleProduct.name}
+                    price={bundleProduct.price}
+                    rating={bundleProduct.rating}
+                    branch={bundleProduct.branch}
+                    type={bundleProduct.type}
+                    sold={bundleProduct.selled}
+                    discount={bundleProduct.discount}
+                    id={bundleProduct._id}
+                  />
+                ))
+              ) : (
+                <p>No bundle products available.</p>
+              )}
+            </WrapperProducts> */}
           </Col>
           <CommentComponent
             datahref={

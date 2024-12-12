@@ -26,7 +26,7 @@ import * as OrderService from "../../services/OrderService";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from "../../components/Message/Message";
 import { updateUser } from "../../redux/slice/userslide";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { PayPalButton } from "react-paypal-button-v2";
 import * as PaymentService from "../../services/PaymentService";
 import { useTranslation } from "react-i18next";
@@ -61,6 +61,12 @@ const PaymentPage = () => {
   const [form] = Form.useForm();
 
   const dispatch = useDispatch();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   useEffect(() => {
     form.setFieldsValue(stateUserDetails);
