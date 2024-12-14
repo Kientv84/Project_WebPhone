@@ -44,8 +44,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const [ErrorLimitOrder, setErrorLimitOrder] = useState(false);
   const { t } = useTranslation();
 
-  const [bundleProducts, setBundleProducts] = useState([]);
-
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -195,21 +193,75 @@ const ProductDetailsComponent = ({ idProduct }) => {
       .join("\n");
   };
 
-  const formatPromotion = (promotion) => {
-    return promotion
-      .split("\n")
-      .map((line) => `- ${line}`)
-      .join("\n");
-  };
+  // const formatPromotion = (promotion) => {
+  //   return promotion
+  //     .split("\n")
+  //     .map((line) => `- ${line}`)
+  //     .join("\n");
+  // };
 
-  const handlePromotionClick = () => {
-    const targetProductId =
-      productDetails.linkedProductId || productDetails._id;
-    if (targetProductId) {
-      navigate(`/product-details/${targetProductId}`);
-    } else {
-      console.error("Product ID is not defined");
-    }
+  // const formatPromotion = (promotion) => {
+  //   if (!promotion) return null;
+
+  //   // const formattedText = promotion.promotionText
+  //   //   .split("\n")
+  //   //   .map((line) => `- ${line}`)
+  //   //   .join("\n");
+
+  //   if (promotion.relatedProductId) {
+  //     return (
+  //       <span
+  //         style={{
+  //           cursor: "pointer",
+  //           whiteSpace: "pre-line",
+  //         }}
+  //         className={
+  //           promotion.relatedProductId ? "promotion-link" : "promotion-text"
+  //         }
+  //         onClick={() =>
+  //           promotion.relatedProductId &&
+  //           navigate(`/product-details/${promotion.relatedProductId}`)
+  //         }
+  //       >
+  //         {promotion.promotionText}
+  //       </span>
+  //     );
+  //   }
+  //   return (
+  //     <span
+  //       style={{
+  //         color: "black",
+  //         cursor: "default",
+  //         textDecoration: "none",
+  //         whiteSpace: "pre-line",
+  //       }}
+  //     >
+  //       {promotion.promotionText}
+  //     </span>
+  //   );
+  // };
+
+  const formatPromotion = (promotion) => {
+    if (!promotion || !promotion.promotionText) return null;
+
+    const formattedText = promotion.promotionText
+      .split("\n")
+      .map((line, index) => (
+        <span
+          key={index}
+          className={
+            promotion.relatedProductId ? "promotion-link" : "promotion-text"
+          }
+          onClick={() =>
+            promotion.relatedProductId &&
+            navigate(`/product-details/${promotion.relatedProductId}`)
+          }
+        >
+          - {line}
+        </span>
+      ));
+
+    return <div style={{ whiteSpace: "pre-line" }}>{formattedText}</div>;
   };
 
   return (
@@ -436,7 +488,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
               </PromotionHeader>
               <WrapperDecriptionTextProduct>
                 {productDetails?.promotion &&
-                  formatDescription(productDetails?.promotion)}
+                  formatPromotion(productDetails?.promotion)}
               </WrapperDecriptionTextProduct>
             </Box>
 

@@ -24,9 +24,9 @@ import {
   renderOptionsType,
   renderOptionsBranch,
   convertPrice,
+  renderOptionsPromotionProduct,
 } from "../../utils";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 const AdminProduct = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,7 +47,8 @@ const AdminProduct = () => {
     name: "",
     price: "",
     description: "",
-    promotion: "",
+    promotionText: "", // Nội dung khuyến mãi
+    relatedProductId: "",
     rating: "",
     image: "",
     image1: "",
@@ -133,7 +134,8 @@ const AdminProduct = () => {
         name: res?.data?.name,
         price: res?.data?.price,
         description: res?.data?.description,
-        promotion: res?.data?.promotion,
+        promotionText: res?.data?.promotion.promotionText || "", // Kiểm tra promotionText
+        relatedProductId: res?.data?.promotion.relatedProductId || null, // Kiểm tra relatedProductId
         rating: res?.data?.rating,
         image: res?.data?.image,
         image1: res?.data?.image1,
@@ -501,7 +503,7 @@ const AdminProduct = () => {
     }
   }, [isSuccessDeleted, statusDeleted, handleCancelDelete, isErrorDeleted]);
 
-  const handleCancelDrawer = useCallback(() => {
+  const handleUpdateDrawer = useCallback(() => {
     setIsOpenDrawer(false);
     setStateProductDetails({
       name: "",
@@ -525,11 +527,11 @@ const AdminProduct = () => {
   useEffect(() => {
     if (isSuccessUpdated && statusUpdated === "OK") {
       message.success(t("ADMIN.UPDATE_SUCCESS"));
-      handleCancelDrawer();
+      handleUpdateDrawer();
     } else if (isErrorUpdated) {
       message.error(t("ADMIN.UPDATE_FAIL"));
     }
-  }, [isSuccessUpdated, statusUpdated, handleCancelDrawer, isErrorUpdated]);
+  }, [isSuccessUpdated, statusUpdated, handleUpdateDrawer, isErrorUpdated]);
 
   const handleDeleteProduct = () => {
     mutationDeleted.mutate(
@@ -547,7 +549,11 @@ const AdminProduct = () => {
       name: stateProduct.name,
       price: stateProduct.price,
       description: stateProduct.description,
-      promotion: stateProduct.promotion,
+      // promotion: stateProduct.promotion,
+      promotion: {
+        promotionText: stateProduct.promotionText,
+        relatedProductId: stateProduct.relatedProductId,
+      },
       rating: stateProduct.rating,
       image: stateProduct.image,
       image1: stateProduct.image1,
@@ -583,6 +589,13 @@ const AdminProduct = () => {
     setStateProductDetails({
       ...stateProductDetails,
       [name]: value,
+    });
+  };
+
+  const handleChangeNewSelectRelatedProductId = (value) => {
+    setStateProductDetails({
+      ...stateProductDetails,
+      relatedProductId: value, // Cập nhật lại bundleProduct trong state
     });
   };
 
@@ -810,7 +823,21 @@ const AdminProduct = () => {
     const updateData = {
       id: rowSelected,
       token: product?.access_token,
-      ...stateProductDetails,
+      name: stateProductDetails.name,
+      price: stateProductDetails.price,
+      description: stateProductDetails.description,
+      promotion: {
+        promotionText: stateProductDetails.promotionText,
+        relatedProductId: stateProductDetails.relatedProductId,
+      },
+      rating: stateProductDetails.rating,
+      image: stateProductDetails.image,
+      image1: stateProductDetails.image1,
+      image2: stateProductDetails.image2,
+      type: stateProductDetails.type,
+      branch: stateProductDetails.branch,
+      countInStock: stateProductDetails.countInStock,
+      discount: stateProductDetails.discount,
     };
 
     mutationUpdate.mutate(updateData, {
@@ -822,6 +849,10 @@ const AdminProduct = () => {
       },
     });
   };
+
+  const productOptions = queryProduct.data?.data
+    ? renderOptionsPromotionProduct(queryProduct.data.data, "name", "_id")
+    : [];
 
   return (
     <div>
@@ -999,7 +1030,7 @@ const AdminProduct = () => {
 
             <Form.Item
               label={t("ADMIN.NEW_PROMOTION")}
-              name="promotion"
+              name="promotionText"
               rules={[
                 {
                   required: true,
@@ -1010,8 +1041,28 @@ const AdminProduct = () => {
               <Input.TextArea
                 value={stateProduct.promotion}
                 onChange={handleOnchange}
-                name="promotion"
+                name="promotionText"
               />
+            </Form.Item>
+
+            <Form.Item
+              label={t("ADMIN.RELATED_PRODUCT_ID")}
+              name="relatedProductId"
+              rules={[
+                {
+                  required: false,
+                  message: t("ADMIN.PLACEHOLDER_RELATED_PRODUCT_ID"),
+                },
+              ]}
+            >
+              <Select
+                value={stateProduct.relatedProductId}
+                onChange={(value) =>
+                  setStateProduct({ ...stateProduct, relatedProductId: value })
+                }
+                placeholder="Chọn sản phẩm liên quan"
+                options={productOptions}
+              ></Select>
             </Form.Item>
 
             <Form.Item
@@ -1246,7 +1297,7 @@ const AdminProduct = () => {
                 style={{ minHeight: "150px", width: "100%" }}
               />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               label={t("ADMIN.NEW_PROMOTION")}
               name="promotion"
               rules={[
@@ -1261,7 +1312,37 @@ const AdminProduct = () => {
                 onChange={handleOnchangeDetails}
                 name="promotion"
               />
+            </Form.Item> */}
+
+            <Form.Item
+              label={t("ADMIN.NEW_PROMOTION")}
+              name="promotionText"
+              rules={[
+                {
+                  required: true,
+                  message: t("ADMIN.PLACEHOODER_PROMOTION"),
+                },
+              ]}
+            >
+              <Input.TextArea
+                value={stateProductDetails["promotionText"]}
+                onChange={handleOnchangeDetails}
+                name="promotionText"
+              />
             </Form.Item>
+
+            <Form.Item
+              label={t("ADMIN.RELATED_PRODUCT_ID")}
+              name="relatedProductId"
+            >
+              <Select
+                value={stateProductDetails?.promotion?.relatedProductId || ""}
+                onChange={handleChangeNewSelectRelatedProductId}
+                placeholder="Chọn sản phẩm liên quan"
+                options={productOptions}
+              ></Select>
+            </Form.Item>
+
             <Form.Item
               label={t("ADMIN.NEW_RAING")}
               name="rating"

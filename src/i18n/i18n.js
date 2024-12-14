@@ -343,6 +343,7 @@ const resources = {
         APPLY_ERROR:
           "No changes were made. Please update the fields before applying!",
         UPDATE_STOCK: "Update count in stock",
+        RELATED_PRODUCT_ID: "Related Product",
       },
       PAYMENT: {
         TITLE: "Payment",
@@ -838,6 +839,7 @@ const resources = {
         APPLY_ERROR:
           "Không có thay đổi nào được thực hiện. Vui lòng cập nhật các trường trước khi áp dụng!",
         UPDATE_STOCK: "Cập nhật số lượng hàng hóa",
+        RELATED_PRODUCT_ID: "Sản phẩm liên quan",
       },
       PAYMENT: {
         TITLE: "Thanh toán",
