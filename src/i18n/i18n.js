@@ -344,6 +344,7 @@ const resources = {
           "No changes were made. Please update the fields before applying!",
         UPDATE_STOCK: "Update count in stock",
         RELATED_PRODUCT_ID: "Related Product",
+        SELECT_RELATED_PRODUCT: "Select related product",
       },
       PAYMENT: {
         TITLE: "Payment",
@@ -840,6 +841,7 @@ const resources = {
           "Không có thay đổi nào được thực hiện. Vui lòng cập nhật các trường trước khi áp dụng!",
         UPDATE_STOCK: "Cập nhật số lượng hàng hóa",
         RELATED_PRODUCT_ID: "Sản phẩm liên quan",
+        SELECT_RELATED_PRODUCT: "Chọn sản phẩm liên quan",
       },
       PAYMENT: {
         TITLE: "Thanh toán",

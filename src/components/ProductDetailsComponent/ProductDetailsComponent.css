@@ -148,7 +148,6 @@
 
 .promotion-link {
   color: black; /* Màu mặc định */
-  text-decoration: none;
   transition: color 0.3s ease; /* Tạo hiệu ứng chuyển màu mượt */
   display: block;
 }
@@ -161,7 +160,6 @@
 
 .promotion-text {
   color: black;
-  text-decoration: none;
   cursor: default;
   display: block; /* Mỗi dòng là một khối riêng */
   margin-bottom: 5px; /* Khoảng cách giữa các dòng */

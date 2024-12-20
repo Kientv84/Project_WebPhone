@@ -473,7 +473,7 @@ const AdminPromotion = () => {
       return { ...promotion, key: promotion._id };
     });
 
-  const handleAddPromotion = useCallback(() => {
+  const handleCancelPromotion = useCallback(() => {
     setAddrBundleProducts(
       addrbundleProducts.filter((product) => !product.isNew)
     );
@@ -542,7 +542,7 @@ const AdminPromotion = () => {
     }
   }, [isSuccessDeleted, statusDeleted, handleCancelDelete, isErrorDeleted]);
 
-  const handleUpdateDrawer = useCallback(() => {
+  const handleCancelDrawer = useCallback(() => {
     setAddrBundleDetailProducts(
       addrbundleDeltailProducts.filter((product) => !product.isNew)
     );
@@ -613,7 +613,7 @@ const AdminPromotion = () => {
     mutation.mutate(params, {
       onSuccess: () => {
         message.success(t("ADMIN.ADD_PROMOTION_SUCCESS"));
-        handleAddPromotion();
+        handleCancelPromotion();
       },
       onError: (error) => {
         if (
@@ -680,7 +680,7 @@ const AdminPromotion = () => {
     mutationUpdate.mutate(updateData, {
       onSuccess: () => {
         message.success(t("ADMIN.UPDATE_SUCCESS"));
-        handleUpdateDrawer();
+        handleCancelDrawer();
       },
       onError: (error) => {
         // Kiểm tra lỗi từ backend và hiển thị thông báo lỗi
@@ -785,7 +785,7 @@ const AdminPromotion = () => {
         forceRender
         title={t("ADMIN.ADD_NEW_PROMOTION")}
         open={isModalOpen}
-        onCancel={handleAddPromotion}
+        onCancel={handleCancelPromotion}
         footer={null}
         style={{ padding: "24px" }}
         centered
@@ -859,6 +859,12 @@ const AdminPromotion = () => {
             <Form.Item
               label={t("ADMIN.MINIMUM_QUANTITY")}
               name="minimumQuantity"
+              rules={[
+                {
+                  required: true,
+                  message: t("ADMIN.PLACEHOODER_MINIMUM_QUANTITY"),
+                },
+              ]}
             >
               <InputComponent
                 type="number"

@@ -16,7 +16,6 @@ import {
   BoxDecriptionContent,
   PromotionHeaderDecription,
   StyledCommentComponent,
-  WrapperProducts,
 } from "./style";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
@@ -34,8 +33,6 @@ import CommentComponent from "../CommentComponent/CommentComponent.jsx";
 import "./ProductDetailsComponent.css";
 import addToCart from "../../assets/images/art-to-carts.png";
 import { useTranslation } from "react-i18next";
-import * as PromotionService from "../../services/PromotionService";
-import CardComponent from "../../components/CardComponent/CardComponent";
 
 const ProductDetailsComponent = ({ idProduct }) => {
   const [numProduct, setNumProduct] = useState(1);
@@ -69,10 +66,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
   };
 
   useEffect(() => {
-    console.log("idProduct:", idProduct); // Kiểm tra giá trị idProduct trong useEffect
-  }, [idProduct]);
-
-  useEffect(() => {
     initFacebookSDK();
   }, []);
 
@@ -102,8 +95,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
     fetchGetDetailsProduct,
     { enabled: !!idProduct }
   );
-
-  console.log("Product details:", productDetails);
 
   const handleAddOrderProduct = () => {
     if (!user?.id) {
@@ -193,28 +184,14 @@ const ProductDetailsComponent = ({ idProduct }) => {
       .join("\n");
   };
 
-  // const formatPromotion = (promotion) => {
-  //   return promotion
-  //     .split("\n")
-  //     .map((line) => `- ${line}`)
-  //     .join("\n");
-  // };
+  // const formatPromotion = (promotions) => {
+  //   if (!promotions || !Array.isArray(promotions)) return null;
 
-  // const formatPromotion = (promotion) => {
-  //   if (!promotion) return null;
-
-  //   // const formattedText = promotion.promotionText
-  //   //   .split("\n")
-  //   //   .map((line) => `- ${line}`)
-  //   //   .join("\n");
-
-  //   if (promotion.relatedProductId) {
-  //     return (
-  //       <span
-  //         style={{
-  //           cursor: "pointer",
-  //           whiteSpace: "pre-line",
-  //         }}
+  //   return promotions
+  //     .filter((promotion) => promotion.promotionText?.trim()) // Lọc ra các promotionText không rỗng
+  //     .map((promotion, index) => (
+  //       <div
+  //         key={index}
   //         className={
   //           promotion.relatedProductId ? "promotion-link" : "promotion-text"
   //         }
@@ -223,45 +200,40 @@ const ProductDetailsComponent = ({ idProduct }) => {
   //           navigate(`/product-details/${promotion.relatedProductId}`)
   //         }
   //       >
-  //         {promotion.promotionText}
-  //       </span>
-  //     );
-  //   }
-  //   return (
-  //     <span
-  //       style={{
-  //         color: "black",
-  //         cursor: "default",
-  //         textDecoration: "none",
-  //         whiteSpace: "pre-line",
-  //       }}
-  //     >
-  //       {promotion.promotionText}
-  //     </span>
-  //   );
+  //         - {promotion.promotionText}
+  //       </div>
+  //     ));
   // };
 
-  const formatPromotion = (promotion) => {
-    if (!promotion || !promotion.promotionText) return null;
+  const formatPromotion = (promotions) => {
+    if (!promotions || !Array.isArray(promotions)) return null;
 
-    const formattedText = promotion.promotionText
-      .split("\n")
-      .map((line, index) => (
-        <span
-          key={index}
-          className={
-            promotion.relatedProductId ? "promotion-link" : "promotion-text"
-          }
-          onClick={() =>
-            promotion.relatedProductId &&
-            navigate(`/product-details/${promotion.relatedProductId}`)
-          }
-        >
-          - {line}
-        </span>
-      ));
+    return promotions
+      .filter((promotion) => promotion.promotionText?.trim())
+      .map((promotion, index) => {
+        const lines = promotion.promotionText.split("\n"); // Chia các dòng xuống
 
-    return <div style={{ whiteSpace: "pre-line" }}>{formattedText}</div>;
+        return (
+          <div key={index} style={{ marginBottom: "5px" }}>
+            {lines.map((line, idx) => (
+              <div
+                key={idx}
+                className={
+                  promotion.relatedProductId
+                    ? "promotion-link"
+                    : "promotion-text"
+                }
+                onClick={() =>
+                  promotion.relatedProductId &&
+                  navigate(`/product-details/${promotion.relatedProductId}`)
+                }
+              >
+                - {line} {/* Thêm gạch đầu dòng vào mỗi dòng */}
+              </div>
+            ))}
+          </div>
+        );
+      });
   };
 
   return (
@@ -583,30 +555,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 {t("PRODUCT_DETAILS.SOLD_OUT")}
               </span>
             )}
-            {/* <div className="title-option">
-              {t("PRODUCT_DETAILS.BUY_WITH_SHOCKING_PRICE")}
-            </div>
-            <WrapperProducts>
-              {bundleProducts?.length > 0 ? (
-                bundleProducts.map((bundleProduct) => (
-                  <CardComponent
-                    key={bundleProduct._id}
-                    countInStock={bundleProduct.countInStock}
-                    image={bundleProduct.image}
-                    name={bundleProduct.name}
-                    price={bundleProduct.price}
-                    rating={bundleProduct.rating}
-                    branch={bundleProduct.branch}
-                    type={bundleProduct.type}
-                    sold={bundleProduct.selled}
-                    discount={bundleProduct.discount}
-                    id={bundleProduct._id}
-                  />
-                ))
-              ) : (
-                <p>No bundle products available.</p>
-              )}
-            </WrapperProducts> */}
           </Col>
           <CommentComponent
             datahref={

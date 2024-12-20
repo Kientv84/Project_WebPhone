@@ -56,7 +56,7 @@ export const WrapperPriceTextProduct = styled.h1`
   margin-top: 10px;
 `;
 export const WrapperDecriptionTextProduct = styled.h1`
-  display: flex;
+  /* display: flex; */
   align-items: center;
   color: rgb(39, 39, 42);
   gap: 8px;
