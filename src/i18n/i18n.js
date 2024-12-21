@@ -345,6 +345,10 @@ const resources = {
         UPDATE_STOCK: "Update count in stock",
         RELATED_PRODUCT_ID: "Related Product",
         SELECT_RELATED_PRODUCT: "Select related product",
+        ADD_PRODUCT: "ADD",
+        DELETE_PRODUCT: "DELETE",
+        ADD_BUNDLE: "ADD",
+        DELETE_BUNDLE: "DELETE",
       },
       PAYMENT: {
         TITLE: "Payment",
@@ -842,6 +846,11 @@ const resources = {
         UPDATE_STOCK: "Cập nhật số lượng hàng hóa",
         RELATED_PRODUCT_ID: "Sản phẩm liên quan",
         SELECT_RELATED_PRODUCT: "Chọn sản phẩm liên quan",
+
+        ADD_PRODUCT: "THÊM",
+        DELETE_PRODUCT: "XÓA",
+        ADD_BUNDLE: "THÊM",
+        DELETE_BUNDLE: "XÓA",
       },
       PAYMENT: {
         TITLE: "Thanh toán",

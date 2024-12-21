@@ -594,6 +594,18 @@ const AdminProduct = () => {
     });
   };
 
+  const handleOnchangePromotion = (e, index) => {
+    const newPromotions = [...promotions];
+    newPromotions[index].promotionText = e.target.value; // Cập nhật giá trị
+    setPromotions(newPromotions);
+  };
+
+  const handleOnchangePromotionRelatedProduct = (value, index) => {
+    const newPromotions = [...promotions];
+    newPromotions[index].relatedProductId = value;
+    setPromotions(newPromotions);
+  };
+
   const handleOnchangeDetails = (e) => {
     const { name, value } = e.target;
     setStateProductDetails({
@@ -840,18 +852,6 @@ const AdminProduct = () => {
     );
   };
 
-  // const statusUpdated = dataUpdated?.status;
-
-  // //Cập nhật sp
-  // useEffect(() => {
-  //   if (isSuccessUpdated && statusUpdated === "OK") {
-  //     message.success(t("ADMIN.UPDATE_SUCCESS"));
-  //     handleCancelDrawer();
-  //   } else if (isErrorUpdated) {
-  //     message.error(t("ADMIN.UPDATE_FAIL"));
-  //   }
-  // }, [isSuccessUpdated, statusUpdated, handleCancelDrawer, isErrorUpdated]);
-
   const onUpdateProduct = () => {
     const updateData = {
       id: rowSelected,
@@ -906,6 +906,36 @@ const AdminProduct = () => {
     setStateProductDetails({
       ...stateProductDetails,
       promotion: [...stateProductDetails.promotion, newPromotion],
+    });
+  };
+
+  const handleRemovePromotion = (indexToRemove) => {
+    // Lọc danh sách `promotions` để loại bỏ item tại index được chọn
+    const updatedPromotions = promotions.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setPromotions(updatedPromotions);
+
+    // Cập nhật stateProduct.promotion để giữ đồng bộ với promotions
+    const updatedStatePromotions = stateProduct.promotion.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setStateProduct({
+      ...stateProduct,
+      promotion: updatedStatePromotions,
+    });
+  };
+
+  const handleRemovePromotionDetail = (indexToRemove) => {
+    // Lọc danh sách `promotion` để loại bỏ item tại index được chọn
+    const updatedPromotions = stateProductDetails.promotion.filter(
+      (_, index) => index !== indexToRemove
+    );
+
+    // Cập nhật lại stateProductDetails
+    setStateProductDetails({
+      ...stateProductDetails,
+      promotion: updatedPromotions,
     });
   };
 
@@ -1091,49 +1121,69 @@ const AdminProduct = () => {
                   onClick={() => handleAddPromotion()}
                 >
                   <PlusOutlined style={{ fontSize: "20px" }} />
-                  ADD
+                  {t("ADMIN.ADD_PRODUCT")}
                 </Button>
               </div>
 
               {promotions.map((item, index) => (
-                <div>
-                  <Form.Item
-                    key={item.key}
-                    label={t("ADMIN.NEW_PROMOTION")}
-                    name={`promotionText_${index}`}
-                    rules={[
-                      {
-                        required: true,
-                        message: t("ADMIN.PLACEHOODER_PROMOTION"),
-                      },
-                    ]}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    justifyContent: "flex-end",
+                    paddingLeft: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      flexGrow: 1, // Form.Item chiếm phần còn lại
+                      maxWidth: "calc(100% - 100px)", // Giới hạn chiều rộng để chừa chỗ cho nút
+                    }}
                   >
-                    <Input.TextArea
-                      value={stateProduct.promotion}
-                      onChange={(e) => {
-                        const newPromotions = [...promotions];
-                        newPromotions[index].promotionText = e.target.value; // Cập nhật giá trị
-                        setPromotions(newPromotions);
-                      }}
-                    />
-                  </Form.Item>
+                    <Form.Item
+                      key={item.key}
+                      label={t("ADMIN.NEW_PROMOTION")}
+                      name={`promotionText_${index}`}
+                      rules={[
+                        {
+                          required: true,
+                          message: t("ADMIN.PLACEHOODER_PROMOTION"),
+                        },
+                      ]}
+                    >
+                      <Input.TextArea
+                        value={stateProduct.promotion}
+                        onChange={(e) => handleOnchangePromotion(e, index)}
+                        style={{ minHeight: "100px", width: "100%" }}
+                      />
+                    </Form.Item>
 
-                  <Form.Item
-                    key={item.key}
-                    label={t("ADMIN.RELATED_PRODUCT_ID")}
-                    name={`relatedProductId_${index}`}
+                    <Form.Item
+                      key={item.key}
+                      label={t("ADMIN.RELATED_PRODUCT_ID")}
+                      name={`relatedProductId_${index}`}
+                    >
+                      <Select
+                        value={item.relatedProductId}
+                        onChange={(value) =>
+                          handleOnchangePromotionRelatedProduct(value, index)
+                        }
+                        placeholder={t("ADMIN.SELECT_RELATED_PRODUCT")}
+                        options={productOptions}
+                      ></Select>
+                    </Form.Item>
+                  </div>
+                  <Button
+                    style={{
+                      color: "red",
+                      borderColor: "red",
+                    }}
+                    variant="outlined"
+                    size="middle"
+                    onClick={() => handleRemovePromotion(index)}
                   >
-                    <Select
-                      value={item.relatedProductId}
-                      onChange={(value) => {
-                        const newPromotions = [...promotions];
-                        newPromotions[index].relatedProductId = value;
-                        setPromotions(newPromotions);
-                      }}
-                      placeholder={t("ADMIN.SELECT_RELATED_PRODUCT")}
-                      options={productOptions}
-                    ></Select>
-                  </Form.Item>
+                    {t("ADMIN.DELETE_PRODUCT")}
+                  </Button>
                 </div>
               ))}
             </div>
@@ -1274,6 +1324,7 @@ const AdminProduct = () => {
         isOpen={isOpenDrawer}
         onCancel={() => setIsOpenDrawer(false)}
         footer={null}
+        width={800}
       >
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
           <Form
@@ -1378,43 +1429,69 @@ const AdminProduct = () => {
                   onClick={() => handleAddPromotionDetail()}
                 >
                   <PlusOutlined style={{ fontSize: "20px" }} />
-                  ADD
+                  {t("ADMIN.ADD_PRODUCT")}
                 </Button>
               </div>
               {stateProductDetails.promotion.map((item, index) => (
-                <div>
-                  <Form.Item
-                    label={t("ADMIN.NEW_PROMOTION")}
-                    name={`promotionText_${index}`}
-                    rules={[
-                      {
-                        required: true,
-                        message: t("ADMIN.PLACEHOODER_PROMOTION"),
-                      },
-                    ]}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    justifyContent: "flex-end",
+                    paddingLeft: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      flexGrow: 1, // Form.Item chiếm phần còn lại
+                      maxWidth: "calc(100% - 100px)", // Giới hạn chiều rộng để chừa chỗ cho nút
+                    }}
                   >
-                    <Input.TextArea
-                      value={item.promotionText}
-                      onChange={(e) =>
-                        handleOnchangePromotionTextDetails(e, index)
-                      }
-                      name={stateProductDetails.promotionText}
-                    />
-                  </Form.Item>
+                    <Form.Item
+                      label={t("ADMIN.NEW_PROMOTION")}
+                      name={`promotionText_${index}`}
+                      rules={[
+                        {
+                          required: true,
+                          message: t("ADMIN.PLACEHOODER_PROMOTION"),
+                        },
+                      ]}
+                    >
+                      <Input.TextArea
+                        value={item.promotionText}
+                        onChange={(e) =>
+                          handleOnchangePromotionTextDetails(e, index)
+                        }
+                        name={stateProductDetails.promotionText}
+                        style={{ minHeight: "100px", width: "100%" }}
+                      />
+                    </Form.Item>
 
-                  <Form.Item
-                    label={t("ADMIN.RELATED_PRODUCT_ID")}
-                    name={`relatedProductId_${index}`}
+                    <Form.Item
+                      label={t("ADMIN.RELATED_PRODUCT_ID")}
+                      name={`relatedProductId_${index}`}
+                    >
+                      <Select
+                        value={item.relatedProductId}
+                        onChange={(value) =>
+                          handleChangeNewSelectRelatedProductId(value, index)
+                        }
+                        placeholder={t("ADMIN.SELECT_RELATED_PRODUCT")}
+                        options={productOptions}
+                      ></Select>
+                    </Form.Item>
+                  </div>
+                  <Button
+                    style={{
+                      color: "red",
+                      borderColor: "red",
+                    }}
+                    variant="outlined"
+                    size="middle"
+                    onClick={() => handleRemovePromotionDetail(index)}
                   >
-                    <Select
-                      value={item.relatedProductId}
-                      onChange={(value) =>
-                        handleChangeNewSelectRelatedProductId(value, index)
-                      }
-                      placeholder={t("ADMIN.SELECT_RELATED_PRODUCT")}
-                      options={productOptions}
-                    ></Select>
-                  </Form.Item>
+                    {t("ADMIN.DELETE_PRODUCT")}
+                  </Button>
                 </div>
               ))}
             </div>

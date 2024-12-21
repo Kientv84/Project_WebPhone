@@ -56,17 +56,15 @@ export const WrapperPriceTextProduct = styled.h1`
   margin-top: 10px;
 `;
 export const WrapperDecriptionTextProduct = styled.h1`
-  /* display: flex; */
-  align-items: center;
   color: rgb(39, 39, 42);
-  gap: 8px;
-  font-size: 20px;
+  gap: 10px; /* Khoảng cách giữa số và nội dung */
+  font-size: 18px;
   line-height: 40px;
   margin-right: 8px;
   font-weight: 200;
   padding: 10px;
   margin-top: 3px;
-  white-space: pre-line;
+  white-space: pre-line; /* Hiển thị xuống dòng đúng */
   min-height: fit-content;
   transition: min-height 1s ease;
 `;
@@ -115,7 +113,7 @@ export const Box = styled.div`
   border: 1px solid rgb(66, 200, 183);
   border-radius: 10px;
   overflow: hidden;
-  width: 60%;
+  width: 70%;
   margin-top: 10px;
 `;
 export const PromotionHeader = styled.div`

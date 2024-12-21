@@ -5,6 +5,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
+  MinusOutlined,
 } from "@ant-design/icons";
 import { WrapperHeader, WrapperUploadFile } from "./style";
 import TableComponent from "../TableComponent/TableComponent";
@@ -749,6 +750,33 @@ const AdminPromotion = () => {
     });
   };
 
+  const handleRemoveBundleProduct = (indexToRemove) => {
+    // Lọc danh sách bundle products, loại bỏ item tại index được chọn
+    const updatedBundleProducts = addrbundleProducts.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setAddrBundleProducts(updatedBundleProducts);
+
+    // Cập nhật statePromotion để giữ đồng bộ với addrbundleProducts
+    const updatedStateBundleProducts = statePromotion.bundleProduct.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setStatePromotion({
+      ...statePromotion,
+      bundleProduct: updatedStateBundleProducts,
+    });
+  };
+
+  const handleRemoveBundleProductDetail = (indexToRemove) => {
+    const updatedBundleProducts = statePromotionDetails.bundleProduct.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setStatePromotionDetails({
+      ...statePromotionDetails,
+      bundleProduct: updatedBundleProducts,
+    });
+  };
+
   return (
     <div>
       <WrapperHeader>{t("ADMIN.MANAGE_PROMOTION")}</WrapperHeader>
@@ -890,25 +918,49 @@ const AdminPromotion = () => {
                   onClick={() => handleAddBundleProduct()}
                 >
                   <PlusOutlined style={{ fontSize: "20px" }} />
-                  ADD
+                  {t("ADMIN.ADD_BUNDLE")}
                 </Button>
               </div>
 
               {addrbundleProducts.map((product, index) => (
-                <Form.Item
-                  key={product.key}
-                  label={t("ADMIN.BUNDLE_PRODUCT")}
-                  name={`bundleProduct_${product.productId}`}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    justifyContent: "flex-end",
+                    paddingLeft: "10px",
+                  }}
                 >
-                  <Select
+                  <Form.Item
+                    style={{
+                      flexGrow: 1, // Form.Item chiếm phần còn lại
+                      maxWidth: "calc(100% - 100px)", // Giới hạn chiều rộng để chừa chỗ cho nút
+                    }}
+                    key={product.key}
+                    label={t("ADMIN.BUNDLE_PRODUCT")}
                     name={`bundleProduct_${product.productId}`}
-                    value={statePromotion.bundleProduct[index]?.productId} // Truyền đúng giá trị từ state
-                    onChange={(value) =>
-                      handleChangeSelectBundleProduct(index, value)
-                    } // Cập nhật giá trị khi chọn sản phẩm
-                    options={productOptions}
-                  />
-                </Form.Item>
+                  >
+                    <Select
+                      name={`bundleProduct_${product.productId}`}
+                      value={statePromotion.bundleProduct[index]?.productId} // Truyền đúng giá trị từ state
+                      onChange={(value) =>
+                        handleChangeSelectBundleProduct(index, value)
+                      } // Cập nhật giá trị khi chọn sản phẩm
+                      options={productOptions}
+                    />
+                  </Form.Item>
+                  <Button
+                    style={{
+                      color: "red",
+                      borderColor: "red",
+                    }}
+                    variant="outlined"
+                    size="middle"
+                    onClick={() => handleRemoveBundleProduct(index)}
+                  >
+                    {t("ADMIN.DELETE_BUNDLE")}
+                  </Button>
+                </div>
               ))}
             </div>
             <Form.Item
@@ -1049,24 +1101,50 @@ const AdminPromotion = () => {
                   onClick={() => handleAddUpdateBundleProduct()}
                 >
                   <PlusOutlined style={{ fontSize: "20px" }} />
-                  ADD
+                  {t("ADMIN.ADD_BUNDLE")}
                 </Button>
               </div>
 
               {statePromotionDetails.bundleProduct.map((item, index) => (
-                <Form.Item
-                  label={t("ADMIN.BUNDLE_PRODUCT")}
-                  name={statePromotionDetails.productId} // Tạo tên duy nhất cho mỗi sản phẩm
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    justifyContent: "flex-end",
+                    paddingLeft: "10px",
+                  }}
                 >
-                  <Select
-                    name={statePromotionDetails.productId}
-                    value={item.productId || undefined} // Đảm bảo truyền đúng giá trị cho Select
-                    onChange={(value) =>
-                      handleChangeNewSelectBundleProduct(index, value)
-                    }
-                    options={productOptions} // Đây phải là một mảng các { label, value }
-                  />
-                </Form.Item>
+                  <Form.Item
+                    style={{
+                      flexGrow: 1, // Form.Item chiếm phần còn lại
+                      maxWidth: "calc(100% - 100px)", // Giới hạn chiều rộng để chừa chỗ cho nút
+                    }}
+                    label={t("ADMIN.BUNDLE_PRODUCT")}
+                    name={statePromotionDetails.productId} // Tạo tên duy nhất cho mỗi sản phẩm
+                  >
+                    <Select
+                      name={statePromotionDetails.productId}
+                      value={item.productId || undefined} // Đảm bảo truyền đúng giá trị cho Select
+                      onChange={(value) =>
+                        handleChangeNewSelectBundleProduct(index, value)
+                      }
+                      options={productOptions} // Đây phải là một mảng các { label, value }
+                    />
+                  </Form.Item>
+                  <div>
+                    <Button
+                      style={{
+                        color: "red",
+                        borderColor: "red",
+                      }}
+                      variant="outlined"
+                      size="middle"
+                      onClick={() => handleRemoveBundleProductDetail(index)}
+                    >
+                      {t("ADMIN.DELETE_BUNDLE")}
+                    </Button>
+                  </div>
+                </div>
               ))}
             </div>
 

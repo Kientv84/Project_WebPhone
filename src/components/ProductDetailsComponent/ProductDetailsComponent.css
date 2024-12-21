@@ -164,3 +164,20 @@
   display: block; /* Mỗi dòng là một khối riêng */
   margin-bottom: 5px; /* Khoảng cách giữa các dòng */
 }
+
+.format-promotion p {
+  font-weight: 600;
+  color: white;
+  margin-right: 10px;
+  font-size: 14px;
+  border-radius: 50%;
+  background-color: rgb(66, 200, 183);
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}

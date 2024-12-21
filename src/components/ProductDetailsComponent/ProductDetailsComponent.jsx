@@ -188,25 +188,37 @@ const ProductDetailsComponent = ({ idProduct }) => {
   //   if (!promotions || !Array.isArray(promotions)) return null;
 
   //   return promotions
-  //     .filter((promotion) => promotion.promotionText?.trim()) // Lọc ra các promotionText không rỗng
-  //     .map((promotion, index) => (
-  //       <div
-  //         key={index}
-  //         className={
-  //           promotion.relatedProductId ? "promotion-link" : "promotion-text"
-  //         }
-  //         onClick={() =>
-  //           promotion.relatedProductId &&
-  //           navigate(`/product-details/${promotion.relatedProductId}`)
-  //         }
-  //       >
-  //         - {promotion.promotionText}
-  //       </div>
-  //     ));
+  //     .filter((promotion) => promotion.promotionText?.trim())
+  //     .map((promotion, index) => {
+  //       const lines = promotion.promotionText.split("\n"); // Chia các dòng xuống
+
+  //       return (
+  //         <div key={index} style={{ marginBottom: "5px" }}>
+  //           {lines.map((line, idx) => (
+  //             <div
+  //               key={idx}
+  //               className={
+  //                 promotion.relatedProductId
+  //                   ? "promotion-link"
+  //                   : "promotion-text"
+  //               }
+  //               onClick={() =>
+  //                 promotion.relatedProductId &&
+  //                 navigate(`/product-details/${promotion.relatedProductId}`)
+  //               }
+  //             >
+  //               - {line} {/* Thêm gạch đầu dòng vào mỗi dòng */}
+  //             </div>
+  //           ))}
+  //         </div>
+  //       );
+  //     });
   // };
 
   const formatPromotion = (promotions) => {
     if (!promotions || !Array.isArray(promotions)) return null;
+
+    let lineNumber = 1; // Số thứ tự toàn cục
 
     return promotions
       .filter((promotion) => promotion.promotionText?.trim())
@@ -214,21 +226,31 @@ const ProductDetailsComponent = ({ idProduct }) => {
         const lines = promotion.promotionText.split("\n"); // Chia các dòng xuống
 
         return (
-          <div key={index} style={{ marginBottom: "5px" }}>
+          <div key={index} style={{ marginBottom: "10px" }}>
             {lines.map((line, idx) => (
               <div
                 key={idx}
-                className={
-                  promotion.relatedProductId
-                    ? "promotion-link"
-                    : "promotion-text"
-                }
-                onClick={() =>
-                  promotion.relatedProductId &&
-                  navigate(`/product-details/${promotion.relatedProductId}`)
-                }
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                }}
+                className="format-promotion"
               >
-                - {line} {/* Thêm gạch đầu dòng vào mỗi dòng */}
+                <p>{lineNumber++}</p>
+                <div
+                  className={
+                    promotion.relatedProductId
+                      ? "promotion-link"
+                      : "promotion-text"
+                  }
+                  onClick={() =>
+                    promotion.relatedProductId &&
+                    navigate(`/product-details/${promotion.relatedProductId}`)
+                  }
+                >
+                  {line}
+                </div>
               </div>
             ))}
           </div>
