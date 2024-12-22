@@ -340,6 +340,7 @@ const resources = {
         DISCOUNT_PERCENTAGE: "Discount",
         MINIMUM_QUANTITY: "Minimum Quantity",
         TRIGGER_PRODUCT: "Trigger Product",
+        
         APPLY_ERROR:
           "No changes were made. Please update the fields before applying!",
         UPDATE_STOCK: "Update count in stock",
@@ -349,6 +350,10 @@ const resources = {
         DELETE_PRODUCT: "DELETE",
         ADD_BUNDLE: "ADD",
         DELETE_BUNDLE: "DELETE",
+        
+        STOCK_MUST_BE_GREATER_THAN_10: "Quantity of goods is low, please import more!"
+
+
       },
       PAYMENT: {
         TITLE: "Payment",
@@ -841,6 +846,7 @@ const resources = {
         MINIMUM_QUANTITY: "Số lượng tối thiểu",
         TRIGGER_PRODUCT: "Sản phẩm kích hoạt",
         DISCOUNT_PRICE: "Giá giảm",
+
         APPLY_ERROR:
           "Không có thay đổi nào được thực hiện. Vui lòng cập nhật các trường trước khi áp dụng!",
         UPDATE_STOCK: "Cập nhật số lượng hàng hóa",
@@ -851,6 +857,10 @@ const resources = {
         DELETE_PRODUCT: "XÓA",
         ADD_BUNDLE: "THÊM",
         DELETE_BUNDLE: "XÓA",
+
+        STOCK_MUST_BE_GREATER_THAN_10: "Số lượng hàng hóa thấp, bạn hãy nhập thêm!"
+
+
       },
       PAYMENT: {
         TITLE: "Thanh toán",

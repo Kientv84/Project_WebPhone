@@ -174,7 +174,7 @@ const HomePage = () => {
               range
               step={500000}
               min={1000}
-              max={70000000}
+              max={60000000}
               value={priceRange}
               onChange={onSliderChange}
             />
