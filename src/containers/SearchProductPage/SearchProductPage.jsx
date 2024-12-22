@@ -141,15 +141,17 @@ const SearchProductPage = () => {
             ) : query.trim() === "" || products?.length === 0 ? (
               <div className="container_searchnotfound">
                 <h1 className="search-result">
-                  Tìm thấy <strong>0</strong> sản phẩm cho từ khoá
+                  {t("SEARCHPRODUCT.FIND")} <strong>0</strong>{" "}
+                  {t("SEARCHPRODUCT.KEY_WORD")}
                   <strong> '{query}' </strong>
                 </h1>
-                <p>Không có kết quả bạn cần tìm</p>
+                <p> {t("SEARCHPRODUCT.NO_RESULT")}</p>
               </div>
             ) : (
               <>
                 <h1 className="search-result">
-                  Tìm thấy <strong>{totalProducts}</strong> sản phẩm cho từ khoá
+                  {t("SEARCHPRODUCT.FIND")} <strong>{totalProducts}</strong>{" "}
+                  {t("SEARCHPRODUCT.KEY_WORD")}
                   <strong> '{query}' </strong>
                 </h1>
 
@@ -189,6 +191,8 @@ const SearchProductPage = () => {
             <div
               style={{
                 marginTop: "30px",
+                display: "flex", // Centering pagination horizontally
+                justifyContent: "center",
               }}
             >
               <Pagination

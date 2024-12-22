@@ -175,6 +175,7 @@ const resources = {
         ORDER_ADDRESS: "Address",
         ORDER_CITY: "City",
         ORDER_PAYMENT_METHOD: "Payment method",
+        ORDER_TYPE_OF_DELIVERY: "Type of delivery",
         ORDER_TOTAL_PRICE: "Total price",
         ORDER_PAID: "Paid",
         ORDER_UPDATE_PAY: "Update Payment",
@@ -454,29 +455,31 @@ const resources = {
       SEARCHPRODUCT: {
         BACK_HOMEPAGE: "Home page",
         SEARCH_RESULT: "Search results for:",
+        NO_RESULT: "No results found",
+        FIND: "Find",
+        KEY_WORD: "products for keywords",
       },
 
       DASHBOARD: {
-      WEEKLY_TITLE: "Revenue Statistics by Week",
-      WEEKLY_AVG: "Average weekly revenue:",
-      WEEKLY_START: "Week:",
-      WEEKLY_TOTAL: "Total:",
+        WEEKLY_TITLE: "Revenue Statistics by Week",
+        WEEKLY_AVG: "Average weekly revenue:",
+        WEEKLY_START: "Week:",
+        WEEKLY_TOTAL: "Total:",
 
-      TABLE_TITLE_1: "Top Best-Selling Products!",
-      TABLE_TITLE_2: "Products Least Interested by Customers!",
-      TABLE_TOP: "Rank",
-      TABLE_NAME: "Product Name",
-      TABLE_QUAN: "sold",
+        TABLE_TITLE_1: "Top Best-Selling Products!",
+        TABLE_TITLE_2: "Products Least Interested by Customers!",
+        TABLE_TOP: "Rank",
+        TABLE_NAME: "Product Name",
+        TABLE_QUAN: "sold",
 
-      DEPOSIT_TITLE: "Order Statistics",
-      DEPOSIT_TOTAL: "Total Orders",
-      DEPOSIT_SUS: "Successfully Delivered Orders",
-      DEPOSIT_PEDDING: "Orders on the Way",
-      DEPOSIT_CANCEL: "Cancelled Orders",
-      DEPOSIT_CHART: "Chart of orders by Payment method",
-      DASHBOARD: "Dashboard"
+        DEPOSIT_TITLE: "Order Statistics",
+        DEPOSIT_TOTAL: "Total Orders",
+        DEPOSIT_SUS: "Successfully Delivered Orders",
+        DEPOSIT_PEDDING: "Orders on the Way",
+        DEPOSIT_CANCEL: "Cancelled Orders",
+        DEPOSIT_CHART: "Chart of orders by Payment method",
+        DASHBOARD: "Dashboard",
       },
-
 
       FILTER: {
         TITLE: "Filter",
@@ -683,6 +686,7 @@ const resources = {
         ORDER_ADDRESS: "Địa chỉ",
         ORDER_CITY: "Thành Phố",
         ORDER_PAYMENT_METHOD: "Phương thức thanh toán",
+        ORDER_TYPE_OF_DELIVERY: "Loại giao hàng",
         ORDER_TOTAL_PRICE: "Tổng tiền",
         ORDER_PAID: "Đã trả",
         ORDER_UPDATE_PAY: "Cập nhật thanh toán",
@@ -979,9 +983,12 @@ const resources = {
       SEARCHPRODUCT: {
         BACK_HOMEPAGE: "Trang chủ",
         SEARCH_RESULT: "Kết quả tìm kiếm cho:",
+        NO_RESULT: "Không có kết quả cần tìm",
+        FIND: "Tìm thấy",
+        KEY_WORD: "sản phẩm cho từ khoá",
       },
 
-       DASHBOARD: {
+      DASHBOARD: {
         WEEKLY_TITLE: "Thống kê Doanh thu theo Tuần",
         WEEKLY_AVG: "Doanh thu trung bình mỗi tuần:",
         WEEKLY_START: "Tuần:",
@@ -999,8 +1006,7 @@ const resources = {
         DEPOSIT_PEDDING: "Đơn hàng đang trên đường vẫn chuyển",
         DEPOSIT_CANCLE: "Đơn hàng bị hủy",
         DEPOSIT_CHART: "Biểu Đồ tròn hiển thị phương thức thanh toán",
-        DASHBOARD: "Thống kê"
-
+        DASHBOARD: "Thống kê",
       },
 
       FILTER: {

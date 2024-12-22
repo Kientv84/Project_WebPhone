@@ -208,17 +208,6 @@ const PaymentPage = () => {
     );
   }, [order, promotions]);
 
-  const priceDiscountMemo = useMemo(() => {
-    const result = order?.orderItemsSelected?.reduce((total, cur) => {
-      const totalDiscount = cur.discount ? cur.discount : 0;
-      return total + (priceMemo * (totalDiscount * cur.amount)) / 100;
-    }, 0);
-    if (Number(result)) {
-      return result;
-    }
-    return 0;
-  }, [order]);
-
   const deliveryPriceMemo = useMemo(() => {
     if (priceMemo >= 1 && priceMemo < 200000) {
       return 30000;
@@ -257,6 +246,7 @@ const PaymentPage = () => {
         phone: user?.phone,
         city: user?.city,
         paymentMethod: payment,
+        typeofdelivery: delivery === "fast" ? "GHTK" : "VIETTELPOST",
         itemsPrice: priceMemo,
         shippingPrice: deliveryPriceMemo,
         totalPrice: totalPriceMemo,
@@ -290,6 +280,7 @@ const PaymentPage = () => {
               phone: user?.phone,
               city: user?.city,
               paymentMethod: "qr_code",
+              typeofdelivery: delivery === "fast" ? "GHTK" : "VIETTELPOST",
               itemsPrice: priceMemo,
               shippingPrice: deliveryPriceMemo,
               totalPrice: totalPriceMemo,
@@ -403,6 +394,7 @@ const PaymentPage = () => {
       phone: user?.phone,
       city: user?.city,
       paymentMethod: payment,
+      typeofdelivery: delivery === "fast" ? "GHTK" : "VIETTELPOST",
       itemsPrice: priceMemo,
       shippingPrice: deliveryPriceMemo,
       totalPrice: totalPriceMemo,
@@ -599,13 +591,13 @@ const PaymentPage = () => {
                   <WrapperRadio onChange={handleDelivery} value={delivery}>
                     <Radio value="fast">
                       <span style={{ color: "#ea8500", fontWeight: "bold" }}>
-                        FAST
+                        GHTK
                       </span>{" "}
                       {t("PAYMENT.FAST_GO_JECT")}
                     </Radio>
                     <Radio value="gojek">
                       <span style={{ color: "#ea8500", fontWeight: "bold" }}>
-                        GO_JEK
+                        VIETTELPOST
                       </span>{" "}
                       {t("PAYMENT.FAST_GO_JECT")}
                     </Radio>

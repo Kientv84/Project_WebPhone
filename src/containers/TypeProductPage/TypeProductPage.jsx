@@ -173,6 +173,8 @@ const TypeProductPage = () => {
             <div
               style={{
                 marginTop: "30px",
+                display: "flex", // Centering pagination horizontally
+                justifyContent: "center",
               }}
             >
               <Pagination
