@@ -145,39 +145,3 @@
   width: fit-content;
   margin-top: 20px;
 }
-
-.promotion-link {
-  color: black; /* Màu mặc định */
-  transition: color 0.3s ease; /* Tạo hiệu ứng chuyển màu mượt */
-  display: block;
-}
-
-.promotion-link:hover {
-  color: #0a0a0a; /* Đổi sang màu xanh khi hover */
-  text-decoration: underline; /* Gạch chân khi hover */
-  cursor: pointer;
-}
-
-.promotion-text {
-  color: black;
-  cursor: default;
-  display: block; /* Mỗi dòng là một khối riêng */
-  margin-bottom: 5px; /* Khoảng cách giữa các dòng */
-}
-
-.format-promotion p {
-  font-weight: 600;
-  color: white;
-  margin-right: 10px;
-  font-size: 14px;
-  border-radius: 50%;
-  background-color: rgb(66, 200, 183);
-  text-align: center;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-}

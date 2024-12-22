@@ -18,11 +18,18 @@ import Promotion from "../../assets/images/promotions.svg";
 
 import { useTranslation } from "react-i18next";
 import AdminDashboard from "../../components/AdminDashboard/AdminDashboard";
+import { useLocation } from "react-router-dom";
 
 const AdminPage = () => {
   const [keySelected, setKeySelected] = useState("dashboard");
 
   const { t } = useTranslation();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   const items = [
     getItem(t("DASHBOARD.DASHBOARD"), "dashboard", <DashboardOutlined />),

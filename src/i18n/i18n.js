@@ -17,11 +17,12 @@ const resources = {
         LOGOUT: "Log Out",
         SIGN_IN_UP: " Sign-In/ Sign-Up",
         ACCOUNT: "Account",
-        PRODUCT_SUGGET: "Product suggests",
+        PRODUCT_SUGGEST: "Product suggests",
         MY_INFOR: " My Information",
         MANAGE: "Management",
         MY_ORDER: "My Order",
         LOG_OUT: "Log Out",
+        NO_RESULT: "No results found",
       },
       MY_ODER: {
         TITLE: "My Oder",
@@ -36,18 +37,18 @@ const resources = {
         IS_PAID: "Payment status",
         PAID: "Paid",
         UN_PAID: "UnPaid",
-        DELETE_ORDER: "Delete Oder ",
+        DELETE_ORDER: "Cancel Oder ",
         MORE_DETAILS: "More Details",
-        TOAST_SUCCESS: "Delete order Success",
-        TOAST_FAILED: "Delete order Failed",
+        TOAST_SUCCESS: "Cancel order Success",
+        TOAST_FAILED: "Cancel order Failed",
         TOTAL: "Total",
         BACK_HOMEPAGE: "Home page",
         UNKNOWN: "Unknown",
         ORDER_ID: "Order ID",
         ORDER_CREATED_AT: "Created date",
         CANCELLED: "Cancelled",
-        CONFIRM_CANCEL_ORDER: "Confirm delete order ",
-        CONFIRM_CANCEL_MESSAGE: "Are you sure you want to delete this order?",
+        CONFIRM_CANCEL_ORDER: "Confirm Cancel order ",
+        CONFIRM_CANCEL_MESSAGE: "Are you sure you want to Cancel this order?",
       },
       ORDER: {
         DELIVERRED_DES1: "Below 200.000 VND",
@@ -100,7 +101,7 @@ const resources = {
         TITLE_FORGOT_PASS: "Enter Your Email",
         FORGOT_PLACEHOODER: "Enter your email address",
         BUTTON_FORGOT: "Send",
-        CONFIRM_PASS: "Confirm password",
+        CONFIRM_PASS: "confirm password",
         RES_BUTTON: "Register",
         ENTER_NEW_PASS: "Enter New Password",
         RES_TEXT: "You already have an account yet?",
@@ -115,6 +116,7 @@ const resources = {
         BACK_HOMEPAGE: "Home page",
         PRODUCT_INFOR: "Product Information",
         STAR: "Star",
+        SOLD: "Sold",
         SOLD_OUT: "Sold Out",
         MESSAGE_SUCCESS: "Success to add product to cart",
         PROMOTION: "Promotion",
@@ -122,6 +124,7 @@ const resources = {
         DESCRIPTION: "Description",
         PURCHASE: "Purchase now",
         ADD_CART: "Add to cart",
+        BUY_WITH_SHOCKING_PRICE: "Buy with a shocking price",
       },
       LOGIN_TOAST: {
         TOAST_SUCCESS: "Logged in successfully",
@@ -224,7 +227,7 @@ const resources = {
         MESS_DELETE_USER: "Are you sure you want to delete this user?",
 
         DELETE_ORDER: "Delete Order",
-        MESS_DELETE_ORDER: "Are you sure you want to delete this order?",
+        MESS_DELETE_ORDER: "Are you sure you want to Delete this order?",
         CANCEL_BUTTON: "Cancel",
         OKE_BUTTON: "Delete",
 
@@ -248,6 +251,7 @@ const resources = {
         NEW_IMG_2: "Image Product",
         SELECT_IMG_PRODUCT: "Select File",
         BUTTON_SUBMID_ADD_PRODUCT: "Submit",
+        BUTTON_SUBMID_ADD_PROMOTION: "Submit",
         PRODUCT_DETAIL: "Product Details",
         PROMOTION_DETAIL: "Promotion Details",
         BUNDLE_PRODUCT: "Bundle product",
@@ -307,6 +311,9 @@ const resources = {
         UPDATE_FAIL_BRAND:
           "The promotion with this brand already exists. Please choose a different brand!",
 
+        UPDATE_FAIL_TRIGGER_PRODUCT_DUPLICATE:
+          "The promotion with this trigger product already exists. Please choose a different trigger product!",
+
         DELETE_ORDER_SUCCESS: "Delete order sucess!",
         DELETE_ORDER_FAIL: "Delete order fail!",
         UPDATE_ORDER_SUCCESS: "Update order sucess!",
@@ -325,14 +332,27 @@ const resources = {
         DELETE_MANY_FAIL_PROMOTION: "Delete many promotion fail!",
 
         QUANLITY_ADMIN: "Quantity",
-        PROMOTION: "Promotion",
+        PROMOTION: "Promotions",
+        MANAGE_PROMOTION: "Manage Promotions",
         TITILE_NO: "PRODUCT LIST IS ABOUT TO END UP, NEED TO IMPORT MORE!",
         MONTH: "Month",
         YEAR: "Year",
         DISCOUNT_PERCENTAGE: "Discount",
         MINIMUM_QUANTITY: "Minimum Quantity",
         TRIGGER_PRODUCT: "Trigger Product",
+        
+        APPLY_ERROR:
+          "No changes were made. Please update the fields before applying!",
+        UPDATE_STOCK: "Update count in stock",
+        RELATED_PRODUCT_ID: "Related Product",
+        SELECT_RELATED_PRODUCT: "Select related product",
+        ADD_PRODUCT: "ADD",
+        DELETE_PRODUCT: "DELETE",
+        ADD_BUNDLE: "ADD",
+        DELETE_BUNDLE: "DELETE",
+        
         STOCK_MUST_BE_GREATER_THAN_10: "Quantity of goods is low, please import more!"
+
 
       },
       PAYMENT: {
@@ -507,11 +527,12 @@ const resources = {
         LOGOUT: "Đăng xuất",
         SIGN_IN_UP: " Đăng nhập/ Đăng ký",
         ACCOUNT: "Tài khoản",
-        PRODUCT_SUGGET: "Gợi ý sản phẩm",
+        PRODUCT_SUGGEST: "Gợi ý sản phẩm",
         MY_INFOR: " Thông tin của tôi",
         MANAGE: "Quản lý sản phẩm",
         MY_ORDER: "Đơn hàng của tôi",
         LOG_OUT: "Đăng xuất",
+        NO_RESULT: "Không có kết quả cần tìm",
       },
       MY_ODER: {
         TITLE: "Đơn hàng của tôi",
@@ -528,16 +549,16 @@ const resources = {
         UN_PAID: "Chưa thanh toán",
         DELETE_ORDER: "Hủy đơn hàng",
         MORE_DETAILS: "Xem chi tiết",
-        TOAST_SUCCESS: "Xóa đơn hàng thành công",
-        TOAST_FAILED: "Xóa đơn hàng thất bại",
+        TOAST_SUCCESS: "Hủy đơn hàng thành công",
+        TOAST_FAILED: "Hủy đơn hàng thất bại",
         TOTAL: "Tổng đơn hàng",
         BACK_HOMEPAGE: "Trang chủ",
         UNKNOWN: "Không xác định",
         ORDER_ID: "Mã đơn hàng",
         ORDER_CREATED_AT: "Ngày tạo",
         CANCELLED: "Đã hủy đơn hàng",
-        CONFIRM_CANCEL_ORDER: "Xác nhận xóa đơn hàng ",
-        CONFIRM_CANCEL_MESSAGE: "Bạn có chắc chắn muốn xóa đơn hàng này không?",
+        CONFIRM_CANCEL_ORDER: "Xác nhận hủy đơn hàng ",
+        CONFIRM_CANCEL_MESSAGE: "Bạn có chắc chắn muốn hủy đơn hàng này không?",
       },
       ORDER: {
         DELIVERRED_DES1: "Dưới 200.000 VND",
@@ -605,6 +626,7 @@ const resources = {
         BACK_HOMEPAGE: "Trang chủ",
         PRODUCT_INFOR: "Thông tin về sản phẩm",
         STAR: "Sao",
+        SOLD: "Đã bán",
         SOLD_OUT: "Hết hàng",
         MESSAGE_SUCCESS: "Thêm giỏ hàng thành công",
         PROMOTION: "Khuyến mãi",
@@ -612,6 +634,7 @@ const resources = {
         DESCRIPTION: "Mô tả",
         PURCHASE: "Mua ngay",
         ADD_CART: "Thêm giỏ hàng",
+        BUY_WITH_SHOCKING_PRICE: "Mua kèm giá sốc",
       },
       LOGIN_TOAST: {
         TOAST_SUCCESS: "Đăng nhập thành công",
@@ -660,6 +683,7 @@ const resources = {
         PRODUCT_BRANCH: "Thương hiệu",
         BUNDLE_PRODUCT: "Gói sản phẩm",
         PRODUCT_PROMOTION: "Khuyến mãi",
+        MANAGE_PROMOTION: "Quản lý khuyến mãi",
 
         PLACEHOODER_PRODCUT_NAME: "Vui lòng nhập tên sản phẩm!",
         PLACEHOODER_TYPE: "Vui lòng nhập loại sản phẩm!",
@@ -716,6 +740,8 @@ const resources = {
         ORDER_NUMBER: "Mã đơn hàng",
         UPDATE_FAIL_BRAND:
           "Promotion với brand này đã tồn tại. Vui lòng chọn brand khác!",
+        UPDATE_FAIL_TRIGGER_PRODUCT_DUPLICATE:
+          "Promotion với sản phẩm kích hoạt này đã tồn tại. Vui lòng chọn sản phẩm kích hoạt khác!",
 
         DELETE_USER: "Xóa người dùng",
         MESS_DELETE_USER: "Bạn có chắc sẽ xóa người dùng này?",
@@ -760,6 +786,7 @@ const resources = {
         NEW_IMG_2: "Ảnh 2",
         SELECT_IMG_PRODUCT: "Chọn hình ảnh",
         BUTTON_SUBMID_ADD_PRODUCT: "Lưu sản phẩm",
+        BUTTON_SUBMID_ADD_PROMOTION: "Lưu khuyến mãi",
         PRODUCT_DETAIL: "Chi tiết sản phẩm",
         PROMOTION_DETAIL: "Chi tiết mã khuyến mãi",
 
@@ -819,7 +846,20 @@ const resources = {
         MINIMUM_QUANTITY: "Số lượng tối thiểu",
         TRIGGER_PRODUCT: "Sản phẩm kích hoạt",
         DISCOUNT_PRICE: "Giá giảm",
+
+        APPLY_ERROR:
+          "Không có thay đổi nào được thực hiện. Vui lòng cập nhật các trường trước khi áp dụng!",
+        UPDATE_STOCK: "Cập nhật số lượng hàng hóa",
+        RELATED_PRODUCT_ID: "Sản phẩm liên quan",
+        SELECT_RELATED_PRODUCT: "Chọn sản phẩm liên quan",
+
+        ADD_PRODUCT: "THÊM",
+        DELETE_PRODUCT: "XÓA",
+        ADD_BUNDLE: "THÊM",
+        DELETE_BUNDLE: "XÓA",
+
         STOCK_MUST_BE_GREATER_THAN_10: "Số lượng hàng hóa thấp, bạn hãy nhập thêm!"
+
 
       },
       PAYMENT: {

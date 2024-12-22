@@ -142,6 +142,15 @@ const HeaderComponent = ({
       .trim();
   };
 
+  // const removeVietnameseTones = (str) => {
+  //   return str
+  //     .normalize("NFD")
+  //     .replace(/[\u0300-\u036f]/g, "")
+  //     .replace(/đ/g, "d")
+  //     .replace(/Đ/g, "D")
+  //     .trim();
+  // };
+
   const onSearch = (searchTerm) => {
     setSearch(searchTerm);
   };
@@ -425,67 +434,62 @@ const HeaderComponent = ({
                 />
               </div>
               <div className="dropdown">
-                {products?.data?.filter((product) => {
-                  const searchTerm = removeVietnameseTones(
-                    search.toLowerCase()
-                  );
-                  const productNameLower = removeVietnameseTones(
-                    product.name.toLowerCase()
-                  );
-                  return (
-                    searchTerm &&
-                    productNameLower.includes(searchTerm) &&
-                    productNameLower !== searchTerm
-                  );
-                }).length > 0 && (
-                  <p className="title-box">{t("HEADER.PRODUCT_SUGGET")}</p>
-                )}
-
-                {products?.data
-                  ?.filter((product) => {
-                    const searchTerm = removeVietnameseTones(
-                      search.toLowerCase()
-                    );
-                    const productNameLower = removeVietnameseTones(
-                      product.name.toLowerCase()
-                    );
-                    return (
-                      searchTerm &&
-                      productNameLower.includes(searchTerm) &&
-                      productNameLower !== searchTerm
-                    );
-                  })
-                  .slice(0, 10)
-                  .map((product) => (
-                    <div
-                      onClick={() => onSearch(product.name)}
-                      className="dropdown-row"
-                      key={product._id}
-                    >
-                      <img
-                        onClick={() => handleDetailProduct(product._id)}
-                        src={product.image} // Đường dẫn tới ảnh sản phẩm
-                        alt={product.name}
-                      />
-                      <div>
-                        <span onClick={() => handleDetailProduct(product._id)}>
-                          {product.name}
-                        </span>
-
-                        <span
-                          onClick={() => handleDetailProduct(product._id)}
-                          style={{
-                            display: "block",
-                            color: "#db003b",
-                            fontSize: "12px",
-                            fontWeight: "600",
-                          }}
-                        >
-                          {convertPrice(product.price)}
-                        </span>
+                {
+                  search && search.trim() ? ( // Check if there is an active search term
+                    products?.data?.filter((product) => {
+                      const searchTerm = removeVietnameseTones(
+                        search.toLowerCase()
+                      );
+                      const productNameLower = removeVietnameseTones(
+                        product.name.toLowerCase()
+                      );
+                      return productNameLower.includes(searchTerm);
+                    }).length > 0 ? (
+                      <>
+                        <p className="title-box">
+                          {t("HEADER.PRODUCT_SUGGEST")}
+                        </p>
+                        {products?.data
+                          ?.filter((product) => {
+                            const searchTerm = removeVietnameseTones(
+                              search.toLowerCase()
+                            );
+                            const productNameLower = removeVietnameseTones(
+                              product.name.toLowerCase()
+                            );
+                            return productNameLower.includes(searchTerm);
+                          })
+                          .slice(0, 10)
+                          .map((product) => (
+                            <div
+                              onClick={() => handleDetailProduct(product._id)}
+                              className="dropdown-row"
+                              key={product._id}
+                            >
+                              <img src={product.image} alt={product.name} />
+                              <div>
+                                <span>{product.name}</span>
+                                <span
+                                  style={{
+                                    display: "block",
+                                    color: "#db003b",
+                                    fontSize: "12px",
+                                    fontWeight: "600",
+                                  }}
+                                >
+                                  {convertPrice(product.price)}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                      </>
+                    ) : (
+                      <div className="no-results">
+                        <p>{t("HEADER.NO_RESULT")}</p>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  ) : null /* Do not render anything if search is empty */
+                }
               </div>
             </Col>
           )}

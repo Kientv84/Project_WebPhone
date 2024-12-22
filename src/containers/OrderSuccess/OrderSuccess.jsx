@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Label,
   WrapperInfo,
@@ -18,6 +18,10 @@ const OrderSuccess = () => {
   const { state } = location;
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   return (
     <div

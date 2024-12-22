@@ -30,7 +30,8 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useTranslation } from "react-i18next";
 import { FilterOutlined } from "@ant-design/icons";
-import { Popover, Slider, Button, Row, Col } from "antd";
+import { Popover, Slider, Row, Col } from "antd";
+import { useLocation } from "react-router-dom";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -44,6 +45,12 @@ const HomePage = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showSlider, setShowSlider] = useState(true);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" }); // Cuộn cả chiều ngang và dọc về đầu trang
+  }, [location]);
 
   const fetchProductAll = async (context) => {
     const limit = (context?.queryKey && context?.queryKey[1]) || 12;
@@ -115,7 +122,6 @@ const HomePage = () => {
     const handlePriceFilter = (minPrice, maxPrice) => {
       setPriceRange([minPrice, maxPrice]);
       filterProductsByPrice(minPrice, maxPrice); // gọi hàm lọc sản phẩm
-      setShowSlider(false);
     };
 
     const onSliderChange = (value) => {
@@ -233,26 +239,20 @@ const HomePage = () => {
     setFilteredProducts(filteredProducts);
   };
 
-  const onSliderChange = (value) => {
-    setPriceRange(value);
-  };
-
   return (
-    <div style={{ minWidth: "100vw" }}>
+    <div>
       <Loading isLoading={isLoading}>
         <div
           className="body"
           style={{
-            width: "100%",
+            width: "100vw",
             backgroundColor: "#efefef",
-            margin: "0",
           }}
         >
           <div
             style={{
               display: "flex",
-              width: "100%",
-              maxWidth: "1270px",
+              width: "1270px",
               margin: "65px auto 0",
               gap: "20px",
               paddingBottom: "20px",

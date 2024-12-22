@@ -41,10 +41,14 @@ const ProductDetailsComponent = ({ idProduct }) => {
   const [ErrorLimitOrder, setErrorLimitOrder] = useState(false);
   const { t } = useTranslation();
 
-  const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const [productName, setProductName] = useState("");
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   const onChange = (value) => {
     setNumProduct(Number(value));
@@ -54,7 +58,10 @@ const ProductDetailsComponent = ({ idProduct }) => {
     const id = context?.queryKey && context?.queryKey[1];
     if (id) {
       const res = await ProductService.getDetailsProduct(id);
-      return res.data;
+      if (res?.data) {
+        setProductName(res.data.name); // Lưu tên sản phẩm
+      }
+      return res?.data;
     }
   };
 
@@ -177,26 +184,131 @@ const ProductDetailsComponent = ({ idProduct }) => {
       .join("\n");
   };
 
-  const formatPromotion = (promotion) => {
-    return promotion
-      .split("\n")
-      .map((line) => `- ${line}`)
-      .join("\n");
-  };
+  // const formatPromotion = (promotions) => {
+  //   if (!promotions || !Array.isArray(promotions)) return null;
 
-  const handlePromotionClick = () => {
-    const targetProductId =
-      productDetails.linkedProductId || productDetails._id;
-    if (targetProductId) {
-      navigate(`/product-details/${targetProductId}`);
-    } else {
-      console.error("Product ID is not defined");
-    }
+  //   return promotions
+  //     .filter((promotion) => promotion.promotionText?.trim())
+  //     .map((promotion, index) => {
+  //       const lines = promotion.promotionText.split("\n"); // Chia các dòng xuống
+
+  //       return (
+  //         <div key={index} style={{ marginBottom: "5px" }}>
+  //           {lines.map((line, idx) => (
+  //             <div
+  //               key={idx}
+  //               className={
+  //                 promotion.relatedProductId
+  //                   ? "promotion-link"
+  //                   : "promotion-text"
+  //               }
+  //               onClick={() =>
+  //                 promotion.relatedProductId &&
+  //                 navigate(`/product-details/${promotion.relatedProductId}`)
+  //               }
+  //             >
+  //               - {line} {/* Thêm gạch đầu dòng vào mỗi dòng */}
+  //             </div>
+  //           ))}
+  //         </div>
+  //       );
+  //     });
+  // };
+
+  const formatPromotion = (promotions) => {
+    if (!promotions || !Array.isArray(promotions)) return null;
+
+    let lineNumber = 1; // Số thứ tự toàn cục
+
+    return promotions
+      .filter((promotion) => promotion.promotionText?.trim())
+      .map((promotion, index) => {
+        const lines = promotion.promotionText.split("\n"); // Chia các dòng xuống
+
+        return (
+          <div key={index} style={{ marginBottom: "10px" }}>
+            {lines.map((line, idx) => (
+              <div
+                key={idx}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                }}
+                className="format-promotion"
+              >
+                <p>{lineNumber++}</p>
+                <div
+                  className={
+                    promotion.relatedProductId
+                      ? "promotion-link"
+                      : "promotion-text"
+                  }
+                  onClick={() =>
+                    promotion.relatedProductId &&
+                    navigate(`/product-details/${promotion.relatedProductId}`)
+                  }
+                >
+                  {line}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      });
   };
 
   return (
     <div>
       <Loading isLoading={isLoading}>
+        <div
+          style={{
+            fontWeight: "normal",
+            marginTop: "5px",
+            fontSize: "15px",
+            marginTop: "20px",
+          }}
+        >
+          {" "}
+          <span
+            style={{
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "14px",
+              color: "#707070",
+            }}
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            {t("PRODUCT_DETAILS.BACK_HOMEPAGE")}
+          </span>{" "}
+          <svg
+            style={{
+              margin: "0 10px 0 6px",
+              width: "14px",
+              color: "#707070",
+              height: "14px",
+              verticalAlign: "middle",
+            }}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 320 512"
+          >
+            <path
+              fill="currentColor"
+              d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"
+            ></path>
+          </svg>
+          <span
+            style={{
+              fontSize: "14px", // Kích thước chữ
+              fontWeight: "bold", // Kiểu chữ đậm
+              color: "#707070", // Màu chữ (ví dụ: đỏ cam)
+            }}
+          >
+            {productName}
+          </span>
+        </div>
         <Row
           style={{
             padding: "25px",
@@ -318,7 +430,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
               />
               <WrapperStyleTextSell>
                 {" "}
-                | {t("PRODUCT_DETAILS.STAR")} {productDetails?.selled}
+                | {t("PRODUCT_DETAILS.SOLD")} {productDetails?.selled}
               </WrapperStyleTextSell>
             </div>
             <WrapperPriceProduct>
@@ -368,19 +480,9 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   </div>
                 </div>
               </PromotionHeader>
-              {/* <WrapperDecriptionTextProduct>
-                {productDetails?.promotion &&
-                  formatDescription(productDetails?.promotion)}
-              </WrapperDecriptionTextProduct> */}
               <WrapperDecriptionTextProduct>
-                {productDetails?.promotion ? (
-                  <span className="promotion" onClick={handlePromotionClick}>
-                    {productDetails.linkedProductName ||
-                      formatPromotion(productDetails.promotion)}
-                  </span>
-                ) : (
-                  <span>No Promotion</span>
-                )}
+                {productDetails?.promotion &&
+                  formatPromotion(productDetails?.promotion)}
               </WrapperDecriptionTextProduct>
             </Box>
 

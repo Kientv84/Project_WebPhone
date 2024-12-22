@@ -169,6 +169,10 @@ const AdminOrder = () => {
   }, [rowSelected, isOpenDrawer, fetchGetDetailsOrder]);
 
   const handleOnChange = (field, value) => {
+    if (field === "isDelivered" || field === "isPaid") {
+      return; // Không cập nhật các giá trị này
+    }
+
     setOrderState({
       ...orderState,
       [field]: value,
@@ -382,7 +386,6 @@ const AdminOrder = () => {
         const productNames = order.orderItems
           .map((item) => item.name)
           .join(", ");
-        console.log("Order typeofdelivery:", order.typeofdelivery);
         return {
           ...order,
           key: order._id,
@@ -422,6 +425,16 @@ const AdminOrder = () => {
       ?.sort((a, b) => b.createdAt - a.createdAt);
 
   const onUpdateOrder = (values) => {
+    // Kiểm tra xem có sự thay đổi thực sự không
+    const isUnchanged =
+      values.isDelivered === orderState.isDelivered &&
+      values.isPaid === orderState.isPaid;
+
+    if (isUnchanged) {
+      message.error(t("ADMIN.APPLY_ERROR"));
+      return; // Dừng lại nếu không có thay đổi
+    }
+
     const updateDeliveryPromise = mutationUpdate.mutateAsync({
       id: rowSelected,
       token: user?.access_token,

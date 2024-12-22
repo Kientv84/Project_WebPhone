@@ -28,6 +28,10 @@ const MyOrderPage = () => {
   const [isModalOpenCancelOrder, setIsModalOpenCancelOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
+
   const fetchMyOrder = async () => {
     if (!state?.id || !state?.token) {
       throw new Error("Invalid state");
@@ -106,13 +110,13 @@ const MyOrderPage = () => {
     data: dataCancel,
   } = mutation;
 
-  useEffect(() => {
-    if (isSuccessCancel && dataCancel?.status === "OK") {
-      message.success();
-    } else if (isErrorCancel) {
-      message.error();
-    }
-  }, [isErrorCancel, isSuccessCancel, dataCancel]);
+  // useEffect(() => {
+  //   if (isSuccessCancel && dataCancel?.status === "OK") {
+  //     message.success();
+  //   } else if (isErrorCancel) {
+  //     message.error();
+  //   }
+  // }, [isErrorCancel, isSuccessCancel, dataCancel]);
 
   const renderProduct = (data) => {
     return data?.map((order) => {

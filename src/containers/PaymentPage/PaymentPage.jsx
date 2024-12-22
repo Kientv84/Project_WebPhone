@@ -26,7 +26,7 @@ import * as OrderService from "../../services/OrderService";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from "../../components/Message/Message";
 import { updateUser } from "../../redux/slice/userslide";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { PayPalButton } from "react-paypal-button-v2";
 import * as PaymentService from "../../services/PaymentService";
 import { useTranslation } from "react-i18next";
@@ -61,6 +61,12 @@ const PaymentPage = () => {
   const [form] = Form.useForm();
 
   const dispatch = useDispatch();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   useEffect(() => {
     form.setFieldsValue(stateUserDetails);
@@ -113,7 +119,7 @@ const PaymentPage = () => {
       itemsByBrand[item.branch].totalQuantity += item.amount;
     });
 
-    // Điều kiện 1: Giảm giá số tiền cố định khi mua tối thiểu 2 sản phẩm từ cùng một brand
+    // Gộp Điều kiện 1 và Điều kiện 3: Giảm giá cố định và bundle sản phẩm cho cùng một thương hiệu
     for (const [brand, { items, totalQuantity }] of Object.entries(
       itemsByBrand
     )) {
@@ -121,13 +127,61 @@ const PaymentPage = () => {
         (promo) =>
           promo.branch === brand &&
           promo.minimumQuantity <= totalQuantity &&
-          promo.discountAmount &&
           promo.month === currentMonth &&
           promo.year === currentYear
       );
+
+      // Kiểm tra và áp dụng giảm giá cố định khi mua tối thiểu 2 sản phẩm từ cùng một brand
       if (brandPromotion) {
         const discountAmount = brandPromotion.discountAmount;
-        extraDiscountTotal += discountAmount;
+        if (discountAmount) {
+          extraDiscountTotal += discountAmount;
+        }
+
+        // Kiểm tra các sản phẩm bundle của thương hiệu đó
+        if (Array.isArray(brandPromotion.bundleProduct)) {
+          const totalBundleItems = brandPromotion.bundleProduct.length;
+          if (totalBundleItems >= 2) {
+            let appliedDiscount = false;
+            brandPromotion.bundleProduct.forEach((bundle) => {
+              const bundleProductItem = orderItems.find(
+                (bundleItem) =>
+                  bundleItem.product.toString() ===
+                  bundle.productId._id.toString()
+              );
+              if (bundleProductItem && !appliedDiscount) {
+                const discountAmount = bundle.discountPrice;
+                extraDiscountTotal += discountAmount;
+                appliedDiscount = true;
+              }
+            });
+          } else {
+            brandPromotion.bundleProduct.forEach((bundle) => {
+              const bundleProductItem = orderItems.find(
+                (bundleItem) =>
+                  bundleItem.product.toString() ===
+                  bundle.productId._id.toString()
+              );
+              if (bundleProductItem) {
+                const discountAmount =
+                  bundle.discountPrice * bundleProductItem.amount;
+                extraDiscountTotal += discountAmount;
+              }
+            });
+          }
+        } else if (brandPromotion.bundleProduct) {
+          const bundleProductItem = orderItems.find(
+            (bundleItem) =>
+              bundleItem.product.toString() ===
+              brandPromotion.bundleProduct.productId._id.toString()
+          );
+          if (bundleProductItem) {
+            const discountAmount =
+              brandPromotion.bundleProduct.discountPrice *
+              bundleProductItem.amount;
+            extraDiscountTotal += discountAmount;
+          }
+        }
       }
     }
 
@@ -135,7 +189,7 @@ const PaymentPage = () => {
     orderItems.forEach((item) => {
       let itemDiscount = 0;
 
-      // Điều kiện 2: Nếu sản phẩm là sản phẩm kích hoạt, giảm giá cho bundle product
+      // Điều kiện 2 và 4: Nếu sản phẩm là sản phẩm kích hoạt, giảm giá cho bundle product
       const triggerPromotion = promotions.find(
         (promo) =>
           promo.triggerProduct?._id?.toString() === item.product.toString() &&
@@ -143,40 +197,54 @@ const PaymentPage = () => {
           promo.year === currentYear
       );
       if (triggerPromotion && item.amount >= 1) {
-        const bundleProductItem = orderItems.find(
-          (bundleItem) =>
-            bundleItem.product.toString() ===
-            triggerPromotion.bundleProduct?.productId._id.toString()
-        );
-
-        if (bundleProductItem) {
-          const discountAmount =
-            triggerPromotion.bundleProduct.discountPrice *
-            bundleProductItem.amount;
-          extraDiscountTotal += discountAmount;
-        }
-      }
-
-      // Điều kiện 3: Thêm sản phẩm bundle với giá giảm khi mua sản phẩm từ brand đó
-      const brandBundlePromotion = promotions.find(
-        (promo) =>
-          promo.branch === item.branch &&
-          promo.bundleProduct &&
-          promo.month === currentMonth &&
-          promo.year === currentYear
-      );
-      if (brandBundlePromotion) {
-        const bundleProductItem = orderItems.find(
-          (bundleItem) =>
-            bundleItem.product.toString() ===
-            brandBundlePromotion.bundleProduct?.productId._id.toString()
-        );
-
-        if (bundleProductItem) {
-          const bundleDiscountAmount =
-            brandBundlePromotion.bundleProduct.discountPrice *
-            bundleProductItem.amount;
-          extraDiscountTotal += bundleDiscountAmount;
+        // Điều kiện khi mua 1 sản phẩm triggerProduct thì sẽ được giảm thêm cho các sản phẩm bundleProduct
+        if (Array.isArray(triggerPromotion.bundleProduct)) {
+          // Kiểm tra nếu có bundleProduct (dạng mảng)
+          const totalBundleItems = triggerPromotion.bundleProduct.length;
+          if (totalBundleItems >= 2) {
+            // Nếu bundle có từ 2 sản phẩm trở lên, giảm giá cho toàn bộ bundle 1 lần duy nhất
+            let appliedDiscount = false;
+            triggerPromotion.bundleProduct.forEach((bundle) => {
+              const bundleProductItem = orderItems.find(
+                (bundleItem) =>
+                  bundleItem.product.toString() ===
+                  bundle.productId._id.toString()
+              );
+              if (bundleProductItem && !appliedDiscount) {
+                // Tính giảm giá cho toàn bộ bundle (chỉ tính 1 lần cho tất cả sản phẩm trong bundle)
+                const discountAmount = bundle.discountPrice; // Chỉ lấy giá giảm của bundle một lần
+                extraDiscountTotal += discountAmount;
+                appliedDiscount = true; // Đảm bảo chỉ tính giảm giá 1 lần cho toàn bộ bundle
+              }
+            });
+          } else {
+            // Nếu bundle chỉ có một sản phẩm, áp dụng giảm giá cho sản phẩm đó
+            triggerPromotion.bundleProduct.forEach((bundle) => {
+              const bundleProductItem = orderItems.find(
+                (bundleItem) =>
+                  bundleItem.product.toString() ===
+                  bundle.productId._id.toString()
+              );
+              if (bundleProductItem) {
+                const discountAmount =
+                  bundle.discountPrice * bundleProductItem.amount;
+                extraDiscountTotal += discountAmount;
+              }
+            });
+          }
+        } else if (triggerPromotion.bundleProduct) {
+          // Nếu chỉ có một bundleProduct (không phải mảng)
+          const bundleProductItem = orderItems.find(
+            (bundleItem) =>
+              bundleItem.product.toString() ===
+              triggerPromotion.bundleProduct.productId._id.toString()
+          );
+          if (bundleProductItem) {
+            const discountAmount =
+              triggerPromotion.bundleProduct.discountPrice *
+              bundleProductItem.amount;
+            extraDiscountTotal += discountAmount;
+          }
         }
       }
 
@@ -494,7 +562,7 @@ const PaymentPage = () => {
         padding: "0.1px 0",
         background: "#f5f5fa",
         with: "100%",
-        height: "100vh",
+        minHeight: "100vh",
         marginTop: "65px",
       }}
     >

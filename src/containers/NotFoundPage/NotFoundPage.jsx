@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./NotFoundPage.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Loading from "../../components/LoadingComponent/Loading";
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
+
   const handleReturnHome = () => {
     setLoading(true);
     setTimeout(() => {

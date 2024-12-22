@@ -20,7 +20,7 @@ import { getBase64 } from "../../utils";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../ultis/firebase";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
   const user = useSelector((state) => state.user);
@@ -33,6 +33,11 @@ const ProfilePage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
 
   const handleGetDetailsUser = useCallback(
     async (id, token) => {

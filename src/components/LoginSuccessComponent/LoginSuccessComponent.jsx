@@ -60,7 +60,7 @@ const LoginSuccessComponent = () => {
     fetchToken();
   }, [userId, navigate, handleGetDetailsUser, location]);
 
-  return <div className="conatainer_proccess">Đang xử lý đăng nhập...</div>;
+  return <div className="conatainer_proccess">Processing login...</div>;
 };
 
 export default LoginSuccessComponent;

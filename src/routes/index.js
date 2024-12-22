@@ -9,7 +9,6 @@ import OrderPage from "../containers/OrderPage/OrderPage";
 import OrderSuccess from "../containers/OrderSuccess/OrderSuccess";
 import PasswordReset from "../containers/PasswordReset/PasswordReset.jsx";
 import PaymentPage from "../containers/PaymentPage/PaymentPage";
-import ProductsPage from "../containers/ProducsPages/ProductsPage";
 import ProductDetailsPage from "../containers/ProductDetailsPage/ProductDetailsPage";
 import ProfilePage from "../containers/ProfilePage/ProfilePage";
 import SignInPage from "../containers/SignInPage/SignInPage";
@@ -49,11 +48,6 @@ export const routes = [
   {
     path: "/order-success",
     page: OrderSuccess,
-    isShowHeader: true,
-  },
-  {
-    path: "/products",
-    page: ProductsPage,
     isShowHeader: true,
   },
   {
@@ -102,6 +96,7 @@ export const routes = [
     path: "/forgot-password",
     page: ForgotPassPage,
     isShowHeader: true,
+    isShowChatbox: false,
   },
   {
     path: "/reset-password/:id/:token",
@@ -127,7 +122,7 @@ export const routes = [
   {
     path: "/notcomplete",
     page: NotCompletePage,
-    isShowHeader: false,
+    isShowHeader: true,
     isShowFooter: true,
   },
 ];

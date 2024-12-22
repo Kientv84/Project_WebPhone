@@ -5,6 +5,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
+  MinusOutlined,
 } from "@ant-design/icons";
 import { WrapperHeader, WrapperUploadFile } from "./style";
 import TableComponent from "../TableComponent/TableComponent";
@@ -37,6 +38,13 @@ const AdminPromotion = () => {
   const [isDeleteManySuccessNotified, setIsDeleteManySuccessNotified] =
     useState(false);
 
+  const [addrbundleProducts, setAddrBundleProducts] = useState([
+    { key: Date.now(), name: "bundleProduct" },
+  ]);
+
+  const [addrbundleDeltailProducts, setAddrBundleDetailProducts] = useState([
+    { key: Date.now(), name: "bundleProduct" },
+  ]);
   const searchInput = useRef(null);
 
   const initial = () => ({
@@ -46,7 +54,7 @@ const AdminPromotion = () => {
     branch: null,
     minimumQuantity: 2,
     triggerProduct: "",
-    bundleProduct: "", // Sản phẩm kèm theo
+    bundleProduct: [], // Sản phẩm kèm theo
     discountPrice: "",
   });
 
@@ -103,8 +111,8 @@ const AdminPromotion = () => {
 
   //
   const getAllPromotion = async () => {
-    const product = JSON.parse(localStorage.getItem("promotion"));
-    const res = await PromotionService.getAllPromotion(product?.access_token);
+    const promotion = JSON.parse(localStorage.getItem("promotion"));
+    const res = await PromotionService.getAllPromotion(promotion?.access_token);
     return { data: res?.data, key: "promotions" };
   };
 
@@ -112,6 +120,21 @@ const AdminPromotion = () => {
   const fetchGetDetailsPromotion = async (rowSelected) => {
     const res = await PromotionService.getDetailsPromotion(rowSelected);
     if (res?.data) {
+      const { bundleProduct = [] } = res?.data;
+
+      const updatedBundleProduct = bundleProduct.length
+        ? bundleProduct.map((item, index) => ({
+            key: item.productId || Date.now() + index,
+            productId: item.productId || null,
+            isNew: false,
+          }))
+        : [
+            {
+              productId: null, // Đảm bảo không có productId
+              isNew: true,
+            },
+          ];
+
       setStatePromotionDetails({
         month: res?.data?.month,
         year: res?.data?.year,
@@ -119,12 +142,13 @@ const AdminPromotion = () => {
         branch: res?.data?.branch,
         minimumQuantity: res?.data?.minimumQuantity,
         triggerProduct: res?.data?.triggerProduct,
-        bundleProduct: res?.data?.bundleProduct?.productId || "", // Lấy productId từ đối tượng bundleProduct
-        discountPrice: res?.data?.bundleProduct?.discountPrice || "",
+        bundleProduct: updatedBundleProduct, // Lấy productId từ đối tượng bundleProduct
+        discountPrice: res?.data?.bundleProduct[0]?.discountPrice || "",
       });
     }
     setIsLoadingUpdate(false);
   };
+
   // khi bấm edit sản phẩm nó giúp cho việc hiện ra lại các thông tin cần edit
   useEffect(() => {
     if (!isModalOpen) {
@@ -166,11 +190,21 @@ const AdminPromotion = () => {
     });
   };
 
-  const handleChangeSelectBundleProduct = (value) => {
-    setStatePromotion({
-      ...statePromotion,
-      bundleProduct: value,
-    });
+  const handleChangeSelectBundleProduct = (index, value) => {
+    // Tạo một bản sao mới của mảng bundleProduct
+    const updatedBundleProducts = [...statePromotion.bundleProduct];
+
+    // Cập nhật giá trị của productId trong bundleProduct tại index tương ứng
+    updatedBundleProducts[index] = {
+      ...updatedBundleProducts[index],
+      productId: value, // Cập nhật productId của sản phẩm đi kèm
+    };
+
+    // Cập nhật lại state
+    setStatePromotion((prevState) => ({
+      ...prevState,
+      bundleProduct: updatedBundleProducts, // Cập nhật lại bundleProduct trong state
+    }));
   };
 
   const handleChangeSelectTriggerProduct = (value) => {
@@ -180,10 +214,16 @@ const AdminPromotion = () => {
     });
   };
 
-  const handleChangeNewSelectBundleProduct = (value) => {
+  const handleChangeNewSelectBundleProduct = (index, value) => {
+    const updatedBundleProducts = [...statePromotionDetails.bundleProduct];
+    updatedBundleProducts[index] = {
+      ...updatedBundleProducts[index],
+      productId: value, // Cập nhật productId của sản phẩm đi kèm
+    };
+
     setStatePromotionDetails({
       ...statePromotionDetails,
-      bundleProduct: value,
+      bundleProduct: updatedBundleProducts, // Cập nhật lại bundleProduct trong state
     });
   };
 
@@ -384,14 +424,42 @@ const AdminPromotion = () => {
     },
     {
       title: t("ADMIN.BUNDLE_PRODUCT"),
-      dataIndex: ["bundleProduct", "productId", "name"],
-      render: (bundleProduct) => bundleProduct || "N/A", // Display product name or fallback
+      dataIndex: "bundleProduct",
+      render: (bundleProduct) => {
+        if (
+          !bundleProduct ||
+          (Array.isArray(bundleProduct) && bundleProduct.length === 0)
+        ) {
+          return "N/A"; // Nếu bundleProduct không có giá trị hoặc là mảng rỗng, hiển thị "N/A"
+        }
+
+        if (Array.isArray(bundleProduct)) {
+          // Nếu bundleProduct là mảng, map qua từng sản phẩm và lấy tên sản phẩm
+          return bundleProduct.map((bundle, index) => (
+            <div key={index}>{bundle.productId?.name || "N/A"}</div>
+          ));
+        }
+
+        // Nếu không phải mảng, trả về "N/A"
+        return "N/A";
+      },
     },
     {
       title: t("ADMIN.DISCOUNT_PRICE"),
-      dataIndex: ["bundleProduct", "discountPrice"], // Adjust if nested
-      render: (discountPrice) =>
-        discountPrice ? <span>{convertPrice(discountPrice)}</span> : "N/A",
+      dataIndex: "bundleProduct", // Không cần truy cập vào discountPrice, chỉ cần bundleProduct
+      render: (bundleProduct) => {
+        if (Array.isArray(bundleProduct) && bundleProduct.length > 0) {
+          // Lấy discountPrice từ sản phẩm đầu tiên trong mảng
+          const discountPrice = bundleProduct[0].discountPrice;
+
+          return discountPrice ? (
+            <span>{convertPrice(discountPrice)}</span>
+          ) : (
+            "N/A"
+          );
+        }
+        return "N/A"; // Trường hợp không có bundleProduct
+      },
     },
     {
       title: t("ADMIN.ACTION"),
@@ -406,7 +474,10 @@ const AdminPromotion = () => {
       return { ...promotion, key: promotion._id };
     });
 
-  const handleCancel = useCallback(() => {
+  const handleCancelPromotion = useCallback(() => {
+    setAddrBundleProducts(
+      addrbundleProducts.filter((product) => !product.isNew)
+    );
     setIsModalOpen(false);
     setStatePromotion({
       month: "",
@@ -415,22 +486,11 @@ const AdminPromotion = () => {
       branch: "",
       minimumQuantity: "",
       triggerProduct: "",
-      bundleProduct: "", // Sản phẩm kèm theo
+      bundleProduct: [], // Sản phẩm kèm theo
       discountPrice: "",
     });
     form.resetFields();
   }, [form]);
-
-  const statuss = data?.status;
-  //Thêm mới sp
-  useEffect(() => {
-    if (isSuccess && statuss === "OK") {
-      message.success(t("ADMIN.ADD_PROMOTION_SUCCESS"));
-      handleCancel();
-    } else if (isError) {
-      message.error(t("ADMIN.ADD_PROMOTION_FAIL"));
-    }
-  }, [isSuccess, statuss, handleCancel, isError]);
 
   // Hàm xác nhận xóa tất cả
   const handleConfirmDeleteAll = () => {
@@ -484,6 +544,9 @@ const AdminPromotion = () => {
   }, [isSuccessDeleted, statusDeleted, handleCancelDelete, isErrorDeleted]);
 
   const handleCancelDrawer = useCallback(() => {
+    setAddrBundleDetailProducts(
+      addrbundleDeltailProducts.filter((product) => !product.isNew)
+    );
     setIsOpenDrawer(false);
     setStatePromotionDetails({
       month: "",
@@ -492,23 +555,12 @@ const AdminPromotion = () => {
       branch: "",
       minimumQuantity: "",
       triggerProduct: "",
-      bundleProduct: "", // Sản phẩm kèm theo
+      bundleProduct: [], // Sản phẩm kèm theo
       discountPrice: "",
     });
     form.resetFields();
+    // setAddrBundleProducts([]);
   }, [form]);
-
-  const statusUpdated = dataUpdated?.status;
-
-  //Cập nhật sp
-  useEffect(() => {
-    if (isSuccessUpdated && statusUpdated === "OK") {
-      message.success(t("ADMIN.UPDATE_SUCCESS"));
-      handleCancelDrawer();
-    } else if (isErrorUpdated) {
-      message.error(t("ADMIN.UPDATE_FAIL"));
-    }
-  }, [isSuccessUpdated, statusUpdated, handleCancelDrawer, isErrorUpdated]);
 
   const handleDeleteProduct = () => {
     mutationDeleted.mutate(
@@ -522,18 +574,59 @@ const AdminPromotion = () => {
   };
 
   const onFinish = async () => {
+    const {
+      month,
+      year,
+      discountAmount,
+      minimumQuantity,
+      branch,
+      triggerProduct,
+      bundleProduct,
+      discountPrice,
+    } = statePromotion;
+
+    // Kiểm tra nếu cả discountAmount, triggerProduct, và bundleProduct đều không có giá trị
+    if (
+      !discountAmount &&
+      !branch &&
+      !triggerProduct &&
+      !bundleProduct.length
+    ) {
+      message.error(
+        "At least one of Discount, Brand, Trigger Product, or Bundle Product must be filled."
+      );
+      return;
+    }
+
+    // Tạo params sau khi validation thành công
     const params = {
-      month: statePromotion.month || new Date().getMonth() + 1,
-      year: statePromotion.year || new Date().getFullYear(),
-      discountAmount: statePromotion.discountAmount,
-      minimumQuantity: statePromotion.minimumQuantity,
-      branch: statePromotion.branch,
-      triggerProduct: statePromotion.triggerProduct || null,
-      bundleProduct: statePromotion.bundleProduct,
-      discountPrice: statePromotion.discountPrice,
+      month: month || new Date().getMonth() + 1,
+      year: year || new Date().getFullYear(),
+      discountAmount: discountAmount || null,
+      minimumQuantity,
+      branch: branch || null,
+      triggerProduct: triggerProduct || null,
+      bundleProduct: bundleProduct || [],
+      discountPrice: discountPrice || null,
     };
 
+    // Gửi mutation
     mutation.mutate(params, {
+      onSuccess: () => {
+        message.success(t("ADMIN.ADD_PROMOTION_SUCCESS"));
+        handleCancelPromotion();
+      },
+      onError: (error) => {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          message.error(error.response.data.message); // Hiển thị thông báo lỗi từ backend
+        } else {
+          message.error("An error occurred while add the promotion."); // Lỗi mặc định nếu không có thông báo lỗi từ backend
+        }
+      },
       onSettled: () => {
         queryPromotion.refetch();
       },
@@ -556,19 +649,6 @@ const AdminPromotion = () => {
   };
 
   const onUpdatePromotion = () => {
-    const isDuplicate = promotions?.data?.some(
-      (promo) =>
-        promo.branch === statePromotionDetails.branch && // Kiểm tra trùng branch
-        promo.month === statePromotionDetails.month &&
-        promo.year === statePromotionDetails.year &&
-        promo._id !== rowSelected // Loại trừ promotion hiện tại (đang được cập nhật)
-    );
-
-    if (isDuplicate) {
-      message.error(t("ADMIN.UPDATE_FAIL_BRAND"));
-      return; // Dừng lại nếu trùng lặp
-    }
-
     const updateData = {
       id: rowSelected,
       token: promotion?.access_token,
@@ -579,12 +659,18 @@ const AdminPromotion = () => {
       minimumQuantity: statePromotionDetails.minimumQuantity,
     };
 
-    // Chỉ thêm bundleProduct nếu có dữ liệu
-    if (statePromotionDetails.bundleProduct) {
-      updateData.bundleProduct = {
-        productId: statePromotionDetails.bundleProduct,
-        discountPrice: statePromotionDetails.discountPrice || 0,
-      };
+    // Kiểm tra sự thay đổi dữ liệu so với promotion cũ
+
+    if (
+      statePromotionDetails.bundleProduct &&
+      statePromotionDetails.bundleProduct.length > 0
+    ) {
+      updateData.bundleProduct = statePromotionDetails.bundleProduct.map(
+        (promotion) => ({
+          productId: promotion.productId,
+          discountPrice: statePromotionDetails.discountPrice || 0, // Áp dụng giá trị discountPrice cho tất cả các sản phẩm
+        })
+      );
     }
 
     // Chỉ thêm triggerProduct nếu có dữ liệu
@@ -593,6 +679,22 @@ const AdminPromotion = () => {
     }
 
     mutationUpdate.mutate(updateData, {
+      onSuccess: () => {
+        message.success(t("ADMIN.UPDATE_SUCCESS"));
+        handleCancelDrawer();
+      },
+      onError: (error) => {
+        // Kiểm tra lỗi từ backend và hiển thị thông báo lỗi
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          message.error(error.response.data.message); // Hiển thị thông báo lỗi từ backend
+        } else {
+          message.error("An error occurred while updating the promotion."); // Lỗi mặc định nếu không có thông báo lỗi từ backend
+        }
+      },
       onSettled: () => {
         queryPromotion.refetch();
       },
@@ -603,9 +705,81 @@ const AdminPromotion = () => {
     ? renderOptionsPromotionProduct(allProduct.data.data, "name", "_id")
     : [];
 
+  const handleAddBundleProduct = () => {
+    const newProduct = {
+      productId: null, // Chưa chọn sản phẩm
+      discountPrice: null, // Mức giá giảm chưa xác định
+      isNew: true,
+    };
+
+    // Thêm sản phẩm vào danh sách sản phẩm đi kèm
+    setAddrBundleProducts([...addrbundleProducts, newProduct]);
+
+    // Cập nhật statePromotion để giữ các sản phẩm đi kèm trong đó
+    setStatePromotion({
+      ...statePromotion,
+      bundleProduct: [...statePromotion.bundleProduct, newProduct],
+    });
+  };
+
+  const handleAddUpdateBundleProduct = () => {
+    const newProduct = {
+      productId: null, // Chưa chọn sản phẩm
+      discountPrice: null, // Mức giá giảm chưa xác định
+      isNew: true,
+    };
+
+    // Thêm sản phẩm vào danh sách sản phẩm đi kèm
+    setAddrBundleDetailProducts([...addrbundleDeltailProducts, newProduct]);
+
+    // Cập nhật statePromotion để giữ các sản phẩm đi kèm trong đó
+    setStatePromotionDetails({
+      ...statePromotionDetails,
+      bundleProduct: [...statePromotionDetails.bundleProduct, newProduct],
+    });
+  };
+
+  const handleDiscountPriceChange = (newDiscountPrice) => {
+    setStatePromotionDetails({
+      ...statePromotionDetails,
+      discountPrice: newDiscountPrice,
+      bundleProduct: statePromotionDetails.bundleProduct.map((item) => ({
+        ...item,
+        discountPrice: newDiscountPrice, // Cập nhật discountPrice cho tất cả các sản phẩm
+      })),
+    });
+  };
+
+  const handleRemoveBundleProduct = (indexToRemove) => {
+    // Lọc danh sách bundle products, loại bỏ item tại index được chọn
+    const updatedBundleProducts = addrbundleProducts.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setAddrBundleProducts(updatedBundleProducts);
+
+    // Cập nhật statePromotion để giữ đồng bộ với addrbundleProducts
+    const updatedStateBundleProducts = statePromotion.bundleProduct.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setStatePromotion({
+      ...statePromotion,
+      bundleProduct: updatedStateBundleProducts,
+    });
+  };
+
+  const handleRemoveBundleProductDetail = (indexToRemove) => {
+    const updatedBundleProducts = statePromotionDetails.bundleProduct.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setStatePromotionDetails({
+      ...statePromotionDetails,
+      bundleProduct: updatedBundleProducts,
+    });
+  };
+
   return (
     <div>
-      <WrapperHeader>{t("ADMIN.PROMOTION")}</WrapperHeader>
+      <WrapperHeader>{t("ADMIN.MANAGE_PROMOTION")}</WrapperHeader>
       <div style={{ marginTop: "10px" }}>
         <Button
           style={{
@@ -634,11 +808,12 @@ const AdminPromotion = () => {
           }}
         />
       </div>
+
       <ModalComponent
         forceRender
         title={t("ADMIN.ADD_NEW_PROMOTION")}
         open={isModalOpen}
-        onCancel={handleCancel}
+        onCancel={handleCancelPromotion}
         footer={null}
         style={{ padding: "24px" }}
         centered
@@ -712,6 +887,12 @@ const AdminPromotion = () => {
             <Form.Item
               label={t("ADMIN.MINIMUM_QUANTITY")}
               name="minimumQuantity"
+              rules={[
+                {
+                  required: true,
+                  message: t("ADMIN.PLACEHOODER_MINIMUM_QUANTITY"),
+                },
+              ]}
             >
               <InputComponent
                 type="number"
@@ -728,23 +909,60 @@ const AdminPromotion = () => {
                 options={productOptions} // Assuming productOptions has product choices
               />
             </Form.Item>
-            <Form.Item
-              label={t("ADMIN.BUNDLE_PRODUCT")}
-              name="bundleProduct"
-              rules={[
-                {
-                  required: false, // Không bắt buộc nếu không cần
-                  message: t("ADMIN.PLACEHOLDER_BUNDLE_PRODUCT"),
-                },
-              ]}
-            >
-              <Select
-                name="bundleProduct"
-                valueBranch={statePromotion.bundleProduct}
-                onChange={handleChangeSelectBundleProduct}
-                options={productOptions}
-              />
-            </Form.Item>
+            <div>
+              <div style={{ textAlign: "right", marginBottom: 8 }}>
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  size="middle"
+                  onClick={() => handleAddBundleProduct()}
+                >
+                  <PlusOutlined style={{ fontSize: "20px" }} />
+                  {t("ADMIN.ADD_BUNDLE")}
+                </Button>
+              </div>
+
+              {addrbundleProducts.map((product, index) => (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    justifyContent: "flex-end",
+                    paddingLeft: "10px",
+                  }}
+                >
+                  <Form.Item
+                    style={{
+                      flexGrow: 1, // Form.Item chiếm phần còn lại
+                      maxWidth: "calc(100% - 100px)", // Giới hạn chiều rộng để chừa chỗ cho nút
+                    }}
+                    key={product.key}
+                    label={t("ADMIN.BUNDLE_PRODUCT")}
+                    name={`bundleProduct_${product.productId}`}
+                  >
+                    <Select
+                      name={`bundleProduct_${product.productId}`}
+                      value={statePromotion.bundleProduct[index]?.productId} // Truyền đúng giá trị từ state
+                      onChange={(value) =>
+                        handleChangeSelectBundleProduct(index, value)
+                      } // Cập nhật giá trị khi chọn sản phẩm
+                      options={productOptions}
+                    />
+                  </Form.Item>
+                  <Button
+                    style={{
+                      color: "red",
+                      borderColor: "red",
+                    }}
+                    variant="outlined"
+                    size="middle"
+                    onClick={() => handleRemoveBundleProduct(index)}
+                  >
+                    {t("ADMIN.DELETE_BUNDLE")}
+                  </Button>
+                </div>
+              ))}
+            </div>
             <Form.Item
               label={t("ADMIN.DISCOUNT_PRICE")}
               name="discountPrice"
@@ -764,7 +982,7 @@ const AdminPromotion = () => {
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                {t("ADMIN.BUTTON_SUBMID_ADD_PRODUCT")}
+                {t("ADMIN.BUTTON_SUBMID_ADD_PROMOTION")}
               </Button>
             </Form.Item>
             {data?.status === "ERR" && (
@@ -874,21 +1092,67 @@ const AdminPromotion = () => {
                 options={productOptions}
               />
             </Form.Item>
+            <div>
+              <div style={{ textAlign: "right", marginBottom: 8 }}>
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  size="middle"
+                  onClick={() => handleAddUpdateBundleProduct()}
+                >
+                  <PlusOutlined style={{ fontSize: "20px" }} />
+                  {t("ADMIN.ADD_BUNDLE")}
+                </Button>
+              </div>
 
-            <Form.Item label={t("ADMIN.BUNDLE_PRODUCT")} name="bundleProduct">
-              <Select
-                name="bundleProduct"
-                valueBranch={statePromotionDetails.bundleProduct}
-                onChange={handleChangeNewSelectBundleProduct}
-                options={productOptions}
-              />
-            </Form.Item>
+              {statePromotionDetails.bundleProduct.map((item, index) => (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    justifyContent: "flex-end",
+                    paddingLeft: "10px",
+                  }}
+                >
+                  <Form.Item
+                    style={{
+                      flexGrow: 1, // Form.Item chiếm phần còn lại
+                      maxWidth: "calc(100% - 100px)", // Giới hạn chiều rộng để chừa chỗ cho nút
+                    }}
+                    label={t("ADMIN.BUNDLE_PRODUCT")}
+                    name={statePromotionDetails.productId} // Tạo tên duy nhất cho mỗi sản phẩm
+                  >
+                    <Select
+                      name={statePromotionDetails.productId}
+                      value={item.productId || undefined} // Đảm bảo truyền đúng giá trị cho Select
+                      onChange={(value) =>
+                        handleChangeNewSelectBundleProduct(index, value)
+                      }
+                      options={productOptions} // Đây phải là một mảng các { label, value }
+                    />
+                  </Form.Item>
+                  <div>
+                    <Button
+                      style={{
+                        color: "red",
+                        borderColor: "red",
+                      }}
+                      variant="outlined"
+                      size="middle"
+                      onClick={() => handleRemoveBundleProductDetail(index)}
+                    >
+                      {t("ADMIN.DELETE_BUNDLE")}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
 
             <Form.Item label={t("ADMIN.DISCOUNT_PRICE")} name="discountPrice">
               <InputComponent
                 type="number"
                 value={statePromotionDetails["discountPrice"]}
-                onChange={handleOnchangeDetails}
+                onChange={(e) => handleDiscountPriceChange(e.target.value)}
                 name="discountPrice"
               />
             </Form.Item>

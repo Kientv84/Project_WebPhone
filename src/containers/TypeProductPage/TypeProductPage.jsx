@@ -1,7 +1,18 @@
 import React, { useCallback } from "react";
 import CardComponent from "../../components/CardComponent/CardComponent";
-import { Col, Pagination, Row } from "antd";
-import { WrapperProducts } from "./style";
+import { Col, Pagination, Row, Popover, Slider } from "antd";
+import {
+  PriceInput,
+  PriceInputWrapper,
+  PriceLabel,
+  PriceRangeWrapper,
+  PriceTag,
+  TextBrand,
+  Wrapper,
+  WrapperBranchProduct,
+  WrapperFilter,
+  WrapperProducts,
+} from "./style";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as ProductService from "../../services/ProductService";
 import { useEffect } from "react";
@@ -11,6 +22,8 @@ import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
 import "./TypeProductPage.css";
 import { useTranslation } from "react-i18next";
+import BranchProduct from "../../components/BranchProduct/BranchProduct";
+import { FilterOutlined } from "@ant-design/icons";
 
 const TypeProductPage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -21,11 +34,32 @@ const TypeProductPage = () => {
   const { state } = useLocation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [branchProducts, setBranchProducts] = useState([]);
   const [panigate, setPanigate] = useState({
     page: 0,
     limit: 18,
     total: 1,
   });
+
+  const [priceRange, setPriceRange] = useState([1000, 10000000]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [showSlider, setShowSlider] = useState(true);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Cuộn về đầu trang
+  }, [location]);
+
+  const fetchAllBranchProduct = async () => {
+    const res = await ProductService.getAllBranchProduct();
+    if (res?.status === "OK") setBranchProducts(res?.data);
+  };
+
+  useEffect(() => {
+    fetchAllBranchProduct();
+  }, []);
 
   const fetchProductType = useCallback(
     async (type, page, limit) => {
@@ -35,8 +69,10 @@ const TypeProductPage = () => {
         setLoading(false);
         setProducts(res?.data);
         setPanigate({ ...panigate, total: res?.totalPage });
+        filterBrandsByType(res?.data);
       } else {
         setLoading(false);
+        console.error("Failed to fetch product type:", res);
       }
     },
     [panigate]
@@ -51,6 +87,110 @@ const TypeProductPage = () => {
   const onChange = (current, pageSize) => {
     setPanigate({ ...panigate, page: current - 1, limit: pageSize });
   };
+
+  const FilterPopupContent = () => {
+    const handlePriceFilter = (minPrice, maxPrice) => {
+      setPriceRange([minPrice, maxPrice]);
+      filterProductsByPrice(minPrice, maxPrice); // gọi hàm lọc sản phẩm
+      // setShowSlider(false);
+    };
+
+    const onSliderChange = (value) => {
+      setPriceRange(value); // Cập nhật giá trị priceRange
+      filterProductsByPrice(value[0], value[1]); // Lọc sản phẩm theo khoảng giá mới
+    };
+
+    return (
+      <Wrapper>
+        <Row>
+          <Col span={24}>
+            <PriceLabel> {t("FILTER.PRICE")}</PriceLabel>
+          </Col>
+          <Col>
+            <PriceTag onClick={() => handlePriceFilter(0, 5000000)}>
+              {" "}
+              {t("FILTER.PRICE_UNDER_5")}
+            </PriceTag>
+            <PriceTag onClick={() => handlePriceFilter(5000000, 10000000)}>
+              {" "}
+              {t("FILTER.PRICE_5_TO_10")}
+            </PriceTag>
+            <PriceTag onClick={() => handlePriceFilter(10000000, 20000000)}>
+              {" "}
+              {t("FILTER.PRICE_10_TO_20")}
+            </PriceTag>
+            <PriceTag onClick={() => handlePriceFilter(20000000, 30000000)}>
+              {" "}
+              {t("FILTER.PRICE_20_TO_30")}
+            </PriceTag>
+            <PriceTag onClick={() => handlePriceFilter(30000000, 50000000)}>
+              {" "}
+              {t("FILTER.PRICE_30_TO_50")}
+            </PriceTag>
+            <PriceTag onClick={() => handlePriceFilter(50000000, 100000000)}>
+              {" "}
+              {t("FILTER.PRICE_OVER_50")}
+            </PriceTag>
+          </Col>
+        </Row>
+
+        {showSlider && (
+          <PriceRangeWrapper>
+            <Row>
+              <Col span={24}>
+                <PriceLabel>{t("FILTER.CHOOSE_PRICE")}</PriceLabel>
+              </Col>
+            </Row>
+            <Slider
+              range
+              step={500000}
+              min={1000}
+              max={70000000}
+              value={priceRange}
+              onChange={onSliderChange}
+            />
+            <PriceInputWrapper>
+              <PriceInput
+                value={`${priceRange[0].toLocaleString()}đ`}
+                readOnly
+              />
+              <PriceInput
+                value={`${priceRange[1].toLocaleString()}đ`}
+                readOnly
+              />
+            </PriceInputWrapper>
+          </PriceRangeWrapper>
+        )}
+      </Wrapper>
+    );
+  };
+
+  const filterProductsByPrice = (minPrice, maxPrice) => {
+    if (!products || !products.length) {
+      setFilteredProducts([]); // Đảm bảo rằng danh sách lọc là rỗng nếu không có sản phẩm
+      return;
+    }
+
+    const filtered = products.filter((product) => {
+      const price = parseFloat(product.price); // Chuyển giá trị price thành số (nếu cần)
+      return price >= minPrice && price <= maxPrice;
+    });
+
+    setFilteredProducts(filtered); // Cập nhật danh sách đã lọc
+  };
+
+  const handlePopoverClick = (visible) => {
+    setIsPopoverOpen(visible); // Cập nhật trạng thái mở/đóng của popover
+    if (visible) {
+      setShowSlider(true); // Hiển thị lại slider khi popover mở
+    }
+  };
+
+  const filterBrandsByType = (products) => {
+    const brands = [...new Set(products.map((product) => product.branch))];
+    setBranchProducts(brands); // Cập nhật danh sách thương hiệu
+  };
+
   return (
     <Loading isLoading={loading}>
       <div className="wrapper-page">
@@ -113,6 +253,38 @@ const TypeProductPage = () => {
             </span>
           </div>
           <div
+            className="branch-product"
+            style={{
+              width: "1270px",
+              margin: "15px auto 0",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Popover
+              content={FilterPopupContent}
+              trigger="click"
+              placement="bottomLeft"
+              onVisibleChange={handlePopoverClick}
+            >
+              <WrapperFilter>
+                <FilterOutlined /> {t("FILTER.TITLE")}
+              </WrapperFilter>
+            </Popover>
+
+            <WrapperBranchProduct>
+              <TextBrand>{t("HOMEPAGE.BRAND_TEXT")}</TextBrand>
+              {loading ? (
+                <div>Loading brands...</div> // Hiển thị loading khi đang tải dữ liệu
+              ) : (
+                branchProducts.map((item) => (
+                  <BranchProduct name={item} key={item} />
+                ))
+              )}
+            </WrapperBranchProduct>
+          </div>
+
+          <div
             style={{
               width: "1270px",
               margin: "0 auto",
@@ -136,36 +308,24 @@ const TypeProductPage = () => {
                   <WrapperProducts
                     style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}
                   >
-                    {products
-                      ?.filter((pro) => {
-                        if (searchDebounce === "") {
-                          return true; // Trả về true để giữ lại tất cả các sản phẩm
-                        } else if (
-                          pro?.name
-                            ?.toLowerCase()
-                            ?.includes(searchDebounce?.toLowerCase())
-                        ) {
-                          return true; // Trả về true nếu sản phẩm khớp với tìm kiếm
-                        }
-                        return false;
-                      })
-                      ?.map((product) => {
-                        return (
-                          <CardComponent
-                            key={product._id}
-                            countInStock={product.countInStock}
-                            description={product.description}
-                            image={product.image}
-                            name={product.name}
-                            price={product.price}
-                            rating={product.rating}
-                            type={product.type}
-                            selled={product.selled}
-                            discount={product.discount}
-                            id={product._id}
-                          />
-                        );
-                      })}
+                    {(filteredProducts?.length > 0
+                      ? filteredProducts
+                      : products
+                    )?.map((product) => (
+                      <CardComponent
+                        key={product._id}
+                        countInStock={product.countInStock}
+                        description={product.description}
+                        image={product.image}
+                        name={product.name}
+                        price={product.price}
+                        rating={product.rating}
+                        type={product.type}
+                        selled={product.selled}
+                        discount={product.discount}
+                        id={product._id}
+                      />
+                    ))}
                   </WrapperProducts>
                 </Col>
               </Row>
