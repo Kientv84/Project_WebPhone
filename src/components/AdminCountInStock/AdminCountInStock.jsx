@@ -208,22 +208,27 @@ const AdminCountInStock = () => {
       
       {/* Modal cập nhật số lượng */}
       <Modal
-        title={t("ADMIN.UPDATE_STOCK")}
+        title={t("ADMIN.QUANLITY_ADMIN")}
         visible={isModalOpen}
         onOk={handleUpdateStock}
         onCancel={() => setIsModalOpen(false)}
       >
         <Form form={form}>
-          <Form.Item label={t("ADMIN.COUNT_IN_STOCK")}>
-            <Input
-              type="number"
-              value={newStock}
-              onChange={(e) => setNewStock(Number(e.target.value))}
-              min={0}
-              placeholder={t("ADMIN.ENTER_NEW_STOCK")}
-            />
-          </Form.Item>
-        </Form>
+        <Form.Item
+          label={t("ADMIN.COUNT_IN_STOCK")}
+          validateStatus={newStock <= 10 ? "error" : ""}
+          help={newStock <= 10 ? t("ADMIN.STOCK_MUST_BE_GREATER_THAN_10") : ""}
+          rules={[{ required: true, message: t("ADMIN.ENTER_NEW_STOCK") }]}
+        >
+          <Input
+            type="number"
+            value={newStock}
+            onChange={(e) => setNewStock(Number(e.target.value))}
+            min={0}
+            placeholder={t("ADMIN.ENTER_NEW_STOCK")}
+          />
+        </Form.Item>
+      </Form>
       </Modal>
     </>
   );

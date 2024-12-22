@@ -331,6 +331,8 @@ const resources = {
         DISCOUNT_PERCENTAGE: "Discount",
         MINIMUM_QUANTITY: "Minimum Quantity",
         TRIGGER_PRODUCT: "Trigger Product",
+        STOCK_MUST_BE_GREATER_THAN_10: "Quantity of goods is low, please import more!"
+
       },
       PAYMENT: {
         TITLE: "Payment",
@@ -813,6 +815,8 @@ const resources = {
         MINIMUM_QUANTITY: "Số lượng tối thiểu",
         TRIGGER_PRODUCT: "Sản phẩm kích hoạt",
         DISCOUNT_PRICE: "Giá giảm",
+        STOCK_MUST_BE_GREATER_THAN_10: "Số lượng hàng hóa thấp, bạn hãy nhập thêm!"
+
       },
       PAYMENT: {
         TITLE: "Thanh toán",
