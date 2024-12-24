@@ -427,13 +427,6 @@ const AdminProduct = () => {
       dataIndex: "branch",
       ...getColumnSearchProps("branch"), // search branch
     },
-    // {
-    //   title: t("ADMIN.PRODUCT_PROMOTION"),
-    //   dataIndex: "promotion",
-    //   render: (promotion, record) => (
-    //     <Link to={`/product-details/${record._id}`}>{promotion}</Link>
-    //   ),
-    // },
     {
       title: t("ADMIN.ACTION"),
       dataIndex: "action",
@@ -450,20 +443,7 @@ const AdminProduct = () => {
   const handleCancel = useCallback(() => {
     setIsModalOpen(false);
     setPromotions([{ promotionText: "", relatedProductId: null }]);
-    setStateProduct({
-      name: "",
-      price: "",
-      description: "",
-      promotion: "",
-      rating: "",
-      image: "",
-      image1: "",
-      image2: "",
-      type: "",
-      branch: "",
-      countInStock: "",
-      discount: "",
-    });
+    setStateProduct(initial());
     form.resetFields();
   }, [form]);
 
@@ -1152,7 +1132,7 @@ const AdminProduct = () => {
                       ]}
                     >
                       <Input.TextArea
-                        value={stateProduct.promotion}
+                        value={item.promotionText}
                         onChange={(e) => handleOnchangePromotion(e, index)}
                         style={{ minHeight: "100px", width: "100%" }}
                       />
@@ -1322,7 +1302,7 @@ const AdminProduct = () => {
       <DrawerComponent
         title={t("ADMIN.PRODUCT_DETAIL")}
         isOpen={isOpenDrawer}
-        onCancel={() => setIsOpenDrawer(false)}
+        onCancel={handleCancelDrawer}
         footer={null}
         width={800}
       >
